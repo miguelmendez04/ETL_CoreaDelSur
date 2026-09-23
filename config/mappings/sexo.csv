@@ -1,0 +1,4 @@
+cod_sexo,nombre,cod_kosis,cod_worldbank,cod_oecd
+T,Total,0,,_T
+H,Hombres,1,MA,M
+M,Mujeres,2,FE,F

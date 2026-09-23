@@ -1,0 +1,98 @@
+# Catálogo de fuentes del ETL.
+# rol: maestra | contraste. Una sola fuente maestra por indicador (ver CLAUDE.md §3).
+# Los valores marcados "PENDIENTE" o "verificar" aún no se han confirmado contra la fuente.
+
+periodo_historico:
+  inicio: 2000
+  fin: 2025
+
+kosis:
+  base_url: https://kosis.kr/openapi/Param/statisticsParameterData.do
+  api_key_env: KOSIS_API_KEY
+  params_comunes:
+    method: getList
+    format: json
+    jsonVD: "Y"
+  datasets:
+    nacimientos_tfr:
+      indicadores: [NACIMIENTOS, TFR]
+      rol: maestra
+      org_id: "101"
+      tbl_id: null            # PENDIENTE: estadísticas vitales por si-do
+      prd_se: Y
+      territorio: nacional + si-do
+    poblacion_estimada:
+      indicadores: [POBLACION]
+      rol: maestra
+      org_id: "101"
+      tbl_id: null            # PENDIENTE: población estimada por sexo y edad (mitad de año)
+      prd_se: Y
+      territorio: nacional + si-do
+    eaps:
+      indicadores: [POB_ACTIVA, OCUPADOS, TASA_PARTICIPACION, TASA_DESEMPLEO]
+      rol: maestra
+      org_id: "101"
+      tbl_id: null            # PENDIENTE: EAPS por si-do y sexo (mensual -> promedio anual)
+      prd_se: M
+      unidad_origen: miles    # convertir a personas en silver
+      territorio: nacional + si-do
+    proyeccion_nacional:
+      indicadores: [POBLACION]
+      rol: maestra
+      nivel: proyeccion
+      edicion_proyeccion: KOSTAT_2022_2072
+      escenarios: [medio, alto, bajo]
+      org_id: "101"
+      tbl_id: null            # PENDIENTE
+      periodo: {inicio: 2026, fin: 2072}
+    proyeccion_provincial:
+      indicadores: [POBLACION]
+      rol: maestra
+      nivel: proyeccion
+      edicion_proyeccion: KOSTAT_2022_2052
+      escenarios: [medio, alto, bajo]
+      org_id: "101"
+      tbl_id: null            # PENDIENTE
+      periodo: {inicio: 2026, fin: 2052}
+
+worldbank:
+  base_url: https://api.worldbank.org/v2
+  # GET {base_url}/country/{paises}/indicator/{codigo}?format=json&date=2000:2025&per_page=20000
+  paises: [KOR, JPN, USA, DEU, ITA, ESP, FRA, CHN, OED]
+  datasets:
+    SP.DYN.TFRT.IN:    {indicador: TFR,                rol: contraste}
+    SP.POP.65UP.TO.ZS: {indicador: PROP_65MAS,         rol: contraste}
+    SP.POP.1564.TO:    {indicador: POBLACION,          rol: contraste, grupo_edad: "15-64"}
+    SL.TLF.CACT.ZS:    {indicador: TASA_PARTICIPACION, rol: contraste}   # modelado OIT, 15+
+    SP.DYN.CBRT.IN:    {indicador: NACIMIENTOS,        rol: contraste, nota: "tasa bruta por 1000; requiere población para comparar"}
+    SP.POP.DPND.OL:    {indicador: DEPENDENCIA_VEJEZ,  rol: contraste}
+
+oecd:
+  base_url: https://sdmx.oecd.org/public/rest
+  # GET {base_url}/data/{dataflow}/{clave}?startPeriod=2000&format=csvfilewithlabels
+  datasets:
+    productividad:
+      indicadores: [PIB_HORA]
+      rol: maestra
+      dataflow: OECD.SDD.TPS,DSD_PDB@DF_PDB_LV,1.0     # verificar
+      clave: null                                     # PENDIENTE
+    fuerza_laboral:
+      indicadores: [TASA_PARTICIPACION, TASA_DESEMPLEO, OCUPADOS]
+      rol: contraste
+      dataflow: null                                  # PENDIENTE
+    fecundidad:
+      indicadores: [TFR]
+      rol: contraste
+      dataflow: null                                  # PENDIENTE
+
+unwpp:
+  # Descarga CSV. Solo contraste de población histórica y proyectada.
+  base_url: https://population.un.org/wpp
+  edicion: WPP2024
+  datasets:
+    poblacion_edad_sexo:
+      indicadores: [POBLACION]
+      rol: contraste
+      archivo: null           # PENDIENTE: CSV de población por grupo quinquenal y sexo
+      variantes: [Medium, High, Low]
+      location_code: 410      # Republic of Korea

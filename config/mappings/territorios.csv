@@ -1,0 +1,28 @@
+cod_territorio,nombre_es,nombre_en,nombre_ko,tipo,cod_kosis,cod_kosis_alt,iso3,vigente_desde,vigente_hasta,observacion
+00,Corea del Sur (nacional),South Korea,전국,nacional,00,,KOR,,,
+11,Seúl,Seoul,서울특별시,sido,11,,,,,
+21,Busan,Busan,부산광역시,sido,21,,,,,
+22,Daegu,Daegu,대구광역시,sido,22,,,,,
+23,Incheon,Incheon,인천광역시,sido,23,,,,,
+24,Gwangju,Gwangju,광주광역시,sido,24,,,,,
+25,Daejeon,Daejeon,대전광역시,sido,25,,,,,
+26,Ulsan,Ulsan,울산광역시,sido,26,,,,,
+29,Sejong,Sejong,세종특별자치시,sido,29,,,2012,,Si-do independiente desde 2012; antes formaba parte de Chungcheongnam-do
+31,Gyeonggi-do,Gyeonggi,경기도,sido,31,,,,,
+32,Gangwon,Gangwon,강원특별자치도,sido,32,51,,,,Renombrado Gangwon-do -> Gangwon State (2023); KOSIS puede usar el código 51
+33,Chungcheongbuk-do,North Chungcheong,충청북도,sido,33,,,,,
+34,Chungcheongnam-do,South Chungcheong,충청남도,sido,34,,,,,Desde 2012 excluye Sejong
+35,Jeonbuk,Jeonbuk,전북특별자치도,sido,35,52,,,,Renombrado Jeollabuk-do -> Jeonbuk State (2024); KOSIS puede usar el código 52
+36,Jeollanam-do,South Jeolla,전라남도,sido,36,,,,,
+37,Gyeongsangbuk-do,North Gyeongsang,경상북도,sido,37,,,,,
+38,Gyeongsangnam-do,South Gyeongsang,경상남도,sido,38,,,,,
+39,Jeju,Jeju,제주특별자치도,sido,39,,,,,
+CNSJ,Chungnam + Sejong,South Chungcheong + Sejong,충남+세종,agregado,,,,,,Agregado construido en el pipeline (34 + 29) para series comparables 2000-2025
+JPN,Japón,Japan,,pais,,,JPN,,,Comparación internacional
+USA,Estados Unidos,United States,,pais,,,USA,,,Comparación internacional
+DEU,Alemania,Germany,,pais,,,DEU,,,Comparación internacional
+ITA,Italia,Italy,,pais,,,ITA,,,Comparación internacional
+ESP,España,Spain,,pais,,,ESP,,,Comparación internacional
+FRA,Francia,France,,pais,,,FRA,,,Comparación internacional
+CHN,China,China,,pais,,,CHN,,,Comparación internacional
+OED,Promedio OCDE,OECD members,,agregado_int,,,OED,,,Código de agregado del World Bank

@@ -1,0 +1,22 @@
+# Credenciales
+.env
+
+# Crudo de bronze (respaldo local, no se versiona)
+data/bronze/*
+!data/bronze/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Power BI
+*.pbix.bak
+
+# Notas locales de Claude (no se versionan)
+CLAUDE.md

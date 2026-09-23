@@ -1,0 +1,8 @@
+pandas>=2.2
+requests>=2.32
+python-dotenv>=1.0
+PyYAML>=6.0
+psycopg[binary]>=3.2
+SQLAlchemy>=2.0
+pyarrow>=17.0
+pytest>=8.0

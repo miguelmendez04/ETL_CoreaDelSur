@@ -1,0 +1,12 @@
+cod_indicador,nombre,definicion,unidad,frecuencia_original,fuente_maestra,fuente_contraste,es_derivado,rango_min,rango_max
+NACIMIENTOS,Nacimientos,Nacidos vivos registrados en el año,personas,anual,KOSIS,WB,false,0,
+TFR,Tasa global de fecundidad,Número medio de hijos por mujer al final de su vida reproductiva,hijos por mujer,anual,KOSIS,OECD;WB,false,0,10
+POBLACION,Población,Población estimada a mitad de año por sexo y edad,personas,anual,KOSIS,UNWPP,false,0,
+POB_ACTIVA,Población económicamente activa,Ocupados + desocupados de 15 años y más (promedio anual de la EAPS),personas,mensual,KOSIS,OECD,false,0,
+OCUPADOS,Ocupados,Personas ocupadas de 15 años y más (promedio anual de la EAPS),personas,mensual,KOSIS,OECD,false,0,
+TASA_PARTICIPACION,Tasa de participación,Población activa / población de 15 años y más × 100,%,mensual,KOSIS,OECD;WB,false,0,100
+TASA_DESEMPLEO,Tasa de desempleo,Desocupados / población activa × 100,%,mensual,KOSIS,OECD,false,0,100
+PROP_65MAS,Proporción de 65+,Pob 65+ / pob total × 100,%,anual,PIPELINE,WB,true,0,100
+INDICE_ENVEJECIMIENTO,Índice de envejecimiento,Pob 65+ / pob 0-14 × 100,ratio × 100,anual,PIPELINE,OECD,true,0,
+DEPENDENCIA_VEJEZ,Tasa de dependencia de vejez,Pob 65+ / pob 15-64 × 100,ratio × 100,anual,PIPELINE,OECD;WB,true,0,
+PIB_HORA,PIB por hora trabajada,PIB por hora trabajada en USD PPA constantes,USD PPA const.,anual,OECD,WB,false,0,
