@@ -1,9 +1,13 @@
 # Credenciales
 .env
 
-# Crudo de bronze (respaldo local, no se versiona)
-data/bronze/*
-!data/bronze/.gitkeep
+# Archivos de datos locales (no se versionan; solo se conserva la estructura)
+data/*/*
+!data/*/.gitkeep
+
+# Logs de ejecución
+logs/*
+!logs/.gitkeep
 
 # Python
 __pycache__/

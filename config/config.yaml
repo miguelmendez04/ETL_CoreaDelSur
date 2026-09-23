@@ -1,6 +1,26 @@
-# Catálogo de fuentes del ETL.
-# rol: maestra | contraste. Una sola fuente maestra por indicador (ver CLAUDE.md §3).
+# Configuración del pipeline ETL y catálogo de fuentes.
+# rol: maestra | contraste. Una sola fuente maestra por indicador.
 # Los valores marcados "PENDIENTE" o "verificar" aún no se han confirmado contra la fuente.
+# Las credenciales (API keys, contraseña de PostgreSQL) van en .env, nunca aquí.
+
+rutas:
+  bronze: data/bronze        # crudo por fuente y fecha: data/bronze/<fuente>/<fecha>/
+  silver: data/silver
+  gold: data/gold
+  logs: logs
+  mappings: config/mappings
+
+logging:
+  nivel: INFO
+  archivo: logs/pipeline.log
+
+base_datos:
+  # Host, puerto, base, usuario y contraseña se leen de .env (PG_*)
+  esquemas: [bronze, silver, gold, ctl]
+
+calidad:
+  tolerancia_suma_edades_pct: 0.5   # suma de grupos de edad vs total
+  tolerancia_conciliacion_pct: 3.0  # maestra vs contraste
 
 periodo_historico:
   inicio: 2000
