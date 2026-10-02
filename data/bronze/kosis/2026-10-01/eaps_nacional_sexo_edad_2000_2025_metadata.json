@@ -2,15 +2,15 @@
   "fuente": "KOSIS",
   "dataset": "eaps_sexo_edad",
   "metodo": "descarga_manual",
-  "url": "https://kosis.kr/eng/",
+  "url": "https://kosis.kr/statHtml/statHtml.do?orgId=101&tblId=DT_1DA7012S",
   "params": {
     "archivo": "eaps_nacional_sexo_edad_2000_2025.csv",
-    "tabla_kosis": "Summary of economically active pop. by gender & age group",
+    "tabla_kosis": "Summary of economically active pop. by gender/ age group",
     "encoding": "utf-8-sig",
     "formato": "encabezado_doble"
   },
   "org_id": "101",
-  "tbl_id": null,
+  "tbl_id": "DT_1DA7012S",
   "fecha_extraccion": "2026-10-01T00:00:00-05:00",
   "archivo": "data/bronze/kosis/2026-10-01/eaps_nacional_sexo_edad_2000_2025.csv",
   "sha256": "f5f97a6941b1b0751de647aa1604eebb71bbdc02e11c7f36d794e6b4acac8005",
@@ -24,6 +24,6 @@
     "celdas_vacias": 0
   },
   "avisos": [],
-  "id_carga": 20,
+  "id_carga": 29,
   "estado_carga": "exito"
 }

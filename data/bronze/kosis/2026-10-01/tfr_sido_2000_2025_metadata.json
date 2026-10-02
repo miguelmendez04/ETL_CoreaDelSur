@@ -2,15 +2,15 @@
   "fuente": "KOSIS",
   "dataset": "tfr_sido",
   "metodo": "descarga_manual",
-  "url": "https://kosis.kr/eng/",
+  "url": "https://kosis.kr/statHtml/statHtml.do?orgId=101&tblId=DT_1B81A17",
   "params": {
     "archivo": "tfr_sido_2000_2025.csv",
-    "tabla_kosis": "Total Fertility Rates and Age-Specific Fertility Rates",
+    "tabla_kosis": "Total Fertility Rates and Age-Specific Fertility Rates for city, county, and district",
     "encoding": "utf-8-sig",
     "formato": "encabezado_doble"
   },
   "org_id": "101",
-  "tbl_id": null,
+  "tbl_id": "DT_1B81A17",
   "fecha_extraccion": "2026-10-01T00:00:00-05:00",
   "archivo": "data/bronze/kosis/2026-10-01/tfr_sido_2000_2025.csv",
   "sha256": "aec2bce67b72d2378051f4ce3b0756eecc586a3721d47ce2b13ce748ed73049b",
@@ -24,6 +24,6 @@
     "celdas_vacias": 96
   },
   "avisos": [],
-  "id_carga": 18,
+  "id_carga": 27,
   "estado_carga": "exito"
 }

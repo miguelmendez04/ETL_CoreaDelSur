@@ -41,7 +41,8 @@ kosis:
   tabla_bronze: bronze.kosis
   url_tabla: https://kosis.kr/statHtml/statHtml.do?orgId={org_id}&tblId={tbl_id}
   url_portal: https://kosis.kr/eng/
-  # Catálogo de extracción: un archivo = un dataset de bronze.
+  # Catálogo de extracción: un archivo = un dataset de bronze. tbl_id verificado contra el nombre oficial de cada tabla
+  # en kosis.kr (statHtml.do?orgId=101&tblId=...).
   #   patron: nombre del archivo (admite *); se busca en todas las carpetas de fecha y se usa la más reciente.
   #   formato: ancho = 1 fila de encabezado con años como columnas;
   #            encabezado_doble = fila 1 periodo, fila 2 ítem (las columnas mensuales se conservan en bronze).
@@ -50,25 +51,25 @@ kosis:
       patron: estadisticas_vitales_nacional_*.csv
       tabla_kosis: Vital Statistics of Korea
       org_id: "101"
-      tbl_id: null
+      tbl_id: DT_1B8000F
       encoding: utf-8-sig
       formato: ancho
       columnas_dimension: ["By items"]
       periodo_esperado: {inicio: 2000, fin: 2025}
     vitales_sido:
       patron: estadisticas_vitales_sido_*.csv
-      tabla_kosis: Vital statistics number by Month for Provinces
+      tabla_kosis: Vital statistics(number) by Month for Provinces
       org_id: "101"
-      tbl_id: null
+      tbl_id: DT_1B8000G
       encoding: utf-8-sig
       formato: encabezado_doble
       columnas_dimension: ["By administrative divisions"]
       periodo_esperado: {inicio: 2000, fin: 2025}
     tfr_sido:
       patron: tfr_sido_*.csv
-      tabla_kosis: Total Fertility Rates and Age-Specific Fertility Rates
+      tabla_kosis: Total Fertility Rates and Age-Specific Fertility Rates for city, county, and district
       org_id: "101"
-      tbl_id: null
+      tbl_id: DT_1B81A17
       encoding: utf-8-sig
       formato: encabezado_doble
       columnas_dimension: ["By si(city), gun(county) and gu(borough)"]
@@ -84,27 +85,27 @@ kosis:
       periodo_esperado: {inicio: 2000, fin: 2025}
     eaps_sexo_edad:
       patron: eaps_nacional_sexo_edad_*.csv
-      tabla_kosis: Summary of economically active pop. by gender & age group
+      tabla_kosis: Summary of economically active pop. by gender/ age group
       org_id: "101"
-      tbl_id: null
+      tbl_id: DT_1DA7012S
       encoding: utf-8-sig
       formato: encabezado_doble
       columnas_dimension: ["By gender", "By age group"]
       periodo_esperado: {inicio: 2000, fin: 2025}
     poblacion_nacional:
       patron: poblacion_nacional_edad_sexo_*_medio.csv
-      tabla_kosis: Estimated population by sex and age / National (1960-2072)
+      tabla_kosis: Projected Population by Age(Korea)
       org_id: "101"
-      tbl_id: null
+      tbl_id: DT_1BPA001
       encoding: utf-8-sig
       formato: ancho
       columnas_dimension: ["가정별", "성별", "연령별"]
       periodo_esperado: {inicio: 2000, fin: 2072}
     poblacion_sido:
       patron: poblacion_sido_edad_sexo_*_medio.csv
-      tabla_kosis: Projected population by age (Province)
+      tabla_kosis: Projected Population by Age(Province)
       org_id: "101"
-      tbl_id: null
+      tbl_id: DT_1BPB001
       encoding: utf-8-sig
       formato: ancho
       columnas_dimension: ["By scenarios", "By province", "By gender", "By age"]
@@ -113,7 +114,7 @@ kosis:
       patron: proyeccion_nacional_edad_sexo_por_escenario_*.csv
       tabla_kosis: Projected population by scenario, sex and age (Korea)
       org_id: "101"
-      tbl_id: null
+      tbl_id: null             # PENDIENTE: no es DT_1BPA401 (esa no trae sexo ni edad); copiar el tblId de la URL al abrir la tabla
       encoding: cp949            # única descarga que KOSIS entrega en CP949
       formato: ancho
       columnas_dimension: ["시나리오별", "성별", "연령별"]
