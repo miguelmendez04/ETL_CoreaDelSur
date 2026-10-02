@@ -114,7 +114,7 @@ def escribir_metadata(ext: Extraccion, id_carga: int | None, estado: str) -> Pat
         "avisos": ext.avisos,
         "id_carga": id_carga,
         "estado_carga": estado,
-    }, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+    }, ensure_ascii=False, indent=2, default=str), encoding="utf-8", newline="\n")  # LF en cualquier SO
     return destino
 
 
