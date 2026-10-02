@@ -13,7 +13,8 @@ CREATE SCHEMA IF NOT EXISTS gold;
 -- CONTROL
 -- ---------------------------------------------------------------------
 
--- Una fila por ejecución. Cada ejecución genera un id_carga nuevo.
+-- Una fila por ejecución y dataset. Cada ejecución genera un id_carga nuevo.
+-- estado 'omitido' = el archivo crudo es idéntico (mismo hash) al de la última carga exitosa: no se duplica en bronze.
 CREATE TABLE IF NOT EXISTS ctl.log_cargas (
     id_carga          BIGSERIAL PRIMARY KEY,
     capa              TEXT        NOT NULL CHECK (capa IN ('bronze', 'silver', 'gold')),
@@ -23,7 +24,10 @@ CREATE TABLE IF NOT EXISTS ctl.log_cargas (
     inicio            TIMESTAMPTZ NOT NULL DEFAULT now(),
     fin               TIMESTAMPTZ,
     estado            TEXT        NOT NULL DEFAULT 'en_curso'
-                                  CHECK (estado IN ('en_curso', 'exito', 'fallo')),
+                                  CHECK (estado IN ('en_curso', 'exito', 'fallo', 'omitido')),
+    metodo            TEXT        CHECK (metodo IN ('api', 'descarga_manual', 'pipeline')),
+    archivo           TEXT,                          -- archivo crudo en data/bronze/<fuente>/<fecha>/
+    hash_archivo      TEXT,                          -- sha256 del contenido crudo
     filas_extraidas   INTEGER,
     filas_validas     INTEGER,
     filas_rechazadas  INTEGER,
@@ -42,22 +46,26 @@ CREATE TABLE IF NOT EXISTS ctl.rechazos (
     fecha_rechazo     TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS ix_rechazos_carga ON ctl.rechazos (id_carga);
+CREATE INDEX IF NOT EXISTS ix_log_dataset ON ctl.log_cargas (capa, fuente, dataset, estado);
 
 -- ---------------------------------------------------------------------
--- BRONZE: respuesta cruda de cada API, solo inserción (append-only).
--- Una fila por registro de la respuesta; el registro original va en JSONB.
--- hash_registro permite monitorear duplicados entre cargas.
+-- BRONZE: datos crudos de cada fuente, solo inserción (append-only).
+-- Una fila por registro de la respuesta (o por fila del CSV); el registro original va en JSONB, sin modificar.
+-- hash_registro permite monitorear duplicados entre cargas. El archivo crudo de origen está en ctl.log_cargas.
 -- ---------------------------------------------------------------------
 
-CREATE TABLE IF NOT EXISTS bronze.kosis_openapi (
+-- KOSIS: descarga manual de CSV (la OpenAPI está restringida a residentes de Corea).
+-- Cada fila del CSV es un registro; las claves del JSONB son los encabezados del archivo
+-- (en archivos con encabezado doble: "periodo | ítem").
+CREATE TABLE IF NOT EXISTS bronze.kosis (
     id_bronze         BIGSERIAL PRIMARY KEY,
     id_carga          BIGINT      NOT NULL REFERENCES ctl.log_cargas (id_carga),
     fuente            TEXT        NOT NULL DEFAULT 'KOSIS',
-    dataset           TEXT        NOT NULL,          -- clave del dataset en sources.yaml
+    dataset           TEXT        NOT NULL,          -- clave en config.yaml (kosis.archivos)
     org_id            TEXT,
     tbl_id            TEXT,
-    url               TEXT        NOT NULL,
-    params            JSONB,                         -- sin la API key
+    url               TEXT        NOT NULL,          -- tabla en kosis.kr
+    params            JSONB,                         -- archivo, encoding, formato
     fecha_extraccion  TIMESTAMPTZ NOT NULL,
     registro          JSONB       NOT NULL,
     hash_registro     TEXT        NOT NULL
@@ -79,7 +87,7 @@ CREATE TABLE IF NOT EXISTS bronze.oecd_sdmx (
     id_bronze         BIGSERIAL PRIMARY KEY,
     id_carga          BIGINT      NOT NULL REFERENCES ctl.log_cargas (id_carga),
     fuente            TEXT        NOT NULL DEFAULT 'OECD',
-    dataset           TEXT        NOT NULL,          -- dataflow SDMX
+    dataset           TEXT        NOT NULL,          -- clave en config.yaml (oecd.datasets); el dataflow va en params
     url               TEXT        NOT NULL,
     params            JSONB,
     fecha_extraccion  TIMESTAMPTZ NOT NULL,
@@ -91,7 +99,7 @@ CREATE TABLE IF NOT EXISTS bronze.unwpp_wpp2024 (
     id_bronze         BIGSERIAL PRIMARY KEY,
     id_carga          BIGINT      NOT NULL REFERENCES ctl.log_cargas (id_carga),
     fuente            TEXT        NOT NULL DEFAULT 'UNWPP',
-    dataset           TEXT        NOT NULL,          -- nombre del archivo CSV
+    dataset           TEXT        NOT NULL,          -- clave en config.yaml (unwpp.datasets)
     url               TEXT        NOT NULL,
     params            JSONB,
     fecha_extraccion  TIMESTAMPTZ NOT NULL,
@@ -99,7 +107,7 @@ CREATE TABLE IF NOT EXISTS bronze.unwpp_wpp2024 (
     hash_registro     TEXT        NOT NULL
 );
 
-CREATE INDEX IF NOT EXISTS ix_kosis_hash  ON bronze.kosis_openapi (hash_registro);
+CREATE INDEX IF NOT EXISTS ix_kosis_hash  ON bronze.kosis         (hash_registro);
 CREATE INDEX IF NOT EXISTS ix_wb_hash     ON bronze.worldbank_wdi (hash_registro);
 CREATE INDEX IF NOT EXISTS ix_oecd_hash   ON bronze.oecd_sdmx     (hash_registro);
 CREATE INDEX IF NOT EXISTS ix_unwpp_hash  ON bronze.unwpp_wpp2024 (hash_registro);

@@ -1,0 +1,26 @@
+# Postgres local para el proyecto. Uso: docker compose up -d
+# Lee credenciales de .env (PG_DB, PG_USER, PG_PASSWORD, PG_PORT).
+# En el primer arranque ejecuta automáticamente sql/00_schemas.sql.
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: etl_corea_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${PG_DB}
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+    ports:
+      - "${PG_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./sql:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PG_USER} -d ${PG_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata:
