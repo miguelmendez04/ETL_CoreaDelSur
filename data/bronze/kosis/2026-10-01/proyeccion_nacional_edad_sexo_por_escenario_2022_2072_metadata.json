@@ -1,0 +1,29 @@
+{
+  "fuente": "KOSIS",
+  "dataset": "proyeccion_escenarios",
+  "metodo": "descarga_manual",
+  "url": "https://kosis.kr/eng/",
+  "params": {
+    "archivo": "proyeccion_nacional_edad_sexo_por_escenario_2022_2072.csv",
+    "tabla_kosis": "Projected population by scenario, sex and age (Korea)",
+    "encoding": "cp949",
+    "formato": "ancho"
+  },
+  "org_id": "101",
+  "tbl_id": null,
+  "fecha_extraccion": "2026-10-01T00:00:00-05:00",
+  "archivo": "data/bronze/kosis/2026-10-01/proyeccion_nacional_edad_sexo_por_escenario_2022_2072.csv",
+  "sha256": "be3385b69399a62a06bde1416c54bde19558f2ec86b6b1f359dea62e59b4fa61",
+  "bytes": 1085994,
+  "registros": 1848,
+  "resumen": {
+    "filas": 1848,
+    "columnas": 57,
+    "anios": "2022-2072",
+    "columnas_mensuales": 0,
+    "celdas_vacias": 3696
+  },
+  "avisos": [],
+  "id_carga": 23,
+  "estado_carga": "exito"
+}

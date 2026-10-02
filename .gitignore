@@ -4,6 +4,9 @@
 # Archivos de datos locales (no se versionan; solo se conserva la estructura)
 data/*/*
 !data/*/.gitkeep
+# Excepción: las descargas manuales de KOSIS sí se versionan (~2 MB). Su OpenAPI está restringida a residentes
+# de Corea, así que sin estos CSV nadie más podría reproducir la extracción. Las demás fuentes se re-descargan por API.
+!data/bronze/kosis/
 
 # Logs de ejecución
 logs/*

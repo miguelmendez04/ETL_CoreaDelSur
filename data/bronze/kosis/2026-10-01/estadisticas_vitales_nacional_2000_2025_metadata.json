@@ -1,0 +1,29 @@
+{
+  "fuente": "KOSIS",
+  "dataset": "vitales_nacional",
+  "metodo": "descarga_manual",
+  "url": "https://kosis.kr/eng/",
+  "params": {
+    "archivo": "estadisticas_vitales_nacional_2000_2025.csv",
+    "tabla_kosis": "Vital Statistics of Korea",
+    "encoding": "utf-8-sig",
+    "formato": "ancho"
+  },
+  "org_id": "101",
+  "tbl_id": null,
+  "fecha_extraccion": "2026-10-01T00:00:00-05:00",
+  "archivo": "data/bronze/kosis/2026-10-01/estadisticas_vitales_nacional_2000_2025.csv",
+  "sha256": "868493af0cd71513295e693639a37be0ed3ea31a0c24920dfb2f3a510f399f33",
+  "bytes": 2919,
+  "registros": 16,
+  "resumen": {
+    "filas": 16,
+    "columnas": 27,
+    "anios": "2000-2025",
+    "columnas_mensuales": 0,
+    "celdas_vacias": 4
+  },
+  "avisos": [],
+  "id_carga": 16,
+  "estado_carga": "exito"
+}

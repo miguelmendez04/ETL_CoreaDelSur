@@ -1,0 +1,29 @@
+{
+  "fuente": "KOSIS",
+  "dataset": "eaps_sido",
+  "metodo": "descarga_manual",
+  "url": "https://kosis.kr/statHtml/statHtml.do?orgId=101&tblId=DT_1DA7004S",
+  "params": {
+    "archivo": "eaps_sido_anual_2000_2025.csv",
+    "tabla_kosis": "Summary of economically active population by city/province",
+    "encoding": "utf-8-sig",
+    "formato": "encabezado_doble"
+  },
+  "org_id": "101",
+  "tbl_id": "DT_1DA7004S",
+  "fecha_extraccion": "2026-10-01T00:00:00-05:00",
+  "archivo": "data/bronze/kosis/2026-10-01/eaps_sido_anual_2000_2025.csv",
+  "sha256": "812b64f0cd4aeb912ee482929845644dccc2241c7f1614efe4425c06067c1a25",
+  "bytes": 45413,
+  "registros": 19,
+  "resumen": {
+    "filas": 19,
+    "columnas": 352,
+    "anios": "2000-2025",
+    "columnas_mensuales": 117,
+    "celdas_vacias": 378
+  },
+  "avisos": [],
+  "id_carga": 19,
+  "estado_carga": "exito"
+}

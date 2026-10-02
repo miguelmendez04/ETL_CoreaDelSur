@@ -1,0 +1,29 @@
+{
+  "fuente": "KOSIS",
+  "dataset": "poblacion_nacional",
+  "metodo": "descarga_manual",
+  "url": "https://kosis.kr/eng/",
+  "params": {
+    "archivo": "poblacion_nacional_edad_sexo_2000_2072_medio.csv",
+    "tabla_kosis": "Estimated population by sex and age / National (1960-2072)",
+    "encoding": "utf-8-sig",
+    "formato": "ancho"
+  },
+  "org_id": "101",
+  "tbl_id": null,
+  "fecha_extraccion": "2026-10-01T00:00:00-05:00",
+  "archivo": "data/bronze/kosis/2026-10-01/poblacion_nacional_edad_sexo_2000_2072_medio.csv",
+  "sha256": "5a3ab55adea17c3d9709be56194762530029effa6c3ec845cb1253be0e13a4b4",
+  "bytes": 46785,
+  "registros": 69,
+  "resumen": {
+    "filas": 69,
+    "columnas": 76,
+    "anios": "2000-2072",
+    "columnas_mensuales": 0,
+    "celdas_vacias": 0
+  },
+  "avisos": [],
+  "id_carga": 21,
+  "estado_carga": "exito"
+}

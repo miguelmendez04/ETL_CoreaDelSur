@@ -1,0 +1,29 @@
+{
+  "fuente": "KOSIS",
+  "dataset": "poblacion_sido",
+  "metodo": "descarga_manual",
+  "url": "https://kosis.kr/eng/",
+  "params": {
+    "archivo": "poblacion_sido_edad_sexo_2000_2052_medio.csv",
+    "tabla_kosis": "Projected population by age (Province)",
+    "encoding": "utf-8-sig",
+    "formato": "ancho"
+  },
+  "org_id": "101",
+  "tbl_id": null,
+  "fecha_extraccion": "2026-10-01T00:00:00-05:00",
+  "archivo": "data/bronze/kosis/2026-10-01/poblacion_sido_edad_sexo_2000_2052_medio.csv",
+  "sha256": "83a287f65903bdbe1e08b869bd1b59be33b6e332fff32fb496c5a5d1ea7afe0c",
+  "bytes": 629380,
+  "registros": 1242,
+  "resumen": {
+    "filas": 1242,
+    "columnas": 60,
+    "anios": "2000-2052",
+    "columnas_mensuales": 0,
+    "celdas_vacias": 3312
+  },
+  "avisos": [],
+  "id_carga": 22,
+  "estado_carga": "exito"
+}

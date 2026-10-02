@@ -1,0 +1,29 @@
+{
+  "fuente": "KOSIS",
+  "dataset": "tfr_sido",
+  "metodo": "descarga_manual",
+  "url": "https://kosis.kr/eng/",
+  "params": {
+    "archivo": "tfr_sido_2000_2025.csv",
+    "tabla_kosis": "Total Fertility Rates and Age-Specific Fertility Rates",
+    "encoding": "utf-8-sig",
+    "formato": "encabezado_doble"
+  },
+  "org_id": "101",
+  "tbl_id": null,
+  "fecha_extraccion": "2026-10-01T00:00:00-05:00",
+  "archivo": "data/bronze/kosis/2026-10-01/tfr_sido_2000_2025.csv",
+  "sha256": "aec2bce67b72d2378051f4ce3b0756eecc586a3721d47ce2b13ce748ed73049b",
+  "bytes": 22993,
+  "registros": 18,
+  "resumen": {
+    "filas": 18,
+    "columnas": 209,
+    "anios": "2000-2025",
+    "columnas_mensuales": 0,
+    "celdas_vacias": 96
+  },
+  "avisos": [],
+  "id_carga": 18,
+  "estado_carga": "exito"
+}

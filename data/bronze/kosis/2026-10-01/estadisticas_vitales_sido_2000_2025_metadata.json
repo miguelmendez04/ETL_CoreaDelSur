@@ -1,0 +1,29 @@
+{
+  "fuente": "KOSIS",
+  "dataset": "vitales_sido",
+  "metodo": "descarga_manual",
+  "url": "https://kosis.kr/eng/",
+  "params": {
+    "archivo": "estadisticas_vitales_sido_2000_2025.csv",
+    "tabla_kosis": "Vital statistics number by Month for Provinces",
+    "encoding": "utf-8-sig",
+    "formato": "encabezado_doble"
+  },
+  "org_id": "101",
+  "tbl_id": null,
+  "fecha_extraccion": "2026-10-01T00:00:00-05:00",
+  "archivo": "data/bronze/kosis/2026-10-01/estadisticas_vitales_sido_2000_2025.csv",
+  "sha256": "6f0f5d10cb72824a3f807c2e8a1ba808a3422722a6ded1ee164dd4a5a56d3388",
+  "bytes": 51361,
+  "registros": 19,
+  "resumen": {
+    "filas": 19,
+    "columnas": 424,
+    "anios": "2000-2025",
+    "columnas_mensuales": 33,
+    "celdas_vacias": 611
+  },
+  "avisos": [],
+  "id_carga": 17,
+  "estado_carga": "exito"
+}

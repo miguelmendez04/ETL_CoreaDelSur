@@ -1,0 +1,29 @@
+{
+  "fuente": "KOSIS",
+  "dataset": "proyeccion_resumen",
+  "metodo": "descarga_manual",
+  "url": "https://kosis.kr/statHtml/statHtml.do?orgId=101&tblId=DT_1BPA002",
+  "params": {
+    "archivo": "proyeccion_nacional_resumen_medio.csv",
+    "tabla_kosis": "Population Projections and Summary Indicators(Korea)",
+    "encoding": "utf-8-sig",
+    "formato": "ancho"
+  },
+  "org_id": "101",
+  "tbl_id": "DT_1BPA002",
+  "fecha_extraccion": "2026-09-23T00:00:00-05:00",
+  "archivo": "data/bronze/kosis/2026-09-23/proyeccion_nacional_resumen_medio.csv",
+  "sha256": "5910487c68262be3def0e169f32dab4122427c3383f7f7df0f0939503dddfcaf",
+  "bytes": 9393,
+  "registros": 21,
+  "resumen": {
+    "filas": 21,
+    "columnas": 53,
+    "anios": "2022-2072",
+    "columnas_mensuales": 0,
+    "celdas_vacias": 0
+  },
+  "avisos": [],
+  "id_carga": 24,
+  "estado_carga": "exito"
+}
