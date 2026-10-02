@@ -1,57 +1,57 @@
-"""Orquestación del pipeline ETL: extract -> bronze -> silver (-> gold en el siguiente avance).
+"""Orquestación del pipeline ETL (arquitectura medallón): bronze -> silver (-> gold en el siguiente avance).
 
 Uso:
-    python main.py                      # todas las etapas y fuentes
-    python main.py --etapa extract      # solo extracción
-    python main.py --fuente worldbank   # una sola fuente
+    python main.py --listar                          # catálogo de datasets por fuente (desde config.yaml)
+    python main.py                                   # capa bronze, todas las fuentes
+    python main.py --capa bronze --fuente oecd       # una fuente
+    python main.py --dataset SP.POP.TOTL tfr_sido    # datasets puntuales
+    python main.py --sin-db                          # solo archivos crudos, sin PostgreSQL
+    python main.py --forzar                          # recarga en bronze aunque el crudo no haya cambiado
 """
-
 import argparse
 import logging
-from pathlib import Path
+import sys
 
-import yaml
-from dotenv import load_dotenv
+import psycopg
 
-RAIZ = Path(__file__).resolve().parent
-FUENTES = ["worldbank", "kosis", "oecd", "unwpp"]
-ETAPAS = ["extract", "transform", "load"]
+from src.extract.ejecutar import EXTRACTORES, catalogo, ejecutar_bronze
+from src.utils.logs import configurar_logging
 
-
-def cargar_config() -> dict:
-    with open(RAIZ / "config" / "config.yaml", encoding="utf-8") as f:
-        return yaml.safe_load(f)
+CAPAS = ["bronze", "silver"]
 
 
-def configurar_logging(config: dict) -> None:
-    archivo = RAIZ / config["logging"]["archivo"]
-    archivo.parent.mkdir(parents=True, exist_ok=True)
-    logging.basicConfig(
-        level=config["logging"]["nivel"],
-        format="%(asctime)s %(levelname)s %(name)s - %(message)s",
-        handlers=[logging.FileHandler(archivo, encoding="utf-8"), logging.StreamHandler()],
-    )
-
-
-def main() -> None:
-    parser = argparse.ArgumentParser(description="Pipeline ETL Corea del Sur")
-    parser.add_argument("--etapa", choices=ETAPAS, help="ejecutar solo una etapa")
-    parser.add_argument("--fuente", choices=FUENTES, help="ejecutar solo una fuente")
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Pipeline ETL Corea del Sur (medallón)")
+    parser.add_argument("--capa", choices=CAPAS, default="bronze", help="capa a construir (por defecto bronze)")
+    parser.add_argument("--fuente", nargs="+", choices=list(EXTRACTORES), help="una o varias fuentes")
+    parser.add_argument("--dataset", nargs="+", help="uno o varios datasets del catálogo")
+    parser.add_argument("--sin-db", action="store_true", help="no escribir en PostgreSQL (solo data/bronze)")
+    parser.add_argument("--forzar", action="store_true", help="cargar aunque el crudo sea idéntico al último")
+    parser.add_argument("--listar", action="store_true", help="mostrar el catálogo de datasets y salir")
     args = parser.parse_args()
 
-    load_dotenv(RAIZ / ".env")
-    config = cargar_config()
-    configurar_logging(config)
+    if args.listar:
+        print(catalogo(args.fuente).to_string(index=False))
+        return 0
+
+    configurar_logging()
     log = logging.getLogger("pipeline")
 
-    etapas = [args.etapa] if args.etapa else ETAPAS
-    fuentes = [args.fuente] if args.fuente else FUENTES
+    if args.capa == "silver":
+        log.info("Capa silver: pendiente de implementar (transformación del Avance 2).")
+        return 0
 
-    for etapa in etapas:
-        for fuente in fuentes:
-            # TODO: conectar con src/extract, src/transform, src/quality y src/load
-            log.info("Etapa %s - fuente %s: pendiente de implementar", etapa, fuente)
+    try:
+        resumen = ejecutar_bronze(args.fuente, args.dataset, usar_db=not args.sin_db, forzar=args.forzar)
+    except ValueError as e:
+        log.error(str(e))
+        return 2
+    except psycopg.OperationalError as e:
+        log.error("No hay conexión a PostgreSQL (%s). Levantarlo con 'docker compose up -d' "
+                  "o ejecutar con --sin-db para solo descargar los archivos.", str(e).strip().splitlines()[0])
+        return 1
+    return 1 if (resumen["estado"] == "fallo").any() else 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
