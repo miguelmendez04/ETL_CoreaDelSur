@@ -368,6 +368,8 @@ silver:
     SL.GDP.PCAP.EM.KD: {indicador: PIB_OCUPADO}
 
 gold:
+  # Los parámetros de esta sección son decisiones metodológicas del equipo, no datos de una fuente. Su
+  # justificación y sensibilidad están en el README ("Supuestos del modelo"). Si se cambia alguno, subir version_modelo.
   version_modelo: v1
   # Pregunta 6b: fuerza laboral potencial = población proyectada KOSTAT (edición nacional, 3 escenarios)
   #              × tasa de participación por sexo y grupo de edad de la EAPS. Son ESCENARIOS, no pronósticos.

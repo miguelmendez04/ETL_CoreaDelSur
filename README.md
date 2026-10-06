@@ -190,6 +190,30 @@ componentes con igual peso; `gold.riesgo_sensibilidad` muestra el ranking con ot
 normalización por percentiles (Sejong, el único si-do cuya población de 15-64 crece, estira la escala min-max).
 Las cifras regionales de la EAPS vienen de una encuesta por muestreo: se interpretan como tendencia.
 
+## Supuestos del modelo (decisiones metodológicas)
+
+Los escenarios y el índice de riesgo dependen de parámetros que **no vienen de ninguna fuente**: son decisiones
+metodológicas del equipo. Todos están en `config.yaml` (sección `gold`), se guardan con cada ejecución en
+`gold.supuestos` y su efecto se mide en las tablas de sensibilidad. Para cambiar uno se edita `config.yaml` y se
+corre `python main.py --capa gold`. Cifras: fuerza laboral potencial, escenario KOSTAT medio, millones de personas.
+
+| Parámetro | Valor | Por qué | Sensibilidad |
+|---|---|---|---|
+| Año base | 2025 | Último año observado de la EAPS | — |
+| B: periodo de tendencia | 2015–2025 | Última década: refleja el aumento reciente de la participación femenina y de mayores | — |
+| B: cambio máximo | ±15 puntos | Evita que una tendencia lineal lleve tasas a valores irreales en 50 años | 10 → 21,8 M en 2072; 15 → 22,8 M; 20 → 23,3 M |
+| B: piso / tope | 0 % / 90 % | Límites físicos de una tasa de participación | — |
+| B: congelar desde | 2050 | Las tendencias no siguen indefinidamente | 2040 → 22,2 M en 2072; 2060 → 22,8 M |
+| C: año de convergencia | 2050 | Horizonte de una generación para cambios de comportamiento laboral | 2040 o 2060 → 19,7 M en 2072 (sin cambio: el alza femenina compensa la baja masculina) |
+| C: equivalencia de edades | 20-29 = ½ 15-24 + ½ 25-54; 30-49 = 25-54; 50-59 = ½ 25-54 + ½ 55-64 | La OCDE publica 15-24, 25-54 y 55-64; la EAPS, grupos decenales | — |
+| C: grupos constantes | 15-19 y 60+ | La OCDE no publica edades comparables | — |
+| Riesgo: componentes | Proporción 65+ y TFR (2025); variación de 15-64 y dependencia de vejez (2025 → 2052) | Situación actual y proyectada, dos de cada una | — |
+| Riesgo: pesos | 25 % cada componente | Sin evidencia para priorizar uno | Los 4 primeros si-do se mantienen con 4 esquemas de pesos y con normalización por percentiles |
+| Señales de escasez | Dependencia de vejez ≥ 50 y ≥ 75 | Mitad y tres cuartos de la población en edad de trabajar | — |
+
+Resultado base en 2072: A 19,6 M, B 22,8 M y C 19,6 M, frente a 29,6 M de población activa en 2025. Con
+cualquier parámetro probado, la fuerza laboral potencial cae entre 21 % y 34 % a 2072.
+
 ## KPIs de calidad
 
 Se calculan en cada ejecución desde `ctl` y silver (`ctl.kpis`, vista `gold.v_kpis_calidad`):
