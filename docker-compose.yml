@@ -1,6 +1,38 @@
 # Postgres local para el proyecto. Uso: docker compose up -d
 # Lee credenciales de .env (PG_DB, PG_USER, PG_PASSWORD, PG_PORT).
 # En el primer arranque ejecuta automáticamente sql/00_schemas.sql.
+#
+# Orquestación con Airflow (opcional): docker compose --profile airflow up -d --build
+# Interfaz en http://localhost:8080. Ver airflow/README.md.
+
+x-airflow-comun: &airflow-comun
+  build: ./airflow
+  image: etl-corea-airflow:3.3.2
+  profiles: ["airflow"]
+  restart: unless-stopped
+  environment:
+    AIRFLOW__CORE__EXECUTOR: LocalExecutor          # las tareas corren como procesos del scheduler (sin Celery)
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-db/airflow
+    AIRFLOW__CORE__EXECUTION_API_SERVER_URL: http://airflow-apiserver:8080/execution/
+    AIRFLOW__API_AUTH__JWT_SECRET: ${AIRFLOW_JWT_SECRET:-etl-corea-clave-solo-para-uso-local-cambiar-en-.env-si-se-expone-airflow-fuera-del-pc}
+    AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_ALL_ADMINS: "true"   # sin login: es una instalación local de desarrollo
+    AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+    AIRFLOW__CORE__DEFAULT_TIMEZONE: America/Bogota
+    TZ: America/Bogota     # hora local también para el pipeline (fechas de carpetas y de extracción, como en el PC)
+    # El proyecto completo se monta en /opt/airflow/proyecto; dentro de Docker la base del proyecto es el
+    # servicio "postgres" en su puerto interno (el resto de PG_* se lee del .env montado).
+    PYTHONPATH: /opt/airflow/proyecto
+    PG_HOST: postgres
+    PG_PORT: "5432"
+  volumes:
+    - ./airflow/dags:/opt/airflow/dags
+    - .:/opt/airflow/proyecto
+    - airflow-logs:/opt/airflow/logs
+  depends_on: &airflow-depende
+    airflow-db:
+      condition: service_healthy
+    postgres:
+      condition: service_healthy
 
 services:
   postgres:
@@ -22,5 +54,55 @@ services:
       timeout: 5s
       retries: 10
 
+  # ---- Airflow (perfil "airflow") ----
+  airflow-db:   # base interna de Airflow (historial de ejecuciones); separada de la del proyecto
+    image: postgres:16
+    profiles: ["airflow"]
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: airflow
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+    volumes:
+      - airflow-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U airflow -d airflow"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  airflow-init:   # crea o actualiza las tablas internas de Airflow y termina
+    <<: *airflow-comun
+    command: db migrate
+    restart: "no"
+
+  airflow-apiserver:   # interfaz web y API
+    <<: *airflow-comun
+    command: api-server
+    ports:
+      - "8080:8080"
+    depends_on:
+      <<: *airflow-depende
+      airflow-init:
+        condition: service_completed_successfully
+
+  airflow-scheduler:   # decide qué tarea corre y cuándo, y la ejecuta (LocalExecutor)
+    <<: *airflow-comun
+    command: scheduler
+    depends_on:
+      <<: *airflow-depende
+      airflow-init:
+        condition: service_completed_successfully
+
+  airflow-dag-processor:   # lee la carpeta dags/ y registra los cambios del DAG
+    <<: *airflow-comun
+    command: dag-processor
+    depends_on:
+      <<: *airflow-depende
+      airflow-init:
+        condition: service_completed_successfully
+
 volumes:
   pgdata:
+  airflow-db:
+  airflow-logs:

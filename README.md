@@ -46,10 +46,11 @@ en `data/`.
 ├── sql/             DDL de los esquemas y vistas (Docker lo ejecuta al crear la base)
 ├── notebooks/       01-05 perfilamiento de calidad por fuente; 06 resultados de gold por pregunta de negocio
 ├── powerbi/         proyecto de Power BI (.pbip) conectado a las vistas gold; guía en powerbi/README.md
+├── airflow/         orquestación con Apache Airflow: DAG etl_corea, imagen y guía (airflow/README.md)
 ├── tests/           pruebas de las tres capas
 ├── logs/            registro de ejecuciones
 ├── docker-compose.yml
-└── main.py          orquestación: bronze -> silver -> gold
+└── main.py          ejecución manual: bronze -> silver -> gold (Airflow llama a las mismas funciones)
 ```
 
 ## Puesta en marcha
@@ -74,6 +75,26 @@ en `data/`.
    SELECT * FROM gold.v_kpis_calidad;
    SELECT * FROM gold.v_escenarios_resumen WHERE escenario_kostat = 'medio' AND anio IN (2030, 2050, 2072);
    ```
+
+## Orquestación con Airflow
+
+El pipeline se automatiza con **Apache Airflow 3** (opcional, en Docker). El DAG `etl_corea` extrae las cuatro
+fuentes en paralelo, luego construye silver y gold, y al final verifica los KPIs de calidad. Corre cada semana o a
+demanda, con reintentos automáticos y el log de cada tarea en la interfaz web.
+
+```
+bronze_worldbank ┐
+bronze_oecd      ├─> silver ─> gold ─> verificar_kpis
+bronze_unwpp     │
+bronze_kosis     ┘
+```
+
+```bash
+docker compose --profile airflow up -d --build    # interfaz en http://localhost:8080
+```
+
+Las tareas llaman a las mismas funciones que `python main.py`, así que el resultado y la bitácora en `ctl` son
+idénticos. Puesta en marcha, conceptos y cómo diagnosticar fallos: [airflow/README.md](airflow/README.md).
 
 ## Extracción (capa bronze)
 

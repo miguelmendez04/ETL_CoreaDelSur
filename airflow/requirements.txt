@@ -1,0 +1,9 @@
+# Dependencias del pipeline dentro de la imagen de Airflow (solo lo que usan src/ y el DAG).
+# Las de notebooks y pruebas quedan en el requirements.txt de la raíz.
+pandas>=2.2
+numpy>=1.26
+requests>=2.32
+python-dotenv>=1.0
+PyYAML>=6.0
+psycopg[binary]>=3.2
+pyarrow>=17.0

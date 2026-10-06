@@ -21,11 +21,6 @@ def _config() -> dict:
         return yaml.safe_load(f)
 
 
-def carpeta_reciente(fuente: str) -> Path:
-    fechas = sorted(p for p in (BRONZE / fuente).iterdir() if p.is_dir())
-    return fechas[-1]
-
-
 def archivo_reciente(fuente: str, patron: str) -> Path:
     candidatos = sorted((BRONZE / fuente).glob(f"*/{patron}"), key=lambda p: (p.parent.name, p.name))
     if not candidatos:

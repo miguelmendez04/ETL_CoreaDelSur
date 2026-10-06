@@ -1,3 +1,8 @@
 # Datos crudos de bronze: se conservan byte a byte (sin convertir saltos de línea), así su sha256
 # coincide con el de <archivo>_metadata.json en cualquier sistema operativo.
 data/bronze/** -text
+
+# Archivos que se ejecutan dentro de contenedores Linux (Airflow): siempre con saltos de línea LF.
+airflow/Dockerfile text eol=lf
+airflow/requirements.txt text eol=lf
+airflow/dags/*.py text eol=lf
