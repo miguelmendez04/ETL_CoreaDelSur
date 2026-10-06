@@ -1,0 +1,35 @@
+tabla,descripcion,grano
+ctl.log_cargas,"Bitácora de cada ejecución y dataset: inicio, fin, estado y filas extraídas, válidas y rechazadas",una fila por ejecución × dataset (id_carga)
+ctl.rechazos,"Registros que no pasan las validaciones bronze -> silver, con la regla y el motivo",una fila por registro rechazado
+ctl.pasos_silver,Embudo bronze -> silver: filas después de cada paso de filtro o de cálculo,una fila por carga × paso
+ctl.kpis,Foto de los KPIs de calidad de cada ejecución,una fila por carga × KPI
+ctl.calidad_dataset,"Registros evaluados, válidos y rechazados por dataset de bronze en cada ejecución de silver",una fila por carga × fuente × dataset
+bronze.kosis,CSV de KOSIS tal como se descargaron (cada fila del CSV en JSONB),una fila por fila del archivo crudo
+bronze.worldbank_wdi,Respuesta de la API del Banco Mundial (WDI) sin modificar,una fila por observación de la respuesta
+bronze.oecd_sdmx,Respuesta SDMX de la OCDE sin modificar,una fila por observación de la respuesta
+bronze.unwpp_wpp2024,Respuesta de la API de UN WPP 2024 sin modificar,una fila por observación de la respuesta
+silver.dim_territorio,"Territorios homologados: nacional, 17 si-do, agregado Chungnam+Sejong, países y agregados internacionales",una fila por territorio
+silver.dim_edad,"Grupos de edad: quinquenales, decenales de la EAPS, agregados 0-14 / 15-64 / 65+ y TOTAL",una fila por grupo de edad
+silver.dim_sexo,Sexo homologado entre fuentes,"una fila por sexo (T, H, M)"
+silver.dim_indicador,"Diccionario de indicadores: definición, unidad, frecuencia, fuente maestra y de contraste, rango válido",una fila por indicador
+silver.fact_historico,Histórico observado 2000-2025 en formato largo (fuente maestra + indicadores derivados),anio × territorio × sexo × grupo de edad × indicador
+silver.fact_proyeccion,Proyecciones oficiales de KOSTAT sin modificar,anio × territorio × sexo × grupo de edad × indicador × edición × escenario
+silver.conciliacion,"Maestra vs contraste con su diferencia; el contraste nunca reemplaza el valor maestro",nivel × anio × territorio × sexo × grupo de edad × indicador × escenario × fuente de contraste
+gold.supuestos,Supuestos de los escenarios propios A/B/C/D con sus parámetros (versionados),id_supuesto × version_modelo
+gold.escenario_fuerza_laboral,"Fuerza laboral potencial = población KOSTAT × factor de cobertura × tasa supuesta (escenario propio, no pronóstico)",anio × escenario KOSTAT × supuesto × sexo × grupo de edad EAPS
+gold.indicadores_riesgo,"Índice de riesgo demográfico por si-do (0-100, descriptivo, no causal)",una fila por si-do
+gold.riesgo_sensibilidad,Ranking de riesgo con otros pesos y normalizaciones,si-do × esquema
+gold.escenarios_sensibilidad,"Fuerza laboral total con variantes de los parámetros de B, C y D (escenario KOSTAT medio)",supuesto × variante × anio
+gold.asociaciones,"Correlación (no causalidad) entre envejecimiento, empleo y productividad 2000-2025",par de variables
+gold.hitos_escasez,Años en que se cruzan umbrales de escasez laboral y cambio de la fuerza laboral por escenario,hito × escenario KOSTAT × supuesto
+gold.v_panel_indicadores,Panel anual por territorio con una columna por indicador (histórico + proyección media),nivel × anio × territorio
+gold.v_escenarios_resumen,Fuerza laboral potencial total país por escenario y supuesto,anio × escenario KOSTAT × supuesto
+gold.v_proyeccion_escenarios,"Proyección oficial nacional por escenario de fecundidad, migración y envejecimiento",anio × escenario
+gold.v_conciliacion,Conciliación con el nombre del indicador y la marca de tolerancia ±3 %,igual que silver.conciliacion
+gold.v_kpis_calidad,KPIs de calidad de la última ejecución,una fila por KPI
+gold.v_embudo_silver,Embudo bronze -> silver de la última ejecución,una fila por paso
+gold.v_anios,Dimensión de años (histórico y proyección),una fila por año
+gold.v_territorios,Dimensión de territorio con nombre y tipo,una fila por territorio
+gold.v_natalidad_vs_15_64,Nacimientos frente a la población 15-19 y 15-64 (cohortes que entran a la edad de trabajar),una fila por año
+gold.v_senales_escasez,Señales tempranas de escasez laboral por año y territorio,nivel × anio × territorio
+gold.v_calidad_dataset,Calidad por dataset de la última ejecución de silver (con tasas de válidos y de rechazo),una fila por fuente × dataset

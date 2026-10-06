@@ -1,0 +1,14 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/pagesMetadata/1.0.0/schema.json",
+  "pageOrder": [
+    "portada",
+    "resumen",
+    "natalidad",
+    "envejecimiento",
+    "fuerza_laboral",
+    "regiones",
+    "contexto_ocde",
+    "calidad"
+  ],
+  "activePageName": "portada"
+}

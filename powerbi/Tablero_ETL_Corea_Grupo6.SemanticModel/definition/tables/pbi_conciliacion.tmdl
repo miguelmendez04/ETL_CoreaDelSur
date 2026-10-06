@@ -1,0 +1,59 @@
+table pbi_conciliacion
+	lineageTag: 99ffd76a-3c46-4e2f-aee7-f9bb86e97f3d
+
+	measure 'Pares dentro de ±3 %' = DIVIDE(SUMX(pbi_conciliacion, pbi_conciliacion[pares] * pbi_conciliacion[pct_dentro]), SUM(pbi_conciliacion[pares]))
+		formatString: 0.0" %"
+		lineageTag: 37afb7f2-aee9-4018-93d0-1377d8bbcc5a
+
+	column cod_indicador
+		dataType: string
+		lineageTag: 9fa9274f-9f19-4fb1-8861-8c7952c7d677
+		summarizeBy: none
+		sourceColumn: cod_indicador
+
+		annotation SummarizationSetBy = User
+
+	column fuente_contraste
+		dataType: string
+		lineageTag: f02db7df-1cc4-4263-90a6-7547be79cb8e
+		summarizeBy: none
+		sourceColumn: fuente_contraste
+
+		annotation SummarizationSetBy = User
+
+	column pares
+		dataType: int64
+		formatString: 0
+		lineageTag: 68bf1203-9fdd-4b14-a1ae-8664128ac3b8
+		summarizeBy: none
+		sourceColumn: pares
+
+		annotation SummarizationSetBy = User
+
+	column pct_dentro
+		dataType: double
+		formatString: 0.00
+		lineageTag: a8e3e1c7-cf3b-403f-aa95-93527ccf073e
+		summarizeBy: none
+		sourceColumn: pct_dentro
+
+		annotation SummarizationSetBy = User
+
+	column dif_max_pct
+		dataType: double
+		formatString: 0.00
+		lineageTag: 2f0161ee-a9d1-41a0-b705-1635793ea634
+		summarizeBy: none
+		sourceColumn: dif_max_pct
+
+		annotation SummarizationSetBy = User
+
+	partition pbi_conciliacion = m
+		mode: import
+		source =
+				let
+					Fuente = Parquet.Document(File.Contents(RutaGold & "powerbi\pbi_conciliacion.parquet"))
+				in
+					Fuente
+
+	annotation PBI_ResultType = Table

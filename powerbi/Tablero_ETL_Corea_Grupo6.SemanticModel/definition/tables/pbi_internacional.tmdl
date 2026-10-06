@@ -1,0 +1,74 @@
+table pbi_internacional
+	lineageTag: 92e8c178-7536-47f9-9e40-aa1fcc870c10
+
+	measure 'Fecundidad (país)' = CALCULATE(AVERAGE(pbi_internacional[valor]), pbi_internacional[indicador] = "Fecundidad (TFR)")
+		formatString: 0.00
+		lineageTag: 949c8969-20e6-47c1-b252-f88bb3855f8a
+
+	measure '65+ (país)' = CALCULATE(AVERAGE(pbi_internacional[valor]), pbi_internacional[indicador] = "Población 65+ (%)")
+		formatString: 0.0
+		lineageTag: b1510ff5-ec5a-4439-ac35-1e3a22027298
+
+	measure 'Dependencia (país)' = CALCULATE(AVERAGE(pbi_internacional[valor]), pbi_internacional[indicador] = "Dependencia de vejez")
+		formatString: 0.0
+		lineageTag: e1b55f3b-44ab-45dc-9efc-42abcd38bca1
+
+	column anio
+		dataType: int64
+		formatString: 0
+		lineageTag: c3fcaebd-7639-4772-9b8c-3cf15122d438
+		summarizeBy: none
+		sourceColumn: anio
+
+		annotation SummarizationSetBy = User
+
+	column cod_indicador
+		dataType: string
+		lineageTag: 62d853bd-1953-4935-904a-d65d19fef269
+		summarizeBy: none
+		sourceColumn: cod_indicador
+
+		annotation SummarizationSetBy = User
+
+	column valor
+		dataType: double
+		formatString: 0.00
+		lineageTag: 54c9a61c-e7b9-4d1f-a799-9eba597237db
+		summarizeBy: none
+		sourceColumn: valor
+
+		annotation SummarizationSetBy = User
+
+	column pais
+		dataType: string
+		lineageTag: 42823e70-d9e8-4032-8b7e-8db1ccd355ff
+		summarizeBy: none
+		sourceColumn: pais
+
+		annotation SummarizationSetBy = User
+
+	column indicador
+		dataType: string
+		lineageTag: 0e4c1cf3-79f5-4b73-9df6-c2e7d75eaa67
+		summarizeBy: none
+		sourceColumn: indicador
+
+		annotation SummarizationSetBy = User
+
+	column es_corea
+		dataType: boolean
+		lineageTag: cf11c6df-a1d5-4f76-953c-66c6d05cb530
+		summarizeBy: none
+		sourceColumn: es_corea
+
+		annotation SummarizationSetBy = User
+
+	partition pbi_internacional = m
+		mode: import
+		source =
+				let
+					Fuente = Parquet.Document(File.Contents(RutaGold & "powerbi\pbi_internacional.parquet"))
+				in
+					Fuente
+
+	annotation PBI_ResultType = Table

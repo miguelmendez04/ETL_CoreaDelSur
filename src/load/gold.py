@@ -11,7 +11,7 @@ TABLAS = ["gold.supuestos", "gold.escenario_fuerza_laboral", "gold.escenarios_se
           "gold.riesgo_sensibilidad", "gold.asociaciones", "gold.hitos_escasez"]
 VISTAS = ["gold.v_panel_indicadores", "gold.v_escenarios_resumen", "gold.v_natalidad_vs_15_64",
           "gold.v_senales_escasez", "gold.v_conciliacion", "gold.v_kpis_calidad", "gold.v_territorios",
-          "gold.v_anios", "gold.v_embudo_silver"]
+          "gold.v_anios", "gold.v_embudo_silver", "gold.v_proyeccion_escenarios", "gold.v_calidad_dataset"]
 
 
 def escribir(conn: psycopg.Connection, datos: dict[str, pd.DataFrame], ids: dict[str, int]) -> None:

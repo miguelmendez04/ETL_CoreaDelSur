@@ -33,6 +33,11 @@ escenario,Medium,medio,KOSIS tabla provincial
 escenario,중위 추계(기본 추계: 출산율-중위 / 기대수명-중위 / 국제순이동-중위),medio,Coreano: escenario medio (base)
 escenario,높은 출산율 추계(출산율-고위 / 기대수명-중위 / 국제순이동-중위),alto,Coreano: fecundidad alta; resto medio
 escenario,낮은 출산율 추계(출산율-저위 / 기대수명-중위 / 국제순이동-중위),bajo,Coreano: fecundidad baja; resto medio
+escenario,높은 국제순이동 추계(출산율-중위 / 기대수명-중위 / 국제순이동-고위),migracion_alta,Coreano: migración internacional alta; resto medio
+escenario,낮은 국제순이동 추계(출산율-중위 / 기대수명-중위 / 국제순이동-저위),migracion_baja,Coreano: migración internacional baja; resto medio
+escenario,국제 무이동추계(출산율-중위 / 기대수명-중위 / 국제순이동-무이동),sin_migracion,Coreano: sin migración internacional; resto medio
+escenario,빠른 고령화 추계(출산율-저위 / 기대수명-고위 / 국제순이동-저위),envejecimiento_rapido,Coreano: envejecimiento rápido (fecundidad baja; esperanza de vida alta; migración baja)
+escenario,느린 고령화 추계(출산율-고위 / 기대수명-저위 / 국제순이동-고위),envejecimiento_lento,Coreano: envejecimiento lento (fecundidad alta; esperanza de vida baja; migración alta)
 escenario,Median,medio,UN WPP
 escenario,High-fertility,alto,UN WPP
 escenario,Low-fertility,bajo,UN WPP

@@ -30,6 +30,9 @@ def calcular(hist: pd.DataFrame, proy: pd.DataFrame, dims: pd.DataFrame, cfg: di
         "var_pob_15_64_hist_pct": (pob_1564 / valor(hist, "POBLACION", 2015, "15-64") - 1) * 100,
         "var_pob_15_64_proy_pct": (valor(p_sido, "POBLACION", futuro, "15-64") / pob_1564 - 1) * 100,
         "dependencia_vejez_proy": valor(p_sido, "DEPENDENCIA_VEJEZ", futuro),
+        # reemplazo laboral: jóvenes que entran (15-24) por cada 100 que se acercan al retiro (55-64)
+        "reemplazo_laboral": ((valor(hist, "POBLACION", base, "15-19") + valor(hist, "POBLACION", base, "20-24")) /
+                              (valor(hist, "POBLACION", base, "55-59") + valor(hist, "POBLACION", base, "60-64")) * 100),
     })
     t["indice_riesgo"] = indice(t, r["componentes"])
     t["ranking"] = t["indice_riesgo"].rank(ascending=False, method="min").astype(int)
@@ -43,6 +46,11 @@ def indice(t: pd.DataFrame, componentes: dict, normalizacion: str = "minmax") ->
         x = t[comp]
         if normalizacion == "percentil":
             norm = (x.rank() - 1) / (x.count() - 1) * 100
+        elif normalizacion == "zscore":   # puntaje estándar (no queda en 0-100; sirve para comparar el orden)
+            norm = (x - x.mean()) / x.std(ddof=0)
+            puntajes.append((norm if regla["mas_es_peor"] else -norm) * regla["peso"])
+            pesos += regla["peso"]
+            continue
         else:
             norm = (x - x.min()) / (x.max() - x.min()) * 100
         puntajes.append((norm if regla["mas_es_peor"] else 100 - norm) * regla["peso"])
@@ -55,14 +63,17 @@ def sensibilidad(t: pd.DataFrame, cfg: dict) -> pd.DataFrame:
     resultado no depende de la elección de pesos ni del método de normalización."""
     r = cfg["gold"]["riesgo_sido"]
     base = r["componentes"]
+    direccion = {**{c: v["mas_es_peor"] for c, v in base.items()},
+                 **{c: v["mas_es_peor"] for c, v in r.get("componentes_extra", {}).items()}}
     t = t.set_index("cod_territorio")
     pesos_base = {c: v["peso"] for c, v in base.items()}
+    sin_norm = lambda p: {c: w for c, w in p.items() if c != "normalizacion"}
     esquemas = {"base": (pesos_base, "minmax"),
-                **{e: (p, "minmax") for e, p in r["esquemas_sensibilidad"].items()},
+                **{e: (sin_norm(p), p.get("normalizacion", "minmax")) for e, p in r["esquemas_sensibilidad"].items()},
                 **{f"base_normalizacion_{n}": (pesos_base, n) for n in r.get("normalizaciones_sensibilidad", [])}}
     filas = []
     for esquema, (pesos, normalizacion) in esquemas.items():
-        comps = {c: {"peso": w, "mas_es_peor": base[c]["mas_es_peor"]} for c, w in pesos.items() if w}
+        comps = {c: {"peso": w, "mas_es_peor": direccion[c]} for c, w in pesos.items() if w}
         idx = indice(t, comps, normalizacion)
         filas.append(pd.DataFrame({"cod_territorio": idx.index, "esquema": esquema, "indice_riesgo": idx.values,
                                    "ranking": idx.rank(ascending=False, method="min").astype(int).values}))

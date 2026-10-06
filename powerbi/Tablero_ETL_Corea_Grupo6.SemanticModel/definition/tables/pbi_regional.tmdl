@@ -1,0 +1,95 @@
+table pbi_regional
+	lineageTag: 086d8b8c-51fa-4bc9-84a2-6bff38cb0a96
+
+	measure 'TFR 2025 por si-do' = CALCULATE(AVERAGE(pbi_regional[TFR]), pbi_regional[anio] = 2025)
+		formatString: 0.00
+		lineageTag: 80b00ec1-f63d-4b72-a46f-f207a163de2d
+
+	column anio
+		dataType: int64
+		formatString: 0
+		lineageTag: 10ae7359-61d1-4671-89a8-312fe85d7e08
+		summarizeBy: none
+		sourceColumn: anio
+
+		annotation SummarizationSetBy = User
+
+	column cod_territorio
+		dataType: string
+		lineageTag: 883363bd-57cb-4f1c-a14d-ceed2870f244
+		summarizeBy: none
+		sourceColumn: cod_territorio
+
+		annotation SummarizationSetBy = User
+
+	column TFR
+		dataType: double
+		formatString: 0.00
+		lineageTag: 4b8cb482-077e-4944-b9c1-63843fd03132
+		summarizeBy: none
+		sourceColumn: TFR
+
+		annotation SummarizationSetBy = User
+
+	column NACIMIENTOS
+		dataType: double
+		formatString: 0.00
+		lineageTag: 989d0d21-05a0-4ab1-923f-bbe06042e0c6
+		summarizeBy: none
+		sourceColumn: NACIMIENTOS
+
+		annotation SummarizationSetBy = User
+
+	column PROP_65MAS
+		dataType: double
+		formatString: 0.00
+		lineageTag: 9069c3fc-2bcf-4492-98be-5dd7fe2fd551
+		summarizeBy: none
+		sourceColumn: PROP_65MAS
+
+		annotation SummarizationSetBy = User
+
+	column DEP_VEJEZ
+		dataType: double
+		formatString: 0.00
+		lineageTag: 74723c88-64c2-4968-8c18-6fdfd098a2c5
+		summarizeBy: none
+		sourceColumn: DEP_VEJEZ
+
+		annotation SummarizationSetBy = User
+
+	column TASA_PARTICIPACION
+		dataType: double
+		formatString: 0.00
+		lineageTag: 66ccd09d-b00b-46d7-999a-4d87db68cf13
+		summarizeBy: none
+		sourceColumn: TASA_PARTICIPACION
+
+		annotation SummarizationSetBy = User
+
+	column POB_15_64
+		dataType: double
+		formatString: 0.00
+		lineageTag: 3a8521be-7487-4cb6-afd9-0b90b8df67c3
+		summarizeBy: none
+		sourceColumn: POB_15_64
+
+		annotation SummarizationSetBy = User
+
+	column tipo_dato_poblacion
+		dataType: string
+		lineageTag: 2175531d-f125-42d6-bed7-e89a5e7e2f14
+		summarizeBy: none
+		sourceColumn: tipo_dato_poblacion
+
+		annotation SummarizationSetBy = User
+
+	partition pbi_regional = m
+		mode: import
+		source =
+				let
+					Fuente = Parquet.Document(File.Contents(RutaGold & "powerbi\pbi_regional.parquet"))
+				in
+					Fuente
+
+	annotation PBI_ResultType = Table

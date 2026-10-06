@@ -12,3 +12,6 @@ DEPENDENCIA_VEJEZ,Tasa de dependencia de vejez,Pob 65+ / pob 15-64 × 100,ratio 
 PIB_HORA,PIB por hora trabajada,PIB por hora trabajada en USD PPA constantes,USD PPA const.,anual,OECD,,false,0,
 POB_15MAS,Población de 15 años y más,Población civil de 15 años y más cubierta por la EAPS (promedio anual),personas,mensual,KOSIS,,false,0,
 PIB_OCUPADO,PIB por ocupado,PIB por persona ocupada en USD PPA constantes de 2021 (comparación internacional),USD PPA const.,anual,WB,,false,0,
+DEFUNCIONES,Defunciones,Defunciones registradas en el año,personas,anual,KOSIS,,false,0,
+CRECIMIENTO_NATURAL,Crecimiento natural,Nacimientos menos defunciones (negativo desde 2020),personas,anual,KOSIS,,false,,
+ESPERANZA_VIDA,Esperanza de vida al nacer,Años que viviría en promedio un recién nacido con la mortalidad del año,años,anual,KOSIS,,false,0,120

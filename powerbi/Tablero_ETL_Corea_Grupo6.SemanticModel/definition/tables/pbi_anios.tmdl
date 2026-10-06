@@ -1,0 +1,37 @@
+table pbi_anios
+	lineageTag: 70aa4d21-c9d3-48bf-95d4-770ee2a31bda
+
+	column anio
+		dataType: int64
+		formatString: 0
+		lineageTag: 64e47ba0-ccdf-4cfd-a3e1-297657b0c721
+		summarizeBy: none
+		sourceColumn: anio
+
+		annotation SummarizationSetBy = User
+
+	column periodo
+		dataType: string
+		lineageTag: 554f3c22-dcb0-4d74-a2ab-080b94473085
+		summarizeBy: none
+		sourceColumn: periodo
+
+		annotation SummarizationSetBy = User
+
+	column decada
+		dataType: string
+		lineageTag: f6457e2d-bd9e-46c9-82cf-1bfb321b1382
+		summarizeBy: none
+		sourceColumn: decada
+
+		annotation SummarizationSetBy = User
+
+	partition pbi_anios = m
+		mode: import
+		source =
+				let
+					Fuente = Parquet.Document(File.Contents(RutaGold & "powerbi\pbi_anios.parquet"))
+				in
+					Fuente
+
+	annotation PBI_ResultType = Table

@@ -1,0 +1,75 @@
+/// Proyección oficial KOSTAT nacional en sus 8 escenarios (fecundidad, migración y envejecimiento).
+table pbi_escenarios
+	lineageTag: 7d218d27-02cb-41b6-af28-97c29e7a29dd
+
+	/// Proyección oficial KOSTAT; 2025 = año base observado
+	measure 'Población 15-64 por escenario' = CALCULATE(SUM(pbi_escenarios[valor]), pbi_escenarios[indicador] = "Población 15-64 (millones)")
+		formatString: #,0.0" M"
+		lineageTag: 162cc466-02e2-4ae9-b2c1-9d169049e023
+
+	/// Proyección oficial KOSTAT
+	measure 'Dependencia por escenario' = CALCULATE(SUM(pbi_escenarios[valor]), pbi_escenarios[indicador] = "Dependencia de vejez")
+		formatString: 0.0
+		lineageTag: 4f063cc1-67f1-4b7f-8cc5-e445b4258a31
+
+	column anio
+		dataType: int64
+		formatString: 0
+		lineageTag: 7ee0f1b8-a779-468e-9a57-e1bf9ada1522
+		summarizeBy: none
+		sourceColumn: anio
+
+		annotation SummarizationSetBy = User
+
+	column cod_escenario
+		dataType: string
+		lineageTag: c5ae7af5-bd9b-4b3c-8cf0-520f0b42af7f
+		summarizeBy: none
+		sourceColumn: cod_escenario
+
+		annotation SummarizationSetBy = User
+
+	column valor
+		dataType: double
+		formatString: 0.00
+		lineageTag: 667ee79d-eca6-450c-b94b-ff22c7661289
+		summarizeBy: none
+		sourceColumn: valor
+
+		annotation SummarizationSetBy = User
+
+	column indicador
+		dataType: string
+		lineageTag: 1d342dbc-35fb-4eb7-a8fa-caf776ca5034
+		summarizeBy: none
+		sourceColumn: indicador
+
+		annotation SummarizationSetBy = User
+
+	column escenario
+		dataType: string
+		lineageTag: 925f1d64-b467-4719-84a2-5e1db93b7ea3
+		summarizeBy: none
+		sourceColumn: escenario
+		sortByColumn: orden_escenario
+
+		annotation SummarizationSetBy = User
+
+	column orden_escenario
+		dataType: int64
+		formatString: 0
+		lineageTag: 93f5d045-937d-47a2-b122-59581188fb59
+		summarizeBy: none
+		sourceColumn: orden_escenario
+
+		annotation SummarizationSetBy = User
+
+	partition pbi_escenarios = m
+		mode: import
+		source =
+				let
+					Fuente = Parquet.Document(File.Contents(RutaGold & "powerbi\pbi_escenarios.parquet"))
+				in
+					Fuente
+
+	annotation PBI_ResultType = Table

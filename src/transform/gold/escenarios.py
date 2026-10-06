@@ -1,4 +1,4 @@
-"""Pregunta 6b: fuerza laboral potencial bajo supuestos (escenarios A/B/C del equipo, no pronósticos).
+"""Pregunta 6b: fuerza laboral potencial bajo supuestos (escenarios A/B/C/D del equipo, no pronósticos).
 
 fuerza_laboral(año, escenario KOSTAT, supuesto, sexo, grupo) = población proyectada × factor_cobertura × tasa / 100
 
@@ -10,6 +10,7 @@ fuerza_laboral(año, escenario KOSTAT, supuesto, sexo, grupo) = población proye
 - Tasa base: EAPS nacional por sexo y grupo de edad (silver.fact_historico), año base de config.yaml.
 - A: constante. B: tendencia lineal 2015-2025 con cambio máximo, piso, tope y año de congelamiento.
   C: convergencia lineal al promedio OCDE por sexo y edad (silver, territorio OED); 15-19 y 60+ constantes.
+  D: las mujeres cierran linealmente una fracción de su brecha de participación con los hombres hasta el año meta.
 """
 import numpy as np
 import pandas as pd
@@ -86,11 +87,28 @@ def _supuesto_c(base: pd.DataFrame, oecd: pd.DataFrame, anios: list[int], p: dic
     return pd.DataFrame(filas, columns=["anio", "sexo", "grupo_edad", "tasa"]), calculado
 
 
+def _supuesto_d(base: pd.DataFrame, anios: list[int], p: dict, anio_base: int):
+    """La tasa femenina cierra linealmente una fracción de la brecha con la masculina hasta el año meta; la masculina
+    queda constante. Si la tasa femenina ya es mayor (brecha negativa), no cambia."""
+    t = base.set_index(["sexo", "grupo_edad"])["tasa"]
+    brecha = (t.xs("H") - t.xs("M")).rename("brecha")
+    cierre = brecha.clip(lower=0)
+    filas = []
+    for r in base.itertuples():
+        for a in anios:
+            avance = min(max((a - anio_base) / (p["anio_meta"] - anio_base), 0.0), 1.0) * p["fraccion_cierre"]
+            tasa = r.tasa + avance * cierre[r.grupo_edad] if r.sexo == "M" else r.tasa
+            filas.append((a, r.sexo, r.grupo_edad, tasa))
+    calculado = {f"brecha_base_pp[{g}]": round(float(v), 2) for g, v in brecha.items()}
+    return pd.DataFrame(filas, columns=["anio", "sexo", "grupo_edad", "tasa"]), calculado
+
+
 def calcular(hist: pd.DataFrame, proy: pd.DataFrame, cfg: dict) -> tuple[pd.DataFrame, pd.DataFrame]:
     g = cfg["gold"]
     p = g["escenarios_fuerza_laboral"]
     anio_base = p["anio_base"]
     pob = poblacion_grupos(proy, p["grupos"], cfg["silver"]["ediciones"]["kosis_nacional"])
+    pob = pob[pob["escenario_kostat"].isin(p.get("escenarios_kostat", ["medio", "alto", "bajo"]))]
     anios = sorted(pob["anio"].unique())
     tasas = tasas_eaps(hist, list(p["grupos"]))
     base = tasas[tasas["anio"] == anio_base].drop(columns="anio")
@@ -110,8 +128,12 @@ def calcular(hist: pd.DataFrame, proy: pd.DataFrame, cfg: dict) -> tuple[pd.Data
             t, calc = _supuesto_a(base, anios)
         elif sid == "B":
             t, calc = _supuesto_b(tasas, base, anios, sp, anio_base)
-        else:
+        elif sid == "C":
             t, calc = _supuesto_c(base, oecd, anios, sp, anio_base)
+        elif sid == "D":
+            t, calc = _supuesto_d(base, anios, sp, anio_base)
+        else:
+            raise ValueError(f"Supuesto desconocido en config.yaml: {sid}")
         e = pob.merge(t, on=["anio", "sexo", "grupo_edad"]).merge(factores, on=["sexo", "grupo_edad"])
         e["fuerza_laboral"] = e["poblacion"] * e["factor_cobertura"] * e["tasa"] / 100
         escenarios.append(e.assign(id_supuesto=sid))

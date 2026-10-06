@@ -1,0 +1,95 @@
+table pbi_okr
+	lineageTag: 65e62b43-c5a1-45aa-8bcc-75117db064d1
+
+	measure 'Resultados clave logrados' = CALCULATE(COUNTROWS(pbi_okr), pbi_okr[estado] = "✅ Logrado") & " de " & COUNTROWS(pbi_okr)
+		lineageTag: 37f6dba8-3f98-4517-9a98-1bae197fbe83
+
+	column objetivo_cod
+		dataType: string
+		lineageTag: d55259e2-3fcc-483e-a9a7-380b2fe48cde
+		summarizeBy: none
+		sourceColumn: objetivo_cod
+
+		annotation SummarizationSetBy = User
+
+	column eje
+		dataType: string
+		lineageTag: bc71981d-bad6-4926-9c2a-45b9b612b885
+		summarizeBy: none
+		sourceColumn: eje
+
+		annotation SummarizationSetBy = User
+
+	column objetivo
+		dataType: string
+		lineageTag: cac700cb-2f72-4a1c-9b82-303dd1c07f7d
+		summarizeBy: none
+		sourceColumn: objetivo
+
+		annotation SummarizationSetBy = User
+
+	column kr
+		dataType: string
+		lineageTag: e436bfa6-aa78-4a47-bdf7-76cb81012ccd
+		summarizeBy: none
+		sourceColumn: kr
+
+		annotation SummarizationSetBy = User
+
+	column kpi
+		dataType: string
+		lineageTag: 1fb4a652-ca2d-4942-898a-5a54225b1c97
+		summarizeBy: none
+		sourceColumn: kpi
+
+		annotation SummarizationSetBy = User
+
+	column meta
+		dataType: string
+		lineageTag: 0e87a122-46a6-43a1-8e5c-89cd3e432e5b
+		summarizeBy: none
+		sourceColumn: meta
+
+		annotation SummarizationSetBy = User
+
+	column valor
+		dataType: string
+		lineageTag: 640abff8-d91f-4bd3-a0bf-090ab3428f57
+		summarizeBy: none
+		sourceColumn: valor
+
+		annotation SummarizationSetBy = User
+
+	column estado
+		dataType: string
+		lineageTag: 0312afc5-d37b-417c-9b10-eb4ecf38ab1a
+		summarizeBy: none
+		sourceColumn: estado
+
+		annotation SummarizationSetBy = User
+
+	column interpretacion
+		dataType: string
+		lineageTag: 0cf9fb12-57c7-4110-81db-de364fe699bb
+		summarizeBy: none
+		sourceColumn: interpretacion
+
+		annotation SummarizationSetBy = User
+
+	column tabla_gold
+		dataType: string
+		lineageTag: 7b633c87-f2c6-4de0-8866-5cc0e0e462ad
+		summarizeBy: none
+		sourceColumn: tabla_gold
+
+		annotation SummarizationSetBy = User
+
+	partition pbi_okr = m
+		mode: import
+		source =
+				let
+					Fuente = Parquet.Document(File.Contents(RutaGold & "powerbi\pbi_okr.parquet"))
+				in
+					Fuente
+
+	annotation PBI_ResultType = Table

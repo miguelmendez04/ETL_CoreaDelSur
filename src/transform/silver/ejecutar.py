@@ -9,7 +9,8 @@ Pasos:
   6. conciliación maestra vs contraste (reconcile.py)
   7. escribir silver en una transacción, registrar cada tabla en ctl.log_cargas y respaldar en data/silver/
 
-Las filas que quedan después de cada paso se guardan en ctl.pasos_silver (embudo de la transformación).
+Las filas que quedan después de cada paso se guardan en ctl.pasos_silver (embudo de la transformación) y los
+registros evaluados, válidos y rechazados de cada dataset de bronze en ctl.calidad_dataset.
 """
 import logging
 import time
@@ -26,7 +27,8 @@ from src.utils.db import conectar
 
 log = logging.getLogger("silver")
 
-KOSIS = {"vitales_sido": normalize.kosis_vitales_sido, "tfr_sido": normalize.kosis_tfr_sido,
+KOSIS = {"vitales_nacional": normalize.kosis_vitales_nacional,
+         "vitales_sido": normalize.kosis_vitales_sido, "tfr_sido": normalize.kosis_tfr_sido,
          "eaps_sido": normalize.kosis_eaps_sido, "eaps_sexo_edad": normalize.kosis_eaps_sexo_edad,
          "poblacion_nacional": normalize.kosis_poblacion_nacional, "poblacion_sido": normalize.kosis_poblacion_sido,
          "proyeccion_escenarios": normalize.kosis_proyeccion_escenarios}
@@ -42,6 +44,18 @@ def pasos_embudo(pasos: list[tuple[str, str, int, str]]) -> pd.DataFrame:
     if (df.loc[df["en_embudo"], "variacion"] > 0).any():
         raise ValueError("Un filtro de silver agregó filas: revisar el orden de los pasos")
     return df
+
+
+def calidad_por_dataset(validos: pd.DataFrame, rechazos: pd.DataFrame) -> pd.DataFrame:
+    """Registros evaluados, válidos y rechazados por dataset de bronze (lo fuera de alcance y los años en que el
+    territorio no existía no se evalúan: no son errores)."""
+    v = validos.groupby(["fuente", "dataset"]).size().rename("validos")
+    reg = pd.DataFrame(list(rechazos["registro"])) if not rechazos.empty else pd.DataFrame(columns=["fuente", "dataset"])
+    r = reg.groupby(["fuente", "dataset"]).size().rename("rechazados")
+    out = pd.concat([v, r], axis=1).fillna(0).astype(int).reset_index()
+    out = out.rename(columns={"validos": "registros_validos", "rechazados": "registros_rechazados"})
+    out["registros_evaluados"] = out["registros_validos"] + out["registros_rechazados"]
+    return out.sort_values(["fuente", "dataset"]).reset_index(drop=True)
 
 
 def construir(conn, cfg: dict) -> dict:
@@ -83,6 +97,7 @@ def construir(conn, cfg: dict) -> dict:
     # 4-5. Agregados, coherencia y derivados
     df = derive.agregados_edad(df, s["agregados_edad"])
     pasos.append(("+ agregados de edad", "calculo", len(df), "0-14, 15-64 y 65+ sumados desde los quinquenales"))
+    validos = df.copy()
     df, r_coher = validate.coherencia_totales(df, cfg["calidad"]["tolerancia_suma_edades_pct"],
                                                  cfg["calidad"]["coherencia_totales"])
     pasos.append(("Coherencia de totales", "filtro", len(df), "Suma de edades ≈ total y H + M ≈ T (población y EAPS)"))
@@ -104,9 +119,11 @@ def construir(conn, cfg: dict) -> dict:
     conc = reconcile.conciliar(df, contrastes)
 
     rechazos = pd.concat([r_homol, r_valor, r_valid, r_coher], ignore_index=True)
+    # válidos por dataset = los que pasaron las reglas fila a fila y no se rechazaron por coherencia de totales
+    validos = validos[~validos["id_bronze"].isin(pd.DataFrame(list(r_coher["registro"]))["id_bronze"])]         if not r_coher.empty else validos
     return {"dims": dims, "hist": df[df["nivel"] == "historico"], "proy": df[df["nivel"] == "proyeccion"],
             "conc": conc, "rechazos": rechazos, "candidatos": cand, "fuera_alcance": {**fuera, "no_aplica": no_aplica},
-            "pasos": pasos_embudo(pasos)}
+            "pasos": pasos_embudo(pasos), "calidad_dataset": calidad_por_dataset(validos, rechazos)}
 
 
 def ejecutar_silver() -> pd.DataFrame:
@@ -122,7 +139,8 @@ def ejecutar_silver() -> pd.DataFrame:
         hist, proy, conc, rech = r["hist"].copy(), r["proy"].copy(), r["conc"].copy(), r["rechazos"].copy()
         hist["id_carga"], proy["id_carga"], conc["id_carga"] = ids["silver.fact_historico"], ids["silver.fact_proyeccion"], ids["silver.conciliacion"]
         rech["id_carga"] = rech["destino"].map(ids)
-        carga.escribir(conn, r["dims"], hist, proy, conc, rech, r["pasos"].assign(id_carga=ids["silver.fact_historico"]))
+        carga.escribir(conn, r["dims"], hist, proy, conc, rech, r["pasos"].assign(id_carga=ids["silver.fact_historico"]),
+                       r["calidad_dataset"].assign(id_carga=ids["silver.fact_historico"]))
 
         resumen = []
         for tabla, datos in (("silver.fact_historico", hist), ("silver.fact_proyeccion", proy), ("silver.conciliacion", conc)):
@@ -140,8 +158,8 @@ def ejecutar_silver() -> pd.DataFrame:
         log.info("Conciliación histórica: %d de %d pares dentro de ±%s%% (%.1f%%)", dentro[h].sum(), h.sum(),
                  cfg["calidad"]["tolerancia_conciliacion_pct"], dentro[h].mean() * 100)
         log.info("Embudo bronze -> silver:\n%s", r["pasos"][["orden", "paso", "filas", "variacion"]].to_string(index=False))
-        m = archivos.exportar(conn, "silver", carga.TABLAS + ["ctl.rechazos", "ctl.pasos_silver"], ids,
-                              solo_esta_carga=("ctl.rechazos", "ctl.pasos_silver"))
+        m = archivos.exportar(conn, "silver", carga.TABLAS + ["ctl.rechazos", "ctl.pasos_silver", "ctl.calidad_dataset"], ids,
+                              solo_esta_carga=("ctl.rechazos", "ctl.pasos_silver", "ctl.calidad_dataset"))
         log.info("Respaldo silver: %s (%d archivos Parquet)", m["archivos"][0]["archivo"].rsplit("/", 1)[0], len(m["archivos"]))
         return resumen
     except Exception as e:

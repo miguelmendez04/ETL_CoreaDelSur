@@ -5,6 +5,7 @@ import pytest
 from src.transform.gold import escenarios, riesgo
 from src.quality import validate
 from src.transform.silver import derive, homologacion
+from src.transform.silver.ejecutar import calidad_por_dataset
 
 DIMS = homologacion.cargar_dimensiones()
 
@@ -231,3 +232,34 @@ def test_pasos_embudo_marca_filtros_y_calculos():
     assert p["en_embudo"].tolist() == [True, True, False, False]   # después de un cálculo ya no es embudo
     with pytest.raises(ValueError, match="agregó filas"):
         pasos_embudo([("A", "filtro", 10, ""), ("B", "filtro", 12, "")])
+
+
+def test_escenario_d_cierra_fraccion_de_brecha_de_genero():
+    base = pd.DataFrame({"sexo": ["H", "M", "H", "M"], "grupo_edad": ["30-39", "30-39", "20-29", "20-29"],
+                         "tasa": [90.0, 70.0, 60.0, 65.0]})
+    t, calc = escenarios._supuesto_d(base, [2025, 2050, 2060], {"fraccion_cierre": 0.5, "anio_meta": 2050}, 2025)
+    m = t[(t["sexo"] == "M") & (t["grupo_edad"] == "30-39")].set_index("anio")["tasa"]
+    h = t[t["sexo"] == "H"]
+    assert m[2025] == 70 and m[2050] == pytest.approx(80) and m[2060] == pytest.approx(80)   # cierra 10 de 20 pp
+    assert (h[h["grupo_edad"] == "30-39"]["tasa"] == 90).all() and calc["brecha_base_pp[30-39]"] == 20
+    # donde las mujeres ya participan más, su tasa no baja
+    assert (t[(t["sexo"] == "M") & (t["grupo_edad"] == "20-29")]["tasa"] == 65).all()
+
+
+def test_sensibilidad_riesgo_con_componentes_extra_y_zscore():
+    t = pd.DataFrame({"cod_territorio": ["A", "B", "C"], "prop_65mas": [10, 20, 30], "tfr": [1.0, 0.9, 0.8],
+                      "reemplazo_laboral": [120, 90, 60]})
+    cfg = {"gold": {"riesgo_sido": {
+        "componentes": {"prop_65mas": {"peso": 1, "mas_es_peor": True}, "tfr": {"peso": 1, "mas_es_peor": False}},
+        "componentes_extra": {"reemplazo_laboral": {"mas_es_peor": False}},
+        "esquemas_sensibilidad": {"tres_z": {"prop_65mas": 1, "tfr": 1, "reemplazo_laboral": 1, "normalizacion": "zscore"}}}}}
+    s = riesgo.sensibilidad(t, cfg).set_index(["esquema", "cod_territorio"])["ranking"]
+    assert s[("tres_z", "C")] == 1 and s[("tres_z", "A")] == 3   # C es peor en los tres componentes
+
+
+def test_calidad_por_dataset_cuenta_validos_y_rechazados():
+    validos = pd.DataFrame({"fuente": ["KOSIS", "KOSIS", "WB"], "dataset": ["eaps_sido", "eaps_sido", "SP.POP.TOTL"]})
+    rech = pd.DataFrame({"registro": [{"fuente": "KOSIS", "dataset": "eaps_sido"}, {"fuente": "KOSIS", "dataset": "tfr_sido"}]})
+    c = calidad_por_dataset(validos, rech).set_index("dataset")
+    assert c.loc["eaps_sido", "registros_evaluados"] == 3 and c.loc["eaps_sido", "registros_rechazados"] == 1
+    assert c.loc["tfr_sido", "registros_validos"] == 0 and c.loc["SP.POP.TOTL", "registros_rechazados"] == 0

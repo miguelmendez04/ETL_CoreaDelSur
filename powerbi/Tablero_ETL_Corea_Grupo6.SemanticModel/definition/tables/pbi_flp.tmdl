@@ -1,0 +1,84 @@
+/// Escenario propio de fuerza laboral potencial (supuestos A/B/C/D) sobre cada escenario de KOSTAT. No es pronóstico.
+table pbi_flp
+	lineageTag: 485410dd-d505-4a9e-83a4-48ab2ad09e46
+
+	/// Escenario propio (no es pronóstico): población KOSTAT × cobertura EAPS × tasa de participación supuesta
+	measure 'Fuerza laboral potencial' = VAR e = SELECTEDVALUE(pbi_escenario_sel[escenario], "Medio (base)") RETURN CALCULATE(DIVIDE(SUM(pbi_flp[flp]), 1e6), pbi_flp[escenario] = e)
+		formatString: #,0.0" M"
+		lineageTag: c1de3af2-a25a-421b-9545-74106b4b4b83
+
+	measure 'Índice FLP (2025 = 100)' = VAR e = SELECTEDVALUE(pbi_escenario_sel[escenario], "Medio (base)") RETURN CALCULATE(AVERAGE(pbi_flp[indice_2025]), pbi_flp[escenario] = e)
+		formatString: 0.0
+		lineageTag: 284f2574-4418-41cb-8730-80f85b62a803
+
+	measure 'Escenario seleccionado' = SELECTEDVALUE(pbi_escenario_sel[escenario], "Medio (base)")
+		lineageTag: 7686d66e-f46a-49d4-aff3-f43f44f49562
+
+	column anio
+		dataType: int64
+		formatString: 0
+		lineageTag: 3c01e757-3b9b-4263-803b-b8536153badf
+		summarizeBy: none
+		sourceColumn: anio
+
+		annotation SummarizationSetBy = User
+
+	column cod_escenario
+		dataType: string
+		lineageTag: 6ead9e31-fe66-4b2d-a616-511461e1f35a
+		summarizeBy: none
+		sourceColumn: cod_escenario
+
+		annotation SummarizationSetBy = User
+
+	column cod_supuesto
+		dataType: string
+		lineageTag: eb97b33c-c976-427f-a3c9-b3fba4284732
+		summarizeBy: none
+		sourceColumn: cod_supuesto
+
+		annotation SummarizationSetBy = User
+
+	column flp
+		dataType: double
+		formatString: 0.00
+		lineageTag: 0d9563d7-9b49-4608-b97b-a9a4fe0525c9
+		summarizeBy: none
+		sourceColumn: flp
+
+		annotation SummarizationSetBy = User
+
+	column indice_2025
+		dataType: double
+		formatString: 0.00
+		lineageTag: 6fd3a748-44ff-4041-aed1-274449bcb846
+		summarizeBy: none
+		sourceColumn: indice_2025
+
+		annotation SummarizationSetBy = User
+
+	column supuesto
+		dataType: string
+		lineageTag: c7dcc550-dbcf-4e29-af4b-6721559561d5
+		summarizeBy: none
+		sourceColumn: supuesto
+
+		annotation SummarizationSetBy = User
+
+	column escenario
+		dataType: string
+		lineageTag: 9b7fa3fb-0261-4350-b548-f9ee4852cb03
+		summarizeBy: none
+		sourceColumn: escenario
+
+		annotation SummarizationSetBy = User
+
+	partition pbi_flp = m
+		mode: import
+		source =
+				let
+					Fuente = Parquet.Document(File.Contents(RutaGold & "powerbi\pbi_flp.parquet"))
+				in
+					Fuente
+
+	annotation PBI_ResultType = Table

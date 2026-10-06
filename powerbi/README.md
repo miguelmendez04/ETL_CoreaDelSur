@@ -1,131 +1,54 @@
-# Dashboards en Power BI
+# Tablero de Power BI
 
-`ETL_Corea.pbip` es un proyecto de Power BI guardado como texto (se puede versionar en git):
+`Tablero_ETL_Corea_Grupo6.pbip` es el tablero del proyecto: portada y 7 páginas con menú lateral, con el diseño del
+equipo (Angie Rodríguez). Responde las 10 preguntas de negocio y tiene una versión web con el mismo diseño
+(`dashboard/Tablero_ETL_Corea_Grupo6.html`, ver más abajo).
 
-- `ETL_Corea.SemanticModel/`: el modelo. Contiene la conexión a PostgreSQL, 14 tablas leídas de las vistas y tablas
-  `gold`, las relaciones con `Territorio` y las medidas DAX.
-- `ETL_Corea.Report/`: el reporte en formato PBIR (una carpeta por página y un `visual.json` por visual), con
-  6 páginas (una por bloque de preguntas de negocio) y una página "Presentación" con los gráficos de las
-  diapositivas. El tema UAO ya viene aplicado (`StaticResources/`).
-- `tema_uao.json`: el mismo tema por separado (rojo UAO, Segoe UI), para reutilizarlo en otro reporte.
-
-Los datos importados se guardan en `.pbi/cache.abf`, que no se versiona. Para entregar el dashboard a alguien que no
-tiene la base, se usa **Archivo > Exportar > Power BI (.pbix)**: el `.pbix` lleva los datos dentro.
-
-## Abrir y cargar los datos
-
-1. Correr el pipeline (`python main.py`) con PostgreSQL arriba (`docker compose up -d`).
-2. Abrir `powerbi/ETL_Corea.pbip` con Power BI Desktop.
-3. **Inicio > Actualizar**. La primera vez pide credenciales:
-   - tipo **Base de datos**;
-   - usuario y contraseña: `PG_USER` y `PG_PASSWORD` del `.env`;
-   - si avisa que la conexión no está cifrada, aceptar: es la base local de Docker.
-4. Si la base está en otro servidor o puerto: **Transformar datos > Editar parámetros**, cambiar `Servidor` y
-   `BaseDatos`.
-
-Cada vez que se vuelva a correr el pipeline basta con **Actualizar**.
-
-El tema UAO viene aplicado. Para usarlo en otro reporte: **Ver > Temas > Buscar temas** y elegir `powerbi/tema_uao.json`.
-
-## Modelo
-
-| Tabla | Origen | Uso |
+| Página | Contenido | Preguntas |
 |---|---|---|
-| Territorio | `gold.v_territorios` | Filtro común: nacional, 17 si-do, Chungnam+Sejong, países, promedio OCDE |
-| Panel | `gold.v_panel_indicadores` | Un registro por año × territorio con todos los indicadores (histórico + proyección media) |
-| Natalidad | `gold.v_natalidad_vs_15_64` | Nacimientos vs quienes llegan a 15-19 |
-| Riesgo, RiesgoSensibilidad | `gold.indicadores_riesgo`, `gold.riesgo_sensibilidad` | Índice por si-do y ranking con otros pesos |
-| Escenarios, EscenariosDetalle, EscenariosSensibilidad, Supuestos | `gold.v_escenarios_resumen` y tablas de escenarios | Fuerza laboral potencial A/B/C |
-| Hitos, Senales | `gold.hitos_escasez`, `gold.v_senales_escasez` | Señales tempranas de escasez |
-| Asociaciones | `gold.asociaciones` | Correlaciones (asociación, no causalidad) |
-| KPIs, Conciliacion | `gold.v_kpis_calidad`, `gold.v_conciliacion` | Calidad del dato |
-| Embudo | `gold.v_embudo_silver` | Filas después de cada paso de bronze -> silver (`ctl.pasos_silver`) |
-| Anio | `gold.v_anios` | Eje común de años: une en un mismo gráfico el histórico (Panel) y el futuro (Escenarios) |
+| Portada | Pregunta central, equipo y acceso a las secciones | — |
+| Resumen | 6 tarjetas y los 14 KPIs del problema con semáforo | 8, 10 |
+| Natalidad | Nacimientos, fecundidad frente al reemplazo, fecundidad por si-do, nacimientos vs defunciones | 1 |
+| Envejecimiento | Pirámide por año (selector), grandes grupos de edad, dependencia de vejez, esperanza de vida | 3 |
+| Fuerza laboral | Población 15-64 en los 8 escenarios de KOSTAT, fuerza laboral potencial A/B/C/D (selector de escenario), reemplazo laboral, participación por edad y sexo | 2, 4, 6, 8 |
+| Regiones | Índice de riesgo por si-do, sus componentes y mapa | 5 |
+| Corea vs OCDE | Fecundidad, 65+ y dependencia frente a 7 países y el promedio OCDE; PIB por hora | 7, 9 |
+| Calidad y OKR | Resultados clave O1-O4, registros válidos, rechazo, conciliación y calidad por dataset | — |
 
-Relaciones: `Territorio[cod_territorio]` filtra `Panel`, `Riesgo`, `RiesgoSensibilidad` y `Senales`;
-`Anio[anio]` filtra `Panel` y `Escenarios`.
+Convención: línea continua = observado o estimado; discontinua = proyección oficial o escenario propio.
 
-Medidas: las de las tarjetas son siempre de Corea (nacional) y no cambian con el filtro de territorio.
-- **Natalidad y población:** `TFR 2025`, `Nacimientos 2000`, `Nacimientos 2025`, `Variación nacimientos 2000-2025`,
-  `Proporción 65+ 2025`, `Dependencia de vejez 2025`.
-- **Mercado laboral y escenarios:** `Población activa 2025`, `Fuerza laboral potencial`, `Población 15-64 KOSTAT`,
-  `Cambio vs población activa 2025`.
-- **Riesgo:** `Índice de riesgo`.
-- **Calidad:** `KPIs cumplidos (texto)` y `Pares dentro de ±3 %`.
+## Cómo se arma
 
-## Páginas: qué va en cada una
+```
+data/gold/powerbi/pbi_*.parquet          capa de servicio: 16 tablas con la forma que necesita cada visual
+        │                                (src/transform/gold/servicio_bi.py, se regenera al final de la capa gold)
+        ▼
+Tablero_ETL_Corea_Grupo6.SemanticModel   modelo TMDL: tablas, relaciones por año y territorio y medidas DAX
+        │                                (src/load/powerbi.py)
+        ▼
+Tablero_ETL_Corea_Grupo6.Report          páginas, visuales, imágenes y tema (PBIR, versionado tal cual)
+```
 
-Convenciones:
-- un solo eje por gráfico;
-- títulos que digan la conclusión;
-- los escenarios A/B/C se rotulan como **escenarios, no pronósticos**.
+Las transformaciones están en Python y quedan auditadas en el repositorio; Power Query solo lee los archivos Parquet.
 
-### 1. Natalidad (preguntas 1 y 2)
-Filtro de página: `Territorio[tipo]` = nacional.
+## Abrir y actualizar
 
-| Visual | Campos |
-|---|---|
-| 3 tarjetas | `TFR 2025`, `Nacimientos 2025`, `Variación nacimientos 2000-2025` |
-| Líneas: TFR 2000-2025 | Eje X `Panel[anio]`; Y `Panel[tfr]`; filtro `Panel[nivel]` = historico |
-| Columnas: nacimientos por año | Eje X `Panel[anio]`; Y `Panel[nacimientos]`; filtro `Panel[nivel]` = historico |
-| Líneas: cohortes | Eje X `Natalidad[anio]`; Y `Natalidad[nacidos_hace_15]` y `Natalidad[pob_15_19]` |
+1. Correr el pipeline (o al menos la capa gold): `python main.py --capa gold`.
+2. Abrir `powerbi/Tablero_ETL_Corea_Grupo6.pbip` con Power BI Desktop.
+3. Si el repositorio está en otra carpeta: **Transformar datos → Editar parámetros → RutaGold** con la ruta de
+   `data\gold\` (terminada en `\`).
+4. **Actualizar**.
 
-### 2. Envejecimiento y regiones (preguntas 3 y 5)
+Para entregar un solo archivo: **Archivo → Guardar como** `.pbix` (queda con los datos incluidos).
 
-| Visual | Campos |
-|---|---|
-| Segmentador | `Territorio[territorio]`, filtrado a `tipo` nacional y sido (selección única, por defecto Corea) |
-| Líneas: envejecimiento 2000-2072 | Eje X `Panel[anio]`; Y `Panel[prop_65mas]`; leyenda `Panel[nivel]` |
-| Líneas: dependencia de vejez | Igual, con `Panel[dependencia_vejez]` |
-| Barras: riesgo por si-do | Eje Y `Territorio[territorio]`; X `Índice de riesgo`; ordenar de mayor a menor. Este visual no lo filtra el segmentador: Formato > Editar interacciones |
-| Matriz: robustez del ranking | Filas `Territorio[territorio]`; columnas `RiesgoSensibilidad[esquema]`; valores `RiesgoSensibilidad[ranking]` (mínimo) |
+Si cambian las columnas de la capa de servicio, regenerar el modelo con `python -m src.load.powerbi` y volver a abrir
+el proyecto. Si solo cambian los datos, basta con **Actualizar**.
 
-### 3. Mercado laboral (preguntas 4 y 7)
-Filtro de página: `Territorio[tipo]` = nacional y `Panel[nivel]` = historico.
+## Versión web
 
-| Visual | Campos |
-|---|---|
-| Tarjeta | `Población activa 2025` |
-| Líneas: población activa y ocupados | Eje X `Panel[anio]`; Y `Panel[pob_activa]`, `Panel[ocupados]` |
-| Líneas: participación | Eje X `Panel[anio]`; Y `Panel[tasa_participacion]` (y en otro visual `Panel[tasa_desempleo]`: no mezclar en un eje) |
-| Tabla: asociaciones | `Asociaciones[variable_x]`, `[variable_y]`, `[corr_niveles]`, `[corr_variaciones]`. Nota en el título: "asociación, no causalidad" |
+```bash
+python dashboard/generar_tablero.py      # dashboard/Tablero_ETL_Corea_Grupo6.html
+```
 
-### 4. Futuro de la fuerza laboral (preguntas 6a, 6b y 8)
-
-| Visual | Campos |
-|---|---|
-| Segmentador | `Escenarios[escenario_kostat]` (selección única, por defecto medio) |
-| Líneas: fuerza laboral potencial | Eje X `Escenarios[anio]`; Y `Fuerza laboral potencial`; leyenda `Escenarios[supuesto]` |
-| Líneas: población 15-64 KOSTAT | Eje X `Escenarios[anio]`; Y `Población 15-64 KOSTAT` (pregunta 6a) |
-| Tarjeta: cambio a 2072 | `Cambio vs población activa 2025`, con filtro `Escenarios[anio]` = 2072 y `id_supuesto` = A |
-| Tabla: hitos | `Hitos[descripcion]`, `[id_supuesto]`, `[anio]`, `[valor]`; filtro `Hitos[escenario_kostat]` = medio |
-| Líneas: relevo generacional | Eje X `Senales[anio]`; Y `Senales[relevo_generacional]`; filtro `Territorio[tipo]` = nacional |
-
-### 5. Comparación OCDE (pregunta 9)
-Filtro de página: `Territorio[tipo]` = nacional, pais, agregado_int y `Panel[anio]` = 2024 (último año con TFR de
-todos los países).
-
-| Visual | Campos |
-|---|---|
-| Barras | Eje Y `Territorio[territorio]`; X `Panel[tfr]` |
-| Barras | Igual con `Panel[prop_65mas]` |
-| Barras | Igual con `Panel[tasa_participacion]` |
-| Barras | Igual con `Panel[pib_hora]` |
-
-Resaltar a Corea con un color distinto: Formato > Barras > Colores > por elemento.
-
-### 6. Calidad del dato (KPIs)
-
-| Visual | Campos |
-|---|---|
-| Tarjetas | `KPIs cumplidos (texto)`, `Pares dentro de ±3 %` |
-| Tabla: KPIs | `KPIs[kpi]`, `[valor]`, `[meta]`, `[cumple]`, `[detalle]`. Formato condicional en `cumple` (icono) |
-| Tabla: conciliación | `Conciliacion[indicador]`, `[fuente_contraste]`, `[anio]`, `[dif_pct]`; filtro `nivel` = historico |
-
-### 7. Presentación
-Los gráficos de las diapositivas, en millones de personas, para exportar (**Archivo > Exportar > Exportar a PDF**):
-- **Embudo de silver** (diapositiva 11);
-- **Fuerza laboral observada + A/B/C** (13): las medidas de la carpeta "Presentación" arrancan los escenarios en el
-  último año observado (2025) para que la línea sea continua;
-- **Población de 15-64 estimada + KOSTAT medio/alto/bajo** (14);
-- **Índice de riesgo por si-do** (15).
+Un solo archivo HTML con Plotly que lee la misma capa de servicio y replica las 8 páginas. Funciona sin conexión y sin
+Power BI: se abre con doble clic en cualquier navegador.

@@ -1,0 +1,157 @@
+columna,tabla,descripcion
+anio,,Año de la observación (frecuencia anual común)
+anio_base,,Año base del cálculo (último año observado: 2025)
+anio_fin,,Último año usado en el cálculo
+anio_inicio,,Primer año usado en el cálculo
+anio_proyeccion,,Año de la proyección KOSTAT usado en el índice (2052)
+archivo,,Archivo crudo en data/bronze/<fuente>/<fecha>/
+capa,,"Capa del pipeline: bronze, silver o gold"
+cod_grupo_edad,,"Código del grupo de edad (p. ej. 0-4, 15-64, 65+, TOTAL)"
+cod_indicador,,Código del indicador (ver silver.dim_indicador)
+cod_kosis,silver.dim_territorio,Código o etiqueta del territorio en KOSIS
+cod_kosis,silver.dim_sexo,Etiqueta del sexo en KOSIS
+cod_kosis_alt,,"Código nuevo tras el cambio de nombre oficial (Gangwon, Jeonbuk)"
+cod_oecd,,Código del sexo en la OCDE
+cod_sexo,,"Código de sexo: T (total), H (hombres), M (mujeres)"
+cod_territorio,,"Código del territorio: 00 nacional, códigos KOSIS de si-do, ISO3 para países (ver silver.dim_territorio)"
+cod_worldbank,,Código del sexo en el Banco Mundial
+corr_niveles,,Correlación de Pearson en niveles (las series con tendencia suelen correlacionar)
+corr_variaciones,,Correlación de Pearson de las variaciones anuales (si se mueven juntas año a año)
+crecimiento_natural,,Nacimientos menos defunciones (personas; negativo desde 2020)
+cumple,,Si el KPI alcanza la meta
+dataset,,Nombre del dataset en config.yaml (o código del indicador WDI)
+definicion,,Definición del indicador
+defunciones,,Defunciones registradas en el año (personas)
+dentro_tolerancia,,Si la diferencia maestra vs contraste está dentro de ±3 %
+dependencia_vejez,,Dependencia de vejez: población 65+ / población 15-64 × 100 (calculada en el pipeline)
+dependencia_vejez_proy,,Dependencia de vejez proyectada por KOSTAT en el año de proyección (escenario medio)
+descripcion,,Descripción en lenguaje natural
+detalle,,Cómo se calculó el KPI (numerador y denominador)
+dif_abs,,Diferencia absoluta: contraste - maestra
+dif_pct,,Diferencia porcentual: (contraste - maestra) / maestra × 100
+edad_max,,Edad máxima del grupo (vacío = grupo abierto)
+edad_min,,Edad mínima del grupo
+edicion_proyeccion,,"Edición de la proyección de KOSTAT (KOSTAT_2022_2072 nacional, KOSTAT_2022_2052 si-do)"
+en_embudo,,Si el paso forma parte del embudo decreciente (filtros antes del primer cálculo)
+es_derivado,,Si el indicador se calcula en el pipeline y no se toma de una fuente
+escenario,silver.fact_proyeccion,"Escenario de KOSTAT: medio, alto, bajo (fecundidad) o sin_migracion, migracion_baja, migracion_alta"
+escenario,gold.v_panel_indicadores,observado (histórico) o el escenario de KOSTAT de la proyección
+escenario,gold.v_proyeccion_escenarios,Escenario de KOSTAT (fecundidad o migración)
+escenario,silver.conciliacion,Escenario de la proyección (NA en el histórico)
+escenario,gold.v_conciliacion,Escenario de la proyección (NA en el histórico)
+escenario_kostat,,Escenario de fecundidad de KOSTAT sobre el que se calcula el supuesto propio
+esperanza_vida,,Esperanza de vida al nacer (años)
+esquema,,"Esquema de sensibilidad del índice de riesgo (pesos y normalización, ver config.yaml)"
+estado,ctl.log_cargas,"Estado de la ejecución: en_curso, exito, fallo u omitido (crudo idéntico al de la última carga)"
+estado,,"preliminar o definitivo, según la publicación de la fuente"
+factor_cobertura,,Población 15+ de la EAPS / población KOSTAT del mismo sexo y grupo en el año base (la EAPS excluye militares y población institucional)
+fecha_extraccion,,Fecha y hora de la extracción (America/Bogota)
+fecha_rechazo,,Fecha y hora del rechazo
+filas,,Filas después del paso
+filas_extraidas,,Filas leídas del crudo
+filas_rechazadas,,Filas enviadas a ctl.rechazos
+filas_validas,,Filas que pasaron las validaciones
+fin,,Fin de la ejecución
+frecuencia_original,,"Frecuencia publicada por la fuente (anual, trimestral o mensual)"
+fuente,,"Fuente del dato (KOSIS, OECD, WB, UNWPP o PIPELINE si es derivado)"
+fuente_contraste,,Fuentes usadas solo para contrastar
+fuente_maestra,,Fuente maestra del indicador
+fuerza_laboral,,Fuerza laboral potencial (personas)
+grupo_edad,,Grupo de edad (ver silver.dim_edad)
+hash_archivo,,sha256 del contenido crudo (detecta descargas idénticas)
+hash_registro,,sha256 del registro (monitoreo de duplicados en bronze)
+hito,,Nombre del hito de escasez laboral
+id_bronze,,Identificador del registro en bronze
+id_carga,,Identificador de la ejecución en ctl.log_cargas que escribió la fila
+id_carga_origen,,Carga bronze de la que viene la fila (vacío si es derivada)
+id_rechazo,,Identificador del rechazo
+id_registro_origen,,Registro de bronze que se rechazó
+id_supuesto,,"Supuesto propio: A constante, B tendencia con tope, C convergencia OCDE, D cierre de brecha de género ('-' si no aplica)"
+indicador,,Nombre legible del indicador
+indice_envejecimiento,,Índice de envejecimiento: población 65+ / población 0-14 × 100 (calculado en el pipeline)
+indice_riesgo,,Índice de riesgo demográfico (0 = menor riesgo y 100 = mayor entre los 17 si-do en min-max; puntaje estándar en z-score)
+inicio,,Inicio de la ejecución
+iso3,,Código ISO3 del país
+kpi,,Nombre del KPI de calidad
+meta,,Meta del KPI
+mensaje_error,,Error técnico si la ejecución falló
+metodo,,"Método de obtención: api, descarga_manual o pipeline"
+n,,Número de años con dato en ambas series
+nacidos_cohorte_15_19,,Nacidos entre t-19 y t-15 (la cohorte que en t tiene 15-19 años)
+nacidos_hace_15,,Nacidos en t-15
+nacimientos,,Nacidos vivos (personas)
+nivel,,"historico (observado) o proyeccion (oficial KOSTAT)"
+nombre,,Nombre legible
+nombre_en,,Nombre en inglés
+nombre_es,,Nombre en español
+nombre_ko,,Nombre en coreano
+observacion,,Notas de homologación del territorio
+ocupados,,Población ocupada de 15+ (personas)
+orden,,Orden de presentación
+orden_tipo,,Orden del tipo de territorio para Power BI
+org_id,,Organismo emisor en KOSIS (101 = KOSTAT)
+parametros,gold.supuestos,Parámetros del supuesto y valores calculados (JSON)
+parametros,ctl.log_cargas,Parámetros de la extracción (JSON)
+params,,"Parámetros de la solicitud o del archivo (JSON: archivo, encoding, formato, dataflow)"
+paso,,Paso del embudo bronze -> silver
+pct_cohorte_presente,,Población 15-19 / nacidos de su cohorte × 100 (supervivencia y migración neta)
+pib_hora,,PIB por hora trabajada (USD PPA constantes; OCDE)
+pib_ocupado,,PIB por persona ocupada (USD PPA constantes)
+pob_0_14,,Población de 0-14 años (personas)
+pob_15_19,,Población de 15-19 años (personas)
+pob_15_64,,Población de 15-64 años (personas)
+pob_65mas,,Población de 65 años y más (personas)
+pob_activa,,Población económicamente activa de 15+ (personas)
+poblacion,,Población proyectada por KOSTAT para el sexo y grupo (personas)
+poblacion_15mas,,Población proyectada de 15+ (personas)
+poblacion_total,,Población total (personas)
+prop_65mas,,Proporción de población de 65+ (%)
+rango_max,,Valor máximo válido (validación de rango)
+rango_min,,Valor mínimo válido (validación de rango)
+ranking,,Puesto en el índice de riesgo (1 = mayor riesgo)
+reemplazo_laboral,,Reemplazo laboral: población 15-24 por cada 100 de 55-64
+registro,,Registro original sin modificar (JSON)
+regla,,"Regla de validación incumplida (nulo, rango, clave_duplicada, territorio_excluido, ...)"
+motivo,,Motivo del rechazo en lenguaje natural
+relevo_generacional,,Relevo generacional: población 15-19 por cada 100 de 60-64
+sexo,,"Sexo: T, H o M (ver silver.dim_sexo)"
+supuesto,,Nombre del supuesto propio
+tabla_origen,,Tabla de bronze de la que viene el registro rechazado
+tasa_desempleo,,Tasa de desempleo 15+ (%)
+tasa_participacion,gold.escenario_fuerza_laboral,Tasa de participación supuesta para ese año (%)
+tasa_participacion,,Tasa de participación 15+ (%)
+tasa_participacion_agregada,,Fuerza laboral / población 15+ × 100 (%)
+tbl_id,,Identificador de la tabla en KOSIS
+territorio,,Nombre del territorio en español
+tfr,,Tasa global de fecundidad (hijos por mujer)
+tiene_preliminares,,Si alguno de los valores de la fila es preliminar
+tipo,silver.dim_territorio,"Tipo de territorio: nacional, sido, agregado, pais o agregado_int"
+tipo,gold.v_territorios,"Tipo de territorio: nacional, sido, agregado, pais o agregado_int"
+tipo,silver.dim_edad,"Tipo de grupo: total, quinquenal, decenal (EAPS) o agregado"
+tipo,ctl.pasos_silver,"filtro (deja pasar o descarta filas) o calculo (agrega filas calculadas)"
+tipo,gold.v_embudo_silver,"filtro (deja pasar o descarta filas) o calculo (agrega filas calculadas)"
+tipo_dato,,"Naturaleza del dato: observado, preliminar, proyeccion_oficial o escenario_propio"
+tipo_territorio,,Tipo de territorio (ver silver.dim_territorio)
+unidad,,Unidad de medida
+url,,URL de la tabla o de la solicitud a la API
+valor,ctl.kpis,Valor del KPI
+valor,gold.hitos_escasez,Valor del indicador en el año del hito (o cambio %)
+valor,,Valor del indicador en la unidad de silver.dim_indicador
+valor_contraste,,Valor de la fuente de contraste
+valor_maestra,,Valor de la fuente maestra
+var_pob_15_64_hist_pct,,Cambio % de la población 15-64 entre 2015 y el año base
+var_pob_15_64_pct,,Cambio % de la población 15-64 respecto al año anterior
+var_pob_15_64_proy_pct,,Cambio % de la población 15-64 entre el año base y el de proyección (KOSTAT medio)
+variable_x,,Primera variable del par
+variable_y,,Segunda variable del par
+variacion,,Filas del paso menos filas del paso anterior (negativo = descartadas)
+variante,,Variante de los parámetros probada en la sensibilidad
+version_modelo,,Versión del modelo de escenarios (config.yaml)
+version_publicacion,,Versión o fecha de publicación de la fuente
+vigente_desde,,Primer año en que existe el territorio
+vigente_hasta,,Último año en que existe el territorio
+registros_evaluados,,Registros del dataset que pasaron por las reglas (válidos + rechazados)
+registros_validos,,Registros del dataset que pasaron todas las reglas
+registros_rechazados,,Registros del dataset enviados a ctl.rechazos
+tasa_validos_pct,,Registros válidos / evaluados × 100
+tasa_rechazo_pct,gold.v_calidad_dataset,Registros rechazados / evaluados × 100

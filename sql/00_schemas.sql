@@ -60,6 +60,18 @@ CREATE TABLE IF NOT EXISTS ctl.pasos_silver (
     descripcion  TEXT     NOT NULL,
     PRIMARY KEY (id_carga, orden)
 );
+-- Calidad por dataset de bronze en cada ejecución de silver: lo que se evaluó, lo que pasó y lo que se rechazó.
+-- (Lo fuera de alcance y los años en que un territorio no existía no se evalúan: no son errores.)
+CREATE TABLE IF NOT EXISTS ctl.calidad_dataset (
+    id_carga              BIGINT  NOT NULL REFERENCES ctl.log_cargas (id_carga),
+    fuente                TEXT    NOT NULL,
+    dataset               TEXT    NOT NULL,
+    registros_evaluados   INTEGER NOT NULL,
+    registros_validos     INTEGER NOT NULL,
+    registros_rechazados  INTEGER NOT NULL,
+    PRIMARY KEY (id_carga, fuente, dataset)
+);
+
 CREATE INDEX IF NOT EXISTS ix_log_dataset ON ctl.log_cargas (capa, fuente, dataset, estado);
 
 -- ---------------------------------------------------------------------
@@ -202,7 +214,8 @@ CREATE TABLE IF NOT EXISTS silver.fact_proyeccion (
     grupo_edad          TEXT     NOT NULL REFERENCES silver.dim_edad (cod_grupo_edad),
     cod_indicador       TEXT     NOT NULL REFERENCES silver.dim_indicador (cod_indicador),
     edicion_proyeccion  TEXT     NOT NULL,   -- p. ej. 'KOSTAT_2022_2072'
-    escenario           TEXT     NOT NULL CHECK (escenario IN ('medio', 'alto', 'bajo')),
+    escenario           TEXT     NOT NULL CHECK (escenario IN ('medio', 'alto', 'bajo', 'migracion_alta', 'migracion_baja',
+                                                          'sin_migracion', 'envejecimiento_rapido', 'envejecimiento_lento')),
     valor               NUMERIC  NOT NULL,
     fuente              TEXT     NOT NULL,
     fecha_extraccion    TIMESTAMPTZ NOT NULL,
@@ -241,9 +254,9 @@ CREATE TABLE IF NOT EXISTS silver.conciliacion (
 -- Las tablas las calcula el pipeline (python main.py --capa gold); las vistas leen silver y gold.
 -- ---------------------------------------------------------------------
 
--- Supuestos de cada escenario propio (A/B/C), versionados.
+-- Supuestos de cada escenario propio (A/B/C/D), versionados.
 CREATE TABLE IF NOT EXISTS gold.supuestos (
-    id_supuesto       TEXT     NOT NULL,          -- A | B | C
+    id_supuesto       TEXT     NOT NULL,          -- A | B | C | D
     version_modelo    TEXT     NOT NULL,
     nombre            TEXT     NOT NULL,
     descripcion       TEXT     NOT NULL,
@@ -256,7 +269,8 @@ CREATE TABLE IF NOT EXISTS gold.supuestos (
 -- Es un ESCENARIO del equipo, no un pronóstico.
 CREATE TABLE IF NOT EXISTS gold.escenario_fuerza_laboral (
     anio               SMALLINT NOT NULL,
-    escenario_kostat   TEXT     NOT NULL CHECK (escenario_kostat IN ('medio', 'alto', 'bajo')),
+    escenario_kostat   TEXT     NOT NULL CHECK (escenario_kostat IN ('medio', 'alto', 'bajo', 'migracion_alta',
+                                   'migracion_baja', 'sin_migracion', 'envejecimiento_rapido', 'envejecimiento_lento')),
     id_supuesto        TEXT     NOT NULL,
     version_modelo     TEXT     NOT NULL,
     sexo               TEXT     NOT NULL REFERENCES silver.dim_sexo (cod_sexo),
@@ -283,6 +297,7 @@ CREATE TABLE IF NOT EXISTS gold.indicadores_riesgo (
     var_pob_15_64_hist_pct    NUMERIC,      -- cambio 2015 -> año base
     var_pob_15_64_proy_pct    NUMERIC,      -- cambio año base -> año proyección (KOSTAT, escenario medio)
     dependencia_vejez_proy    NUMERIC,
+    reemplazo_laboral         NUMERIC,      -- 15-24 por cada 100 de 55-64 en el año base (solo sensibilidad)
     indice_riesgo             NUMERIC  NOT NULL,   -- 0 (menor) a 100 (mayor)
     ranking                   SMALLINT NOT NULL,
     id_carga                  BIGINT   NOT NULL REFERENCES ctl.log_cargas (id_carga)
@@ -326,7 +341,13 @@ SELECT b.nivel, b.escenario, b.anio, b.cod_territorio, t.nombre_es AS territorio
        max(valor) FILTER (WHERE cod_indicador = 'TASA_DESEMPLEO' AND grupo_edad = '15+')         AS tasa_desempleo,
        max(valor) FILTER (WHERE cod_indicador = 'PIB_HORA' AND grupo_edad = 'TOTAL')             AS pib_hora,
        max(valor) FILTER (WHERE cod_indicador = 'PIB_OCUPADO' AND grupo_edad = 'TOTAL')          AS pib_ocupado,
-       bool_or(estado = 'preliminar')                                                   AS tiene_preliminares
+       bool_or(estado = 'preliminar')                                                   AS tiene_preliminares,
+       max(valor) FILTER (WHERE cod_indicador = 'DEFUNCIONES' AND grupo_edad = 'TOTAL')          AS defunciones,
+       max(valor) FILTER (WHERE cod_indicador = 'CRECIMIENTO_NATURAL' AND grupo_edad = 'TOTAL')  AS crecimiento_natural,
+       max(valor) FILTER (WHERE cod_indicador = 'ESPERANZA_VIDA' AND grupo_edad = 'TOTAL')       AS esperanza_vida,
+       -- naturaleza del dato de la fila (para que en Power BI nadie confunda un dato observado con una proyección)
+       CASE WHEN b.nivel = 'proyeccion' THEN 'proyeccion_oficial'
+            WHEN bool_or(estado = 'preliminar') THEN 'preliminar' ELSE 'observado' END   AS tipo_dato
 FROM base b JOIN silver.dim_territorio t USING (cod_territorio)
 WHERE b.sexo = 'T' AND b.grupo_edad IN ('TOTAL', '0-14', '15-64', '65+', '15+')
 GROUP BY b.nivel, b.escenario, b.anio, b.cod_territorio, t.nombre_es, t.tipo;
@@ -336,7 +357,7 @@ CREATE OR REPLACE VIEW gold.v_escenarios_resumen AS
 SELECT e.anio, e.escenario_kostat, e.id_supuesto, s.nombre AS supuesto, e.version_modelo,
        sum(e.fuerza_laboral) AS fuerza_laboral, sum(e.poblacion) AS poblacion_15mas,
        sum(e.fuerza_laboral) / sum(e.poblacion) * 100 AS tasa_participacion_agregada,
-       p.valor AS pob_15_64
+       p.valor AS pob_15_64, 'escenario_propio'::text AS tipo_dato
 FROM gold.escenario_fuerza_laboral e
 JOIN gold.supuestos s USING (id_supuesto, version_modelo)
 LEFT JOIN silver.fact_proyeccion p ON p.anio = e.anio AND p.escenario = e.escenario_kostat AND p.cod_territorio = '00'
@@ -356,9 +377,26 @@ SELECT k.* FROM ctl.kpis k WHERE k.id_carga = (SELECT max(id_carga) FROM ctl.kpi
 CREATE OR REPLACE VIEW gold.v_embudo_silver AS
 SELECT p.* FROM ctl.pasos_silver p WHERE p.id_carga = (SELECT max(id_carga) FROM ctl.pasos_silver);
 
+-- Calidad por dataset de la última ejecución de silver.
+CREATE OR REPLACE VIEW gold.v_calidad_dataset AS
+SELECT c.*, round(c.registros_validos::numeric / nullif(c.registros_evaluados, 0) * 100, 2) AS tasa_validos_pct,
+       round(c.registros_rechazados::numeric / nullif(c.registros_evaluados, 0) * 100, 2) AS tasa_rechazo_pct
+FROM ctl.calidad_dataset c WHERE c.id_carga = (SELECT max(id_carga) FROM ctl.calidad_dataset);
+
 -- Dimensión de años para Power BI: une en un mismo eje el histórico (panel) y el futuro (escenarios).
 CREATE OR REPLACE VIEW gold.v_anios AS
 SELECT DISTINCT anio FROM silver.fact_historico UNION SELECT DISTINCT anio FROM silver.fact_proyeccion;
+
+-- Proyección oficial nacional por escenario de KOSTAT (fecundidad y migración): población 15-64 y 65+, y dependencia.
+CREATE OR REPLACE VIEW gold.v_proyeccion_escenarios AS
+SELECT anio, escenario,
+       max(valor) FILTER (WHERE cod_indicador = 'POBLACION' AND grupo_edad = '15-64')         AS pob_15_64,
+       max(valor) FILTER (WHERE cod_indicador = 'POBLACION' AND grupo_edad = '65+')           AS pob_65mas,
+       max(valor) FILTER (WHERE cod_indicador = 'DEPENDENCIA_VEJEZ' AND grupo_edad = 'TOTAL') AS dependencia_vejez,
+       'proyeccion_oficial'::text                                                            AS tipo_dato
+FROM silver.fact_proyeccion
+WHERE cod_territorio = '00' AND sexo = 'T' AND edicion_proyeccion = 'KOSTAT_2022_2072'
+GROUP BY anio, escenario;
 
 -- Dimensión de territorio para Power BI: filtra a la vez el panel, el riesgo y las señales por si-do.
 CREATE OR REPLACE VIEW gold.v_territorios AS
@@ -401,7 +439,7 @@ CREATE TABLE IF NOT EXISTS gold.riesgo_sensibilidad (
     PRIMARY KEY (cod_territorio, esquema)
 );
 
--- Sensibilidad de los escenarios B y C a sus parámetros (escenario KOSTAT medio, total país).
+-- Sensibilidad de los escenarios B, C y D a sus parámetros (escenario KOSTAT medio, total país).
 CREATE TABLE IF NOT EXISTS gold.escenarios_sensibilidad (
     id_supuesto     TEXT     NOT NULL,
     variante        TEXT     NOT NULL,
@@ -456,13 +494,16 @@ WITH base AS (
            max(valor) FILTER (WHERE cod_indicador = 'POBLACION' AND grupo_edad = '60-64')        AS pob_60_64,
            max(valor) FILTER (WHERE cod_indicador = 'POBLACION' AND grupo_edad = '15-64')        AS pob_15_64,
            max(valor) FILTER (WHERE cod_indicador = 'DEPENDENCIA_VEJEZ' AND grupo_edad = 'TOTAL') AS dependencia_vejez,
-           max(valor) FILTER (WHERE cod_indicador = 'TASA_DESEMPLEO' AND grupo_edad = '15+')      AS tasa_desempleo
+           max(valor) FILTER (WHERE cod_indicador = 'TASA_DESEMPLEO' AND grupo_edad = '15+')      AS tasa_desempleo,
+           sum(valor) FILTER (WHERE cod_indicador = 'POBLACION' AND grupo_edad IN ('15-19', '20-24')) AS pob_15_24,
+           sum(valor) FILTER (WHERE cod_indicador = 'POBLACION' AND grupo_edad IN ('55-59', '60-64')) AS pob_55_64
     FROM base GROUP BY nivel, anio, cod_territorio
 )
 SELECT a.nivel, a.anio, a.cod_territorio, t.nombre_es AS territorio, t.tipo AS tipo_territorio,
        a.pob_15_19 / a.pob_60_64 * 100                                                       AS relevo_generacional,
        a.pob_15_64,
        (a.pob_15_64 / lag(a.pob_15_64) OVER (PARTITION BY a.cod_territorio ORDER BY a.anio) - 1) * 100 AS var_pob_15_64_pct,
-       a.dependencia_vejez, a.tasa_desempleo
+       a.dependencia_vejez, a.tasa_desempleo,
+       a.pob_15_24 / a.pob_55_64 * 100                                                       AS reemplazo_laboral
 FROM ancho a JOIN silver.dim_territorio t USING (cod_territorio)
 WHERE t.tipo IN ('nacional', 'sido', 'agregado') AND a.pob_15_64 IS NOT NULL;

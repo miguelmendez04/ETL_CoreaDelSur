@@ -185,7 +185,7 @@ kosis:
       rol: maestra
       nivel: proyeccion
       edicion_proyeccion: KOSTAT_2022_2072
-      escenarios: [medio, alto, bajo]
+      escenarios: [medio, alto, bajo, migracion_alta, migracion_baja, sin_migracion, envejecimiento_rapido, envejecimiento_lento]
       archivos: [poblacion_nacional, proyeccion_escenarios, proyeccion_resumen]
       # El archivo de escenarios trae 28 variantes y NO incluye el medio puro:
       #   medio -> poblacion_nacional ("중위 추계")
@@ -328,8 +328,14 @@ silver:
   # Ítems de KOSIS que pasan a silver -> indicador y factor de unidad (miles -> personas = 1000).
   # Los demás ítems quedan solo en bronze (fuera del alcance del proyecto).
   items_kosis:
+    vitales_nacional:   # solo lo que no trae la tabla por si-do (la esperanza de vida, por sexo)
+      "Life expectancy at birth-total(age)": {indicador: ESPERANZA_VIDA, sexo: Total}
+      "Life expectancy at birth-male(age)": {indicador: ESPERANZA_VIDA, sexo: Male}
+      "Life expectancy at birth-female(age)": {indicador: ESPERANZA_VIDA, sexo: Female}
     vitales_sido:
       "Live births(persons)": {indicador: NACIMIENTOS}
+      "Deaths(persons)": {indicador: DEFUNCIONES}
+      "Natural increase(persons)": {indicador: CRECIMIENTO_NATURAL}
     tfr_sido:
       "Total Fertility Rate": {indicador: TFR}
     eaps:   # eaps_sido y eaps_sexo_edad
@@ -348,7 +354,8 @@ silver:
                    "65+": ["65-69", "70-74", "75-79", "80-84", "85+"]}
   # Agregado territorial Chungnam + Sejong (antes de que Sejong exista, Chungnam ya lo incluye).
   agregado_cnsj: {codigo: CNSJ, componentes: ["34", "29"],
-                  indicadores_suma: [POBLACION, NACIMIENTOS, POB_15MAS, POB_ACTIVA, OCUPADOS]}
+                  indicadores_suma: [POBLACION, NACIMIENTOS, DEFUNCIONES, CRECIMIENTO_NATURAL, POB_15MAS, POB_ACTIVA,
+                                     OCUPADOS]}
   ediciones:
     kosis_nacional: KOSTAT_2022_2072
     kosis_sido: KOSTAT_2022_2052
@@ -370,11 +377,14 @@ silver:
 gold:
   # Los parámetros de esta sección son decisiones metodológicas del equipo, no datos de una fuente. Su
   # justificación y sensibilidad están en el README ("Supuestos del modelo"). Si se cambia alguno, subir version_modelo.
-  version_modelo: v1
+  version_modelo: v2   # v2: se agrega el supuesto D (brecha de género)
   # Pregunta 6b: fuerza laboral potencial = población proyectada KOSTAT (edición nacional, 3 escenarios)
   #              × tasa de participación por sexo y grupo de edad de la EAPS. Son ESCENARIOS, no pronósticos.
   escenarios_fuerza_laboral:
     anio_base: 2025
+    # Escenarios de KOSTAT sobre los que se calculan los supuestos (el tablero permite elegir cualquiera de ellos).
+    escenarios_kostat: [medio, alto, bajo, migracion_alta, migracion_baja, sin_migracion, envejecimiento_rapido,
+                        envejecimiento_lento]
     # La EAPS cubre la población civil no institucional (sin militares ni personas en instituciones), menor que la
     # población total de KOSTAT. Factor por sexo y grupo = pob 15+ EAPS / pob KOSTAT en el año base; sin él la
     # fuerza laboral del año base queda ~1.5 % sobre la observada.
@@ -408,10 +418,19 @@ gold:
         # Grupo EAPS -> pesos sobre las edades que publica la OCDE (DSD_LFS@DF_IALFS_LF_WAP_Q).
         equivalencias_oecd: {"20-29": {Y15T24: 0.5, Y25T54: 0.5}, "30-39": {Y25T54: 1},
                              "40-49": {Y25T54: 1}, "50-59": {Y25T54: 0.5, Y55T64: 0.5}}
+      D:
+        nombre: Cierre de la mitad de la brecha de género
+        descripcion: >
+          La tasa femenina de cada grupo de edad cierra linealmente una fracción de su brecha con la masculina entre
+          el año base y el año meta, y luego se mantiene; la masculina queda constante (como en A). Donde las
+          mujeres ya participan más (15-29), la tasa no se toca: cerrar la brecha nunca baja una tasa.
+        fraccion_cierre: 0.5
+        anio_meta: 2050
     # Sensibilidad: cada variante reemplaza parámetros de un supuesto (resultado en gold.escenarios_sensibilidad).
     sensibilidad:
       B: [{cambio_maximo_pp: 10}, {cambio_maximo_pp: 20}, {congelar_desde: 2040}, {congelar_desde: 2060}]
       C: [{anio_convergencia: 2040}, {anio_convergencia: 2060}]
+      D: [{fraccion_cierre: 0.25}, {fraccion_cierre: 1.0}]
   # Pregunta 5: índice de riesgo demográfico por si-do (descriptivo, no causal). Cada componente se normaliza
   # 0-100 entre los 17 si-do (100 = más riesgo) y se promedia con su peso.
   riesgo_sido:
@@ -428,6 +447,15 @@ gold:
       solo_proyeccion: {var_pob_15_64_proy_pct: 0.5, dependencia_vejez_proy: 0.5}
       envejecimiento_doble: {prop_65mas: 0.4, tfr: 0.2, var_pob_15_64_proy_pct: 0.2, dependencia_vejez_proy: 0.2}
       natalidad_doble: {prop_65mas: 0.2, tfr: 0.4, var_pob_15_64_proy_pct: 0.2, dependencia_vejez_proy: 0.2}
+      # Índice alternativo de 6 componentes estandarizados (z) con igual peso, como el que propuso el equipo en la
+      # versión paralela del proyecto: agrega dependencia y participación actuales y el reemplazo laboral.
+      seis_componentes_z: {prop_65mas: 1, tfr: 1, dependencia_vejez: 1, tasa_participacion: 1, reemplazo_laboral: 1,
+                           var_pob_15_64_proy_pct: 1, normalizacion: zscore}
+    # Dirección de los componentes que solo usan los esquemas de sensibilidad.
+    componentes_extra:
+      dependencia_vejez: {mas_es_peor: true}
+      tasa_participacion: {mas_es_peor: false}
+      reemplazo_laboral: {mas_es_peor: false}   # 15-24 por cada 100 de 55-64 en el año base
     # Y con pesos base pero otra normalización: percentil no depende de valores extremos (Sejong crece +11 % en 15-64
     # mientras el resto cae; en min-max eso comprime la escala de los otros 16 si-do).
     normalizaciones_sensibilidad: [percentil]
@@ -436,6 +464,9 @@ gold:
   senales_escasez:
     umbrales_dependencia: [50, 75]          # personas de 65+ por cada 100 de 15-64
     anios_comparacion: [2030, 2040, 2050, 2072]
+    # Migración como palanca: cambio de la población 15-64 al año dado en cada escenario de migración de KOSTAT.
+    escenarios_migracion: [medio, sin_migracion, migracion_baja, migracion_alta]
+    anio_migracion: 2050
 
   # Pregunta 7: pares de indicadores (Corea, 2000-2025) cuya asociación se mide. Asociación, no causalidad.
   asociaciones:

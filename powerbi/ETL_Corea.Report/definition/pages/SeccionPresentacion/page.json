@@ -1,8 +1,0 @@
-{
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
-  "name": "SeccionPresentacion",
-  "displayName": "Presentación",
-  "displayOption": "FitToPage",
-  "height": 880,
-  "width": 1280
-}

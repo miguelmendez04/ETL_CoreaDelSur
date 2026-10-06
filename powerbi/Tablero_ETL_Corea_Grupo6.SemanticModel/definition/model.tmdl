@@ -1,0 +1,30 @@
+model Model
+	culture: es-ES
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	discourageImplicitMeasures
+	sourceQueryCulture: es-CO
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["RutaGold", "pbi_nacional", "pbi_kpi", "pbi_escenarios", "pbi_flp", "pbi_piramide", "pbi_participacion", "pbi_riesgo", "pbi_regional", "pbi_internacional", "pbi_calidad", "pbi_conciliacion", "pbi_okr", "pbi_anio_sel", "pbi_anios", "pbi_escenario_sel", "pbi_territorio"]
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+ref table pbi_nacional
+ref table pbi_kpi
+ref table pbi_escenarios
+ref table pbi_flp
+ref table pbi_piramide
+ref table pbi_participacion
+ref table pbi_riesgo
+ref table pbi_regional
+ref table pbi_internacional
+ref table pbi_calidad
+ref table pbi_conciliacion
+ref table pbi_okr
+ref table pbi_anio_sel
+ref table pbi_anios
+ref table pbi_escenario_sel
+ref table pbi_territorio
+

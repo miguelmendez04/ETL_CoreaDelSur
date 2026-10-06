@@ -1,0 +1,21 @@
+table pbi_anio_sel
+	lineageTag: 9a48b48b-205f-4a01-99e9-a7d7dafffcae
+
+	column anio_piramide
+		dataType: int64
+		formatString: 0
+		lineageTag: 7b499838-b277-40da-94ac-c6a107e3b2b9
+		summarizeBy: none
+		sourceColumn: anio_piramide
+
+		annotation SummarizationSetBy = User
+
+	partition pbi_anio_sel = m
+		mode: import
+		source =
+				let
+					Fuente = Parquet.Document(File.Contents(RutaGold & "powerbi\pbi_anio_sel.parquet"))
+				in
+					Fuente
+
+	annotation PBI_ResultType = Table

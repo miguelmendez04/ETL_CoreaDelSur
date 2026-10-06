@@ -1,0 +1,93 @@
+table pbi_piramide
+	lineageTag: 87e35293-4dec-4de7-8b9c-573b1d5fa26e
+
+	/// % de la población total del año (se grafica a la izquierda)
+	measure 'Hombres (%)' = VAR a = SELECTEDVALUE(pbi_anio_sel[anio_piramide], 2025) RETURN -CALCULATE(SUM(pbi_piramide[pct]), pbi_piramide[sexo] = "Hombres", pbi_piramide[anio] = a)
+		formatString: 0.0;0.0
+		lineageTag: 52ead66f-4591-4efd-9a9f-d77d52738175
+
+	measure 'Mujeres (%)' = VAR a = SELECTEDVALUE(pbi_anio_sel[anio_piramide], 2025) RETURN CALCULATE(SUM(pbi_piramide[pct]), pbi_piramide[sexo] = "Mujeres", pbi_piramide[anio] = a)
+		formatString: 0.0
+		lineageTag: b0e6fff4-a21f-42c6-89a7-f9327b8ee679
+
+	measure 'Año de la pirámide' = VAR a = SELECTEDVALUE(pbi_anio_sel[anio_piramide], 2025) RETURN a & IF(a <= 2022, " · estimada", " · proyección KOSTAT medio")
+		lineageTag: 2a2075de-ae09-4c7d-9f6c-093f69e7896e
+
+	column anio
+		dataType: int64
+		formatString: 0
+		lineageTag: 60395973-1984-402a-84ec-104a9c1da59f
+		summarizeBy: none
+		sourceColumn: anio
+
+		annotation SummarizationSetBy = User
+
+	column cod_edad
+		dataType: string
+		lineageTag: 1e25f050-e207-470f-9d62-96b0a3bbdd60
+		summarizeBy: none
+		sourceColumn: cod_edad
+
+		annotation SummarizationSetBy = User
+
+	column poblacion
+		dataType: double
+		formatString: 0.00
+		lineageTag: 1a28fec4-77b7-4fdd-bc50-f903c6dae296
+		summarizeBy: none
+		sourceColumn: poblacion
+
+		annotation SummarizationSetBy = User
+
+	column edad
+		dataType: string
+		lineageTag: 6d754f69-2095-4762-8f3b-ab339090a301
+		summarizeBy: none
+		sourceColumn: edad
+		sortByColumn: orden
+
+		annotation SummarizationSetBy = User
+
+	column orden
+		dataType: int64
+		formatString: 0
+		lineageTag: b5d56836-cef4-47fd-a17e-dbf6b47b33e3
+		summarizeBy: none
+		sourceColumn: orden
+
+		annotation SummarizationSetBy = User
+
+	column pct
+		dataType: double
+		formatString: 0.00
+		lineageTag: c17fcb11-fdd0-4bdb-a595-b4a5b757fc36
+		summarizeBy: none
+		sourceColumn: pct
+
+		annotation SummarizationSetBy = User
+
+	column sexo
+		dataType: string
+		lineageTag: 1e8ac0b4-7eee-4296-b674-95e46f92e4d7
+		summarizeBy: none
+		sourceColumn: sexo
+
+		annotation SummarizationSetBy = User
+
+	column grupo
+		dataType: string
+		lineageTag: f768d092-807b-40dc-8f14-24625ed068dd
+		summarizeBy: none
+		sourceColumn: grupo
+
+		annotation SummarizationSetBy = User
+
+	partition pbi_piramide = m
+		mode: import
+		source =
+				let
+					Fuente = Parquet.Document(File.Contents(RutaGold & "powerbi\pbi_piramide.parquet"))
+				in
+					Fuente
+
+	annotation PBI_ResultType = Table

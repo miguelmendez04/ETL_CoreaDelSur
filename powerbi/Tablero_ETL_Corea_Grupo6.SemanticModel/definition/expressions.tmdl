@@ -1,0 +1,6 @@
+/// Carpeta de la capa gold del repositorio (termina en \). Cambiarla en Transformar datos > Parámetros.
+expression RutaGold = "C:\Documentos\Maestria\ETL\ProyectoETL\data\gold\" meta [IsParameterQuery = true, Type = "Text", IsParameterQueryRequired = true]
+	lineageTag: 24461ae6-7a6e-4a45-b7c1-7469df0d0594
+
+	annotation PBI_ResultType = Text
+

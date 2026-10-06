@@ -1,0 +1,64 @@
+table pbi_participacion
+	lineageTag: 07eb4300-6e3c-4f19-b0b5-e18f64e90a04
+
+	measure 'Participación 2025' = CALCULATE(AVERAGE(pbi_participacion[tasa]), pbi_participacion[anio] = 2025)
+		formatString: 0.0
+		lineageTag: 058193c7-f7fe-4b9e-bdda-964b98655453
+
+	measure 'Participación mujeres' = CALCULATE(AVERAGE(pbi_participacion[tasa]), pbi_participacion[sexo] = "Mujeres")
+		formatString: 0.0
+		lineageTag: d571797b-1db6-455b-8d8e-d5882da1cf84
+
+	column anio
+		dataType: int64
+		formatString: 0
+		lineageTag: 7ee1b34c-f70b-4a4f-8f14-7b4cdbf0147e
+		summarizeBy: none
+		sourceColumn: anio
+
+		annotation SummarizationSetBy = User
+
+	column tasa
+		dataType: double
+		formatString: 0.00
+		lineageTag: 09de99c2-38f3-4c62-882a-114d4154c84c
+		summarizeBy: none
+		sourceColumn: tasa
+
+		annotation SummarizationSetBy = User
+
+	column sexo
+		dataType: string
+		lineageTag: c579f865-701a-4683-9df6-adf819c9c048
+		summarizeBy: none
+		sourceColumn: sexo
+
+		annotation SummarizationSetBy = User
+
+	column edad
+		dataType: string
+		lineageTag: efe7fc53-50e9-4052-92be-0c0f20b12214
+		summarizeBy: none
+		sourceColumn: edad
+		sortByColumn: orden
+
+		annotation SummarizationSetBy = User
+
+	column orden
+		dataType: int64
+		formatString: 0
+		lineageTag: 8a9e38b1-2d05-4ea1-b29b-7006ede13366
+		summarizeBy: none
+		sourceColumn: orden
+
+		annotation SummarizationSetBy = User
+
+	partition pbi_participacion = m
+		mode: import
+		source =
+				let
+					Fuente = Parquet.Document(File.Contents(RutaGold & "powerbi\pbi_participacion.parquet"))
+				in
+					Fuente
+
+	annotation PBI_ResultType = Table

@@ -1,0 +1,30 @@
+table pbi_escenario_sel
+	lineageTag: 1f5857e5-75ce-4d40-a373-91292115c0d3
+
+	column escenario
+		dataType: string
+		lineageTag: c6df1240-7f3f-4689-9ea9-1448267e57d8
+		summarizeBy: none
+		sourceColumn: escenario
+		sortByColumn: orden
+
+		annotation SummarizationSetBy = User
+
+	column orden
+		dataType: int64
+		formatString: 0
+		lineageTag: 3443b13a-2533-414b-9639-10c1684f80b0
+		summarizeBy: none
+		sourceColumn: orden
+
+		annotation SummarizationSetBy = User
+
+	partition pbi_escenario_sel = m
+		mode: import
+		source =
+				let
+					Fuente = Parquet.Document(File.Contents(RutaGold & "powerbi\pbi_escenario_sel.parquet"))
+				in
+					Fuente
+
+	annotation PBI_ResultType = Table

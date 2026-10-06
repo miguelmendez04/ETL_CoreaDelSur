@@ -1,0 +1,119 @@
+/// Índice de riesgo demográfico por si-do (inferencia propia, 4 componentes con igual peso).
+table pbi_riesgo
+	lineageTag: 76fbb344-de63-445e-a6a7-c3b5690eef82
+
+	/// Inferencia propia: 4 componentes normalizados 0-100 con igual peso (100 = mayor riesgo)
+	measure 'Índice de riesgo' = AVERAGE(pbi_riesgo[indice_riesgo])
+		formatString: 0.0
+		lineageTag: 0a4a1d52-dd84-46d9-9d4e-b4cfe34d011c
+
+	measure 'Si-do en riesgo alto' = CALCULATE(COUNTROWS(pbi_riesgo), pbi_riesgo[nivel_riesgo] = "Alto")
+		formatString: 0
+		lineageTag: c49a7f09-088e-41b4-8d01-e8880839a078
+
+	column cod_territorio
+		dataType: string
+		lineageTag: 1cbe5668-9e3b-4baa-9d6f-109b52d6420d
+		summarizeBy: none
+		sourceColumn: cod_territorio
+
+		annotation SummarizationSetBy = User
+
+	column tfr
+		dataType: double
+		formatString: 0.00
+		lineageTag: cc3eee60-5289-4850-8288-89d7c17ba574
+		summarizeBy: none
+		sourceColumn: tfr
+
+		annotation SummarizationSetBy = User
+
+	column prop_65mas
+		dataType: double
+		formatString: 0.00
+		lineageTag: 1f05a5a3-3f9a-4448-b235-73b0c06debf6
+		summarizeBy: none
+		sourceColumn: prop_65mas
+
+		annotation SummarizationSetBy = User
+
+	column dep_vejez
+		dataType: double
+		formatString: 0.00
+		lineageTag: b925350d-07ba-4be3-9260-3753bfa5be44
+		summarizeBy: none
+		sourceColumn: dep_vejez
+
+		annotation SummarizationSetBy = User
+
+	column tasa_participacion
+		dataType: double
+		formatString: 0.00
+		lineageTag: 44d8eca4-37ed-4345-86c4-a6e48164d60b
+		summarizeBy: none
+		sourceColumn: tasa_participacion
+
+		annotation SummarizationSetBy = User
+
+	column ind_reemplazo_laboral
+		dataType: double
+		formatString: 0.00
+		lineageTag: b9b8b614-1f9a-4ca0-a1d2-63ca24c5925d
+		summarizeBy: none
+		sourceColumn: ind_reemplazo_laboral
+
+		annotation SummarizationSetBy = User
+
+	column var_pob_15_64_2052_pct
+		dataType: double
+		formatString: 0.00
+		lineageTag: fe3d75a2-86a9-4b95-a317-5fa06521c881
+		summarizeBy: none
+		sourceColumn: var_pob_15_64_2052_pct
+
+		annotation SummarizationSetBy = User
+
+	column var_nacimientos_10a_pct
+		dataType: double
+		formatString: 0.00
+		lineageTag: 5fa5752c-11b9-413c-b1cb-8b23611238ee
+		summarizeBy: none
+		sourceColumn: var_nacimientos_10a_pct
+
+		annotation SummarizationSetBy = User
+
+	column indice_riesgo
+		dataType: double
+		formatString: 0.00
+		lineageTag: da9299a7-8569-4a7c-bc52-11df2cfcb869
+		summarizeBy: none
+		sourceColumn: indice_riesgo
+
+		annotation SummarizationSetBy = User
+
+	column ranking_riesgo
+		dataType: int64
+		formatString: 0
+		lineageTag: 2780bad0-2046-49a8-90ff-64013c222532
+		summarizeBy: none
+		sourceColumn: ranking_riesgo
+
+		annotation SummarizationSetBy = User
+
+	column nivel_riesgo
+		dataType: string
+		lineageTag: 673b9d2a-41cb-4d4a-8080-f82a88dda4d6
+		summarizeBy: none
+		sourceColumn: nivel_riesgo
+
+		annotation SummarizationSetBy = User
+
+	partition pbi_riesgo = m
+		mode: import
+		source =
+				let
+					Fuente = Parquet.Document(File.Contents(RutaGold & "powerbi\pbi_riesgo.parquet"))
+				in
+					Fuente
+
+	annotation PBI_ResultType = Table

@@ -1,5 +1,6 @@
 """Capa gold: desde silver calcula escenarios de fuerza laboral (6b), riesgo por si-do (5), asociaciones (7),
-señales de escasez (8), sensibilidades y KPIs de calidad. Escribe en gold.* / ctl.kpis y exporta data/gold/.
+señales de escasez (8), sensibilidades y KPIs de calidad. Escribe en gold.* / ctl.kpis, exporta data/gold/ y la
+capa de servicio del tablero (data/gold/powerbi/pbi_*.parquet, servicio_bi.py).
 
 Las vistas para Power BI (gold.v_*) están en sql/00_schemas.sql y leen silver y gold, así que se actualizan solas.
 """
@@ -11,7 +12,7 @@ import pandas as pd
 from src.load import archivos, ctl
 from src.load import gold as carga
 from src.quality import kpis
-from src.transform.gold import analisis, escenarios, riesgo
+from src.transform.gold import analisis, escenarios, riesgo, servicio_bi
 from src.utils.config import cargar_config
 from src.utils.db import conectar
 
@@ -76,6 +77,8 @@ def ejecutar_gold() -> pd.DataFrame:
         ctl.cerrar_carga(conn, ids["ctl.kpis"], "exito", len(k), len(k), 0)
 
         m = archivos.exportar(conn, "gold", carga.TABLAS + carga.VISTAS, ids, csv=True)   # v_kpis_calidad = KPIs de esta corrida
+        destino = servicio_bi.escribir(servicio_bi.construir(conn))
+        log.info("Capa de servicio del tablero: %s", destino)
         _resumen(datos, dims, k)
         log.info("Gold listo (%.1fs). Archivos: %s (%d archivos)", time.perf_counter() - inicio,
                  m["archivos"][0]["archivo"].rsplit("/", 1)[0], len(m["archivos"]))

@@ -64,6 +64,18 @@ def _kosis_doble(ds: DatasetBronze, dims: dict[str, str], items: dict) -> pd.Dat
     return largo.rename(columns=dims)
 
 
+def kosis_vitales_nacional(ds: DatasetBronze, cfg: dict) -> pd.DataFrame:
+    """Ítems nacionales que no trae la tabla por si-do (esperanza de vida). Cada ítem lleva su indicador y su sexo."""
+    items = cfg["silver"]["items_kosis"]["vitales_nacional"]
+    df = _kosis_ancho(ds, {"By items": "item"})
+    df = df[df["item"].isin(items)].copy()
+    df["cod_indicador"] = df["item"].map(lambda i: items[i]["indicador"])
+    df["sexo_src"] = df["item"].map(lambda i: items[i].get("sexo", "Total"))
+    df["factor"] = df["item"].map(lambda i: items[i].get("factor", 1))
+    return _completar(df.drop(columns="item"), nivel="historico", territorio_src="Whole country", edad_src="Total",
+                      **_base(ds, "bronze.kosis", _version_kosis(ds)))
+
+
 def kosis_vitales_sido(ds: DatasetBronze, cfg: dict) -> pd.DataFrame:
     df = _kosis_doble(ds, {"By administrative divisions": "territorio_src"}, cfg["silver"]["items_kosis"]["vitales_sido"])
     return _completar(df, nivel="historico", sexo_src="Total", edad_src="Total", **_base(ds, "bronze.kosis", _version_kosis(ds)))
@@ -113,7 +125,7 @@ def kosis_poblacion_sido(ds: DatasetBronze, cfg: dict) -> pd.DataFrame:
 
 
 def kosis_proyeccion_escenarios(ds: DatasetBronze, cfg: dict) -> pd.DataFrame:
-    """Escenarios alto y bajo (el medio sale de la tabla nacional). Solo años de proyección."""
+    """Escenarios de fecundidad (alto, bajo) y de migración (el medio sale de la tabla nacional). Solo años de proyección."""
     df = _kosis_ancho(ds, {"시나리오별": "escenario_src", "성별": "sexo_src", "연령별": "edad_src"})
     df = _poblacion(df, cfg, cfg["silver"]["ediciones"]["kosis_nacional"])
     df = df[df["nivel"] == "proyeccion"]

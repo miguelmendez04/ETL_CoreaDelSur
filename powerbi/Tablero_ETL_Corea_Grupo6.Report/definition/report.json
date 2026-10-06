@@ -1,0 +1,122 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/report/1.3.0/schema.json",
+  "themeCollection": {
+    "baseTheme": {
+      "name": "CY24SU10",
+      "reportVersionAtImport": "5.61",
+      "type": "SharedResources"
+    },
+    "customTheme": {
+      "name": "TemaUAOCorea.json",
+      "reportVersionAtImport": "5.61",
+      "type": "RegisteredResources"
+    }
+  },
+  "layoutOptimization": "None",
+  "resourcePackages": [
+    {
+      "name": "SharedResources",
+      "type": "SharedResources",
+      "items": [
+        {
+          "name": "CY24SU10",
+          "path": "BaseThemes/CY24SU10.json",
+          "type": "BaseTheme"
+        }
+      ]
+    },
+    {
+      "name": "RegisteredResources",
+      "type": "RegisteredResources",
+      "items": [
+        {
+          "name": "TemaUAOCorea.json",
+          "path": "TemaUAOCorea.json",
+          "type": "CustomTheme"
+        },
+        {
+          "name": "bandera_coreadelsur.png",
+          "path": "bandera_coreadelsur.png",
+          "type": "Image"
+        },
+        {
+          "name": "barras_azul.png",
+          "path": "barras_azul.png",
+          "type": "Image"
+        },
+        {
+          "name": "bebe_azul.png",
+          "path": "bebe_azul.png",
+          "type": "Image"
+        },
+        {
+          "name": "check_azul.png",
+          "path": "check_azul.png",
+          "type": "Image"
+        },
+        {
+          "name": "familia.jpg",
+          "path": "familia.jpg",
+          "type": "Image"
+        },
+        {
+          "name": "fondo3.jpg",
+          "path": "fondo3.jpg",
+          "type": "Image"
+        },
+        {
+          "name": "globo_azul.png",
+          "path": "globo_azul.png",
+          "type": "Image"
+        },
+        {
+          "name": "logo_uao2_blanco.png",
+          "path": "logo_uao2_blanco.png",
+          "type": "Image"
+        },
+        {
+          "name": "madre_bebe.jpg",
+          "path": "madre_bebe.jpg",
+          "type": "Image"
+        },
+        {
+          "name": "maletin_azul.png",
+          "path": "maletin_azul.png",
+          "type": "Image"
+        },
+        {
+          "name": "mapa_azul.png",
+          "path": "mapa_azul.png",
+          "type": "Image"
+        },
+        {
+          "name": "mapa_corea.png",
+          "path": "mapa_corea.png",
+          "type": "Image"
+        },
+        {
+          "name": "mayor_azul.png",
+          "path": "mayor_azul.png",
+          "type": "Image"
+        },
+        {
+          "name": "trabajadores.jpg",
+          "path": "trabajadores.jpg",
+          "type": "Image"
+        },
+        {
+          "name": "trabajadores_seul.jpg",
+          "path": "trabajadores_seul.jpg",
+          "type": "Image"
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "useStylableVisualContainerHeader": true,
+    "exportDataMode": "AllowSummarized",
+    "defaultDrillFilterOtherVisuals": true,
+    "allowChangeFilterTypes": true,
+    "useEnhancedTooltips": true
+  }
+}

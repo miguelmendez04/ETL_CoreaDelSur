@@ -1,0 +1,32 @@
+relationship 2f376a34-f719-4f97-b9a7-7b2d8c51c308
+	fromColumn: pbi_nacional.anio
+	toColumn: pbi_anios.anio
+
+relationship 87812f65-ae60-40fb-bc35-37c049d22fdc
+	fromColumn: pbi_escenarios.anio
+	toColumn: pbi_anios.anio
+
+relationship 3872273a-a255-4ee0-80f2-5cfc0ae0d264
+	fromColumn: pbi_flp.anio
+	toColumn: pbi_anios.anio
+
+relationship 5ad2b589-b2dd-403a-9949-32de07760fcf
+	fromColumn: pbi_internacional.anio
+	toColumn: pbi_anios.anio
+
+relationship 20ffc2ac-7fa1-467f-b9cb-dc43c617f9c9
+	fromColumn: pbi_participacion.anio
+	toColumn: pbi_anios.anio
+
+relationship 8b518e60-b15e-42e8-abfb-43494d9bdece
+	fromColumn: pbi_regional.anio
+	toColumn: pbi_anios.anio
+
+relationship d52047c7-74dc-4c68-bb81-d55b1322a739
+	fromColumn: pbi_riesgo.cod_territorio
+	toColumn: pbi_territorio.cod_territorio
+
+relationship b29038a7-f1c1-4067-8326-43adc6752dc2
+	fromColumn: pbi_regional.cod_territorio
+	toColumn: pbi_territorio.cod_territorio
+

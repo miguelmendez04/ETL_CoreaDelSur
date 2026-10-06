@@ -1,0 +1,204 @@
+table pbi_kpi
+	lineageTag: 30215022-1158-4b88-b19d-595dcc458bea
+
+	/// Fecundidad (hijos por mujer)
+	measure 'KPI KPI-01' = CALCULATE(MAX(pbi_kpi[valor]), pbi_kpi[codigo] = "KPI-01")
+		formatString: 0.00
+		lineageTag: c5735268-4ca3-484a-8695-009ed32d25c3
+
+	/// Nacimientos vs 2000
+	measure 'KPI KPI-02' = CALCULATE(MAX(pbi_kpi[valor]), pbi_kpi[codigo] = "KPI-02")
+		formatString: 0.0" %"
+		lineageTag: 163ecbcb-f645-4b1e-aec6-582b4ccb618a
+
+	/// Crecimiento natural
+	measure 'KPI KPI-03' = CALCULATE(MAX(pbi_kpi[valor]), pbi_kpi[codigo] = "KPI-03")
+		formatString: #,0
+		lineageTag: cb38ce8e-fabe-488c-bc5f-9b60d42206ac
+
+	/// Esperanza de vida
+	measure 'KPI KPI-04' = CALCULATE(MAX(pbi_kpi[valor]), pbi_kpi[codigo] = "KPI-04")
+		formatString: 0.0
+		lineageTag: 570aca17-871e-4cbe-b353-10181f47ef10
+
+	/// Población 65+
+	measure 'KPI KPI-05' = CALCULATE(MAX(pbi_kpi[valor]), pbi_kpi[codigo] = "KPI-05")
+		formatString: 0.0" %"
+		lineageTag: b8293b77-34a1-4df0-a32b-481b04d6a93b
+
+	/// Dependencia de vejez 2025
+	measure 'KPI KPI-06' = CALCULATE(MAX(pbi_kpi[valor]), pbi_kpi[codigo] = "KPI-06")
+		formatString: 0.0
+		lineageTag: 8a9f9e2e-0c57-46a1-bdf9-545ed192649a
+
+	/// Población 15-64 a 2050
+	measure 'KPI KPI-07' = CALCULATE(MAX(pbi_kpi[valor]), pbi_kpi[codigo] = "KPI-07")
+		formatString: 0.0" %"
+		lineageTag: 0559891c-ae17-4d5e-9c5e-5091fd4af0a3
+
+	/// Reemplazo laboral
+	measure 'KPI KPI-08' = CALCULATE(MAX(pbi_kpi[valor]), pbi_kpi[codigo] = "KPI-08")
+		formatString: 0
+		lineageTag: 97a22910-050d-4fe7-aad3-80b8fec3a40e
+
+	/// Participación 15+
+	measure 'KPI KPI-09' = CALCULATE(MAX(pbi_kpi[valor]), pbi_kpi[codigo] = "KPI-09")
+		formatString: 0.0" %"
+		lineageTag: 81e2cea8-525f-48fa-a3f4-839441fdf4a9
+
+	/// Brecha de género
+	measure 'KPI KPI-10' = CALCULATE(MAX(pbi_kpi[valor]), pbi_kpi[codigo] = "KPI-10")
+		formatString: 0.0" pp"
+		lineageTag: 2487ece0-2ef3-44f9-b88a-f0f4940e8b59
+
+	/// Fuerza laboral potencial a 2050
+	measure 'KPI KPI-11' = CALCULATE(MAX(pbi_kpi[valor]), pbi_kpi[codigo] = "KPI-11")
+		formatString: 0.0" %"
+		lineageTag: 42dc1ffe-0bd1-4cc5-ad4b-023b2941742c
+
+	/// Si-do en riesgo alto
+	measure 'KPI KPI-12' = CALCULATE(MAX(pbi_kpi[valor]), pbi_kpi[codigo] = "KPI-12")
+		formatString: 0
+		lineageTag: 5ea43851-b4da-487e-9dfe-8194cba4ebb3
+
+	/// Efecto de la migración en la población 15-64 a 2050
+	measure 'KPI KPI-13' = CALCULATE(MAX(pbi_kpi[valor]), pbi_kpi[codigo] = "KPI-13")
+		formatString: 0.0" pp"
+		lineageTag: adabb4be-03d3-4b75-a2ca-507a4ab3bf56
+
+	/// PIB por hora
+	measure 'KPI KPI-14' = CALCULATE(MAX(pbi_kpi[valor]), pbi_kpi[codigo] = "KPI-14")
+		formatString: 0.0
+		lineageTag: b5a7b5cb-e8d0-425f-910b-f2f825496ebc
+
+	column codigo
+		dataType: string
+		lineageTag: 93b3ea7c-b91e-4a86-a068-03fe0a42eec5
+		summarizeBy: none
+		sourceColumn: codigo
+
+		annotation SummarizationSetBy = User
+
+	column eje
+		dataType: string
+		lineageTag: 19278f0b-4d43-465c-89f2-4f93033a5db1
+		summarizeBy: none
+		sourceColumn: eje
+
+		annotation SummarizationSetBy = User
+
+	column indicador
+		dataType: string
+		lineageTag: e7045746-73d5-46e4-9afd-67e4a6c7e7f0
+		summarizeBy: none
+		sourceColumn: indicador
+
+		annotation SummarizationSetBy = User
+
+	column formula
+		dataType: string
+		lineageTag: e1274c53-4a29-46b8-ac41-4426ed2dfd3b
+		summarizeBy: none
+		sourceColumn: formula
+
+		annotation SummarizationSetBy = User
+
+	column fuente
+		dataType: string
+		lineageTag: 2bddb78d-2cc8-4960-a193-2c966f9a3975
+		summarizeBy: none
+		sourceColumn: fuente
+
+		annotation SummarizationSetBy = User
+
+	column tipo_dato
+		dataType: string
+		lineageTag: b8688837-16ed-4322-8a6b-92b53194f444
+		summarizeBy: none
+		sourceColumn: tipo_dato
+
+		annotation SummarizationSetBy = User
+
+	column anio
+		dataType: int64
+		formatString: 0
+		lineageTag: 39921d26-28ae-426a-a017-fe2840a0912b
+		summarizeBy: none
+		sourceColumn: anio
+
+		annotation SummarizationSetBy = User
+
+	column valor
+		dataType: double
+		formatString: 0.00
+		lineageTag: 1cda001f-da21-48c0-8c2e-5fa65a0ba5fe
+		summarizeBy: none
+		sourceColumn: valor
+
+		annotation SummarizationSetBy = User
+
+	column valor_texto
+		dataType: string
+		lineageTag: c00297f9-2f7c-4eed-8b79-b670c50bb0a1
+		summarizeBy: none
+		sourceColumn: valor_texto
+
+		annotation SummarizationSetBy = User
+
+	column unidad
+		dataType: string
+		lineageTag: 0d655f69-8213-4ba7-a965-b3583011e4eb
+		summarizeBy: none
+		sourceColumn: unidad
+
+		annotation SummarizationSetBy = User
+
+	column referencia
+		dataType: string
+		lineageTag: 5d5b0fbd-3815-49b0-8b93-b736fe502226
+		summarizeBy: none
+		sourceColumn: referencia
+
+		annotation SummarizationSetBy = User
+
+	column semaforo
+		dataType: string
+		lineageTag: 8e1475a7-22ba-4753-838f-6b91170229dc
+		summarizeBy: none
+		sourceColumn: semaforo
+
+		annotation SummarizationSetBy = User
+
+	column lectura
+		dataType: string
+		lineageTag: e2ab9ca6-08f8-4cfe-bd7f-e0d62c10855a
+		summarizeBy: none
+		sourceColumn: lectura
+
+		annotation SummarizationSetBy = User
+
+	column semaforo_icono
+		dataType: string
+		lineageTag: f96d05ac-e512-4e66-b88a-f162d1c0eec5
+		summarizeBy: none
+		sourceColumn: semaforo_icono
+
+		annotation SummarizationSetBy = User
+
+	column ultimo_valor
+		dataType: string
+		lineageTag: b74e2a9b-1439-4e28-870e-02bd953ef42b
+		summarizeBy: none
+		sourceColumn: ultimo_valor
+
+		annotation SummarizationSetBy = User
+
+	partition pbi_kpi = m
+		mode: import
+		source =
+				let
+					Fuente = Parquet.Document(File.Contents(RutaGold & "powerbi\pbi_kpi.parquet"))
+				in
+					Fuente
+
+	annotation PBI_ResultType = Table

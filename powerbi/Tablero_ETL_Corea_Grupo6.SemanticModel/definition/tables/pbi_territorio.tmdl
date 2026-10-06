@@ -1,0 +1,55 @@
+table pbi_territorio
+	lineageTag: dc76ee6c-4473-4dea-961b-acb9f1a78e64
+
+	column cod_territorio
+		dataType: string
+		lineageTag: dc55233b-0e30-4a04-acc7-54aa499abfb2
+		summarizeBy: none
+		sourceColumn: cod_territorio
+
+		annotation SummarizationSetBy = User
+
+	column si_do
+		dataType: string
+		lineageTag: 83225f55-2f26-43e0-9f5b-cfd56905057e
+		summarizeBy: none
+		sourceColumn: si_do
+		sortByColumn: orden
+
+		annotation SummarizationSetBy = User
+
+	column nombre_ingles
+		dataType: string
+		lineageTag: 563b06b8-65d6-42a1-860b-ad3739485b56
+		summarizeBy: none
+		sourceColumn: nombre_ingles
+		dataCategory: StateOrProvince
+
+		annotation SummarizationSetBy = User
+
+	column region_macro
+		dataType: string
+		lineageTag: 55a456e3-c5b5-441e-ba3e-7eca670d980a
+		summarizeBy: none
+		sourceColumn: region_macro
+
+		annotation SummarizationSetBy = User
+
+	column orden
+		dataType: int64
+		formatString: 0
+		lineageTag: 030239ab-1181-4ad4-b738-ffc2f0bce17c
+		summarizeBy: none
+		sourceColumn: orden
+
+		annotation SummarizationSetBy = User
+
+	partition pbi_territorio = m
+		mode: import
+		source =
+				let
+					Fuente = Parquet.Document(File.Contents(RutaGold & "powerbi\pbi_territorio.parquet"))
+				in
+					Fuente
+
+	annotation PBI_ResultType = Table

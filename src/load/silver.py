@@ -27,7 +27,7 @@ DIMENSIONES = {
 
 
 def escribir(conn: psycopg.Connection, dims: dict, hist: pd.DataFrame, proy: pd.DataFrame, conc: pd.DataFrame,
-             rechazos: pd.DataFrame, pasos: pd.DataFrame) -> None:
+             rechazos: pd.DataFrame, pasos: pd.DataFrame, calidad: pd.DataFrame | None = None) -> None:
     """Reemplaza el contenido de silver (dimensiones, hechos y conciliación) y agrega a ctl los rechazos y el
     embudo de pasos de esta ejecución."""
     with conn.transaction(), conn.cursor() as cur:
@@ -47,6 +47,9 @@ def escribir(conn: psycopg.Connection, dims: dict, hist: pd.DataFrame, proy: pd.
             copiar(cur, "ctl.rechazos", r, ["id_carga", "tabla_origen", "id_registro_origen", "regla", "motivo", "registro"])
         copiar(cur, "ctl.pasos_silver", pasos, ["id_carga", "orden", "paso", "tipo", "filas", "variacion", "en_embudo",
                                                 "descripcion"])
+        if calidad is not None and not calidad.empty:
+            copiar(cur, "ctl.calidad_dataset", calidad, ["id_carga", "fuente", "dataset", "registros_evaluados",
+                                                         "registros_validos", "registros_rechazados"])
 
 
 TABLAS = ["silver.fact_historico", "silver.fact_proyeccion", "silver.conciliacion",

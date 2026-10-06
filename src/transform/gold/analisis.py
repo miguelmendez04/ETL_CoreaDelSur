@@ -55,6 +55,32 @@ def hitos(hist: pd.DataFrame, proy: pd.DataFrame, esc: pd.DataFrame, cfg: dict) 
             filas.append({"hito": f"dependencia_vejez_supera_{umbral}", "escenario_kostat": escenario, "anio": a,
                           "valor": dep.get(a), "descripcion": f"Primer año con {umbral}+ personas de 65+ por cada 100 de 15-64"})
 
+    # Reemplazo laboral (como en la versión paralela del proyecto): 15-24 que entran por cada 100 de 55-64 que salen.
+    p_medio = p_nac[p_nac["escenario"] == "medio"]
+    suma = lambda df, edades: sum(_serie(df, "POBLACION", e) for e in edades)
+    reemplazo = pd.concat([suma(hist, ["15-19", "20-24"]) / suma(hist, ["55-59", "60-64"]),
+                           suma(p_medio, ["15-19", "20-24"]) / suma(p_medio, ["55-59", "60-64"])]) * 100
+    desc = "Reemplazo laboral: personas de 15-24 por cada 100 de 55-64"
+    a = _primer_anio(reemplazo, lambda s: s < 100)
+    filas += [{"hito": "reemplazo_laboral_2000", "escenario_kostat": "medio", "anio": 2000,
+               "valor": reemplazo.get(2000), "descripcion": desc + " (2000)"},
+              {"hito": "reemplazo_laboral_bajo_100", "escenario_kostat": "medio", "anio": a, "valor": reemplazo.get(a),
+               "descripcion": desc + ": primer año bajo 100"},
+              {"hito": "reemplazo_laboral_minimo", "escenario_kostat": "medio", "anio": int(reemplazo.idxmin()),
+               "valor": reemplazo.min(), "descripcion": desc + ": mínimo"}]
+
+    # Migración como palanca: cambio de la población 15-64 al año dado en cada escenario de migración de KOSTAT.
+    s = cfg["gold"]["senales_escasez"]
+    anio_m = s.get("anio_migracion", 2050)
+    pob_base = _serie(hist, "POBLACION", "15-64")[anio_base]
+    for escenario in s.get("escenarios_migracion", []):
+        serie = _serie(p_nac[p_nac["escenario"] == escenario], "POBLACION", "15-64")
+        if anio_m in serie.index:
+            filas.append({"hito": f"cambio_pob_15_64_{anio_base}_{anio_m}_pct", "escenario_kostat": escenario,
+                          "anio": anio_m, "valor": (serie[anio_m] / pob_base - 1) * 100,
+                          "descripcion": f"Cambio % de la población 15-64 entre {anio_base} y {anio_m} según el "
+                                         "escenario de KOSTAT (fecundidad y mortalidad medias)"})
+
     activos = _serie(hist, "POB_ACTIVA", "15+")[anio_base]
     tot = esc.groupby(["escenario_kostat", "id_supuesto", "anio"])["fuerza_laboral"].sum()
     for (escenario, sup), s in tot.groupby(level=[0, 1]):

@@ -1,0 +1,340 @@
+/// Una fila por año (2000-2072), Corea del Sur. Vitales y laborales observados; población estimada hasta 2022 y desde la proyección KOSTAT medio después (columna tipo_dato_poblacion).
+table pbi_nacional
+	lineageTag: ec805930-3dd8-4f8f-97f7-344ce34732d7
+
+	/// Tasa global de fecundidad (observado, KOSIS)
+	measure 'Fecundidad (TFR)' = SUM(pbi_nacional[TFR])
+		formatString: 0.00
+		lineageTag: b51daeb4-e2fa-45d8-b733-97d9d4bb12ce
+
+	/// Referencia demográfica: 2,1 hijos por mujer
+	measure 'Nivel de reemplazo' = IF(NOT ISBLANK([Fecundidad (TFR)]), 2.1)
+		formatString: 0.0
+		lineageTag: e7933b13-5865-4a1f-bd21-f327b835ae81
+
+	/// Nacidos vivos (observado)
+	measure 'Nacimientos (miles)' = DIVIDE(SUM(pbi_nacional[NACIMIENTOS]), 1000)
+		formatString: #,0
+		lineageTag: ac719d26-a289-41b1-9644-59c5adad8875
+
+	/// Defunciones (observado)
+	measure 'Defunciones (miles)' = DIVIDE(SUM(pbi_nacional[DEFUNCIONES]), 1000)
+		formatString: #,0
+		lineageTag: 3ec35a9f-c100-4668-8c86-b0a5f8b90afc
+
+	/// Años (observado)
+	measure 'Esperanza de vida' = SUM(pbi_nacional[ESPERANZA_VIDA])
+		formatString: 0.0
+		lineageTag: fa457392-c8ea-4c7f-8fcb-fea30d9657c8
+
+	/// Estimado ≤2022 · proyección KOSTAT medio ≥2023
+	measure '% 0-14' = SUM(pbi_nacional[PROP_0_14])
+		formatString: 0.0
+		lineageTag: 77b59054-ec76-4930-9fbb-5f8c2e848dd1
+
+	/// Estimado ≤2022 · proyección KOSTAT medio ≥2023
+	measure '% 15-64' = SUM(pbi_nacional[PROP_15_64])
+		formatString: 0.0
+		lineageTag: 52d781e4-fdc1-4f2c-98d4-b8fe8f06e6fa
+
+	/// Estimado ≤2022 · proyección KOSTAT medio ≥2023
+	measure '% 65+' = SUM(pbi_nacional[PROP_65MAS])
+		formatString: 0.0
+		lineageTag: 4359ab24-37e7-4051-bff3-ef2ffbf3e5b4
+
+	/// P65+/P15-64×100 sobre población estimada (≤2022), calculada en el pipeline
+	measure 'Dependencia de vejez · estimada' = CALCULATE(SUM(pbi_nacional[DEP_VEJEZ]), pbi_nacional[tipo_dato_poblacion] = "estimado")
+		formatString: 0.0
+		lineageTag: e5753c48-db5e-4617-8b01-4dcd2d749c80
+
+	/// Proyección oficial KOSTAT (escenario medio) desde 2023; arranca en 2022
+	measure 'Dependencia de vejez · proyección' = CALCULATE(SUM(pbi_nacional[DEP_VEJEZ]), pbi_nacional[anio] >= 2022)
+		formatString: 0.0
+		lineageTag: 9d414319-52a8-45d4-ace0-29cceba00622
+
+	measure 'Población 15-64 · estimada' = CALCULATE(DIVIDE(SUM(pbi_nacional[POB_15_64]), 1e6), pbi_nacional[tipo_dato_poblacion] = "estimado")
+		formatString: #,0.0" M"
+		lineageTag: 8dca2da0-c476-44f1-b37c-fd61a73b9e5a
+
+	measure 'Población 15-64 · proyección' = CALCULATE(DIVIDE(SUM(pbi_nacional[POB_15_64]), 1e6), pbi_nacional[anio] >= 2022)
+		formatString: #,0.0" M"
+		lineageTag: a59869ee-6579-40da-a425-7175cfce389e
+
+	/// Jóvenes 15-24 por cada 100 personas de 55-64
+	measure 'Reemplazo laboral · estimado' = CALCULATE(SUM(pbi_nacional[IND_REEMPLAZO_LABORAL]), pbi_nacional[tipo_dato_poblacion] = "estimado")
+		formatString: 0
+		lineageTag: 741bb432-de20-48e8-94eb-8cadf3b57b3e
+
+	measure 'Reemplazo laboral · proyección' = CALCULATE(SUM(pbi_nacional[IND_REEMPLAZO_LABORAL]), pbi_nacional[anio] >= 2022)
+		formatString: 0
+		lineageTag: 3cb011e8-2f8d-4878-ad35-000053cc63fe
+
+	measure 'Referencia 100' = IF(NOT ISBLANK([Reemplazo laboral · estimado]) || NOT ISBLANK([Reemplazo laboral · proyección]), 100)
+		formatString: 0
+		lineageTag: 05cd670f-9d62-4167-9d14-c80e30ca2e27
+
+	/// EAPS, promedio anual
+	measure 'Población activa observada' = DIVIDE(SUM(pbi_nacional[POB_ACTIVA]), 1e6)
+		formatString: #,0.0" M"
+		lineageTag: 89bf5139-4445-4d50-950f-d13ea8539290
+
+	/// USD PPA constantes (OECD)
+	measure 'PIB por hora' = SUM(pbi_nacional[PIB_HORA])
+		formatString: 0.0
+		lineageTag: bdbbfe81-fc66-4a14-8ceb-c68e8743cf8e
+
+	/// EAPS (observado)
+	measure 'Participación laboral 15+' = SUM(pbi_nacional[TASA_PARTICIPACION])
+		formatString: 0.0
+		lineageTag: e37b72b1-f693-4390-b727-d20d8308bcf3
+
+	column anio
+		dataType: int64
+		formatString: 0
+		lineageTag: df525c54-8389-48cb-99f3-b3c671b1d4aa
+		summarizeBy: none
+		sourceColumn: anio
+
+		annotation SummarizationSetBy = User
+
+	column TFR
+		dataType: double
+		formatString: 0.00
+		lineageTag: c7804a7b-84ba-413f-85a0-72ec41f1c682
+		summarizeBy: none
+		sourceColumn: TFR
+
+		annotation SummarizationSetBy = User
+
+	column NACIMIENTOS
+		dataType: double
+		formatString: 0.00
+		lineageTag: ec1e7276-a11c-4e5c-8ff5-789681a3e8c4
+		summarizeBy: none
+		sourceColumn: NACIMIENTOS
+
+		annotation SummarizationSetBy = User
+
+	column DEFUNCIONES
+		dataType: double
+		formatString: 0.00
+		lineageTag: 9271f0cc-dbf8-4f49-b47c-ad944a11ce81
+		summarizeBy: none
+		sourceColumn: DEFUNCIONES
+
+		annotation SummarizationSetBy = User
+
+	column CRECIMIENTO_NATURAL
+		dataType: double
+		formatString: 0.00
+		lineageTag: 36d6e1e9-481d-4733-b281-3c59192bb363
+		summarizeBy: none
+		sourceColumn: CRECIMIENTO_NATURAL
+
+		annotation SummarizationSetBy = User
+
+	column ESPERANZA_VIDA
+		dataType: double
+		formatString: 0.00
+		lineageTag: ff9d68cd-68b6-4ba3-8f8d-32749b07cadc
+		summarizeBy: none
+		sourceColumn: ESPERANZA_VIDA
+
+		annotation SummarizationSetBy = User
+
+	column POB_0_14
+		dataType: double
+		formatString: 0.00
+		lineageTag: 7ab78376-fb34-4924-bc45-0e203126ef0c
+		summarizeBy: none
+		sourceColumn: POB_0_14
+
+		annotation SummarizationSetBy = User
+
+	column POB_15_64
+		dataType: double
+		formatString: 0.00
+		lineageTag: f764f9ad-aa6d-42df-ab2f-30f52c1a7342
+		summarizeBy: none
+		sourceColumn: POB_15_64
+
+		annotation SummarizationSetBy = User
+
+	column POB_65MAS
+		dataType: double
+		formatString: 0.00
+		lineageTag: 04b540fb-56a7-43f4-b876-b2ba52efc67e
+		summarizeBy: none
+		sourceColumn: POB_65MAS
+
+		annotation SummarizationSetBy = User
+
+	column POB_TOTAL
+		dataType: double
+		formatString: 0.00
+		lineageTag: a68ea9f5-6b09-4e17-b16d-6376d412aaf6
+		summarizeBy: none
+		sourceColumn: POB_TOTAL
+
+		annotation SummarizationSetBy = User
+
+	column PROP_0_14
+		dataType: double
+		formatString: 0.00
+		lineageTag: a28bcdf2-df1a-4ea9-b46c-e47701772d4f
+		summarizeBy: none
+		sourceColumn: PROP_0_14
+
+		annotation SummarizationSetBy = User
+
+	column PROP_15_64
+		dataType: double
+		formatString: 0.00
+		lineageTag: 895744a6-6aba-4e79-a9b3-f5eba3cac193
+		summarizeBy: none
+		sourceColumn: PROP_15_64
+
+		annotation SummarizationSetBy = User
+
+	column PROP_65MAS
+		dataType: double
+		formatString: 0.00
+		lineageTag: d066f4b1-85da-4f25-85df-f39f7be71e25
+		summarizeBy: none
+		sourceColumn: PROP_65MAS
+
+		annotation SummarizationSetBy = User
+
+	column DEP_VEJEZ
+		dataType: double
+		formatString: 0.00
+		lineageTag: 613ce2fd-ae7d-4606-89bf-c032229a1e05
+		summarizeBy: none
+		sourceColumn: DEP_VEJEZ
+
+		annotation SummarizationSetBy = User
+
+	column IND_ENVEJECIMIENTO
+		dataType: double
+		formatString: 0.00
+		lineageTag: 9b28e3e6-7450-4efe-ba81-c5453240b5ff
+		summarizeBy: none
+		sourceColumn: IND_ENVEJECIMIENTO
+
+		annotation SummarizationSetBy = User
+
+	column IND_REEMPLAZO_LABORAL
+		dataType: double
+		formatString: 0.00
+		lineageTag: 3ad9f22b-7196-4b71-a14c-c565ddb14c37
+		summarizeBy: none
+		sourceColumn: IND_REEMPLAZO_LABORAL
+
+		annotation SummarizationSetBy = User
+
+	column POB_ACTIVA
+		dataType: double
+		formatString: 0.00
+		lineageTag: 2a38f233-c11e-4efe-8ed3-471bdb4ee0de
+		summarizeBy: none
+		sourceColumn: POB_ACTIVA
+
+		annotation SummarizationSetBy = User
+
+	column OCUPADOS
+		dataType: double
+		formatString: 0.00
+		lineageTag: 4ce14464-62f1-4e11-8001-69790aecc267
+		summarizeBy: none
+		sourceColumn: OCUPADOS
+
+		annotation SummarizationSetBy = User
+
+	column TASA_PARTICIPACION
+		dataType: double
+		formatString: 0.00
+		lineageTag: 4ffb36ae-b0e7-49c3-b3ed-cbb40a8b7387
+		summarizeBy: none
+		sourceColumn: TASA_PARTICIPACION
+
+		annotation SummarizationSetBy = User
+
+	column TASA_DESEMPLEO
+		dataType: double
+		formatString: 0.00
+		lineageTag: 3cc90266-4420-4c00-aab6-ba15c622e8bd
+		summarizeBy: none
+		sourceColumn: TASA_DESEMPLEO
+
+		annotation SummarizationSetBy = User
+
+	column PIB_HORA
+		dataType: double
+		formatString: 0.00
+		lineageTag: d0b9de0f-ac5f-44cc-9e57-0754e6d55143
+		summarizeBy: none
+		sourceColumn: PIB_HORA
+
+		annotation SummarizationSetBy = User
+
+	column FLP_A
+		dataType: double
+		formatString: 0.00
+		lineageTag: a6ada942-e09d-4a0c-a938-f62338f6ba89
+		summarizeBy: none
+		sourceColumn: FLP_A
+
+		annotation SummarizationSetBy = User
+
+	column FLP_B
+		dataType: double
+		formatString: 0.00
+		lineageTag: 731f776d-32e5-4220-a51b-438d9d9f65ae
+		summarizeBy: none
+		sourceColumn: FLP_B
+
+		annotation SummarizationSetBy = User
+
+	column FLP_C
+		dataType: double
+		formatString: 0.00
+		lineageTag: 579cd7d7-dc8c-4f74-b273-70566f17b64c
+		summarizeBy: none
+		sourceColumn: FLP_C
+
+		annotation SummarizationSetBy = User
+
+	column FLP_D
+		dataType: double
+		formatString: 0.00
+		lineageTag: 0c449471-18f1-4b30-a8bc-075778eeaa27
+		summarizeBy: none
+		sourceColumn: FLP_D
+
+		annotation SummarizationSetBy = User
+
+	column tipo_dato_poblacion
+		dataType: string
+		lineageTag: 1dbe3eb1-d495-47c9-b178-f65dc84908a4
+		summarizeBy: none
+		sourceColumn: tipo_dato_poblacion
+
+		annotation SummarizationSetBy = User
+
+	column periodo
+		dataType: string
+		lineageTag: ba61d606-7ac6-42df-9b18-13d39a09ee40
+		summarizeBy: none
+		sourceColumn: periodo
+
+		annotation SummarizationSetBy = User
+
+	partition pbi_nacional = m
+		mode: import
+		source =
+				let
+					Fuente = Parquet.Document(File.Contents(RutaGold & "powerbi\pbi_nacional.parquet"))
+				in
+					Fuente
+
+	annotation PBI_ResultType = Table

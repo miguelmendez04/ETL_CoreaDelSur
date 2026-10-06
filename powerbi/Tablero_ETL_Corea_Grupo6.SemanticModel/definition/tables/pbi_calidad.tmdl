@@ -1,0 +1,111 @@
+table pbi_calidad
+	lineageTag: 177618ab-d9ab-45e6-bd92-f5a0bbe06c84
+
+	measure 'Registros válidos (%)' = DIVIDE(SUM(pbi_calidad[registros_validos]), SUM(pbi_calidad[registros_evaluados])) * 100
+		formatString: 0.00
+		lineageTag: 77a2676a-6c2e-4db4-8d6d-ae8cee1483b1
+
+	measure 'Rechazo (%)' = DIVIDE(SUM(pbi_calidad[registros_rechazados]), SUM(pbi_calidad[registros_evaluados])) * 100
+		formatString: 0.00
+		lineageTag: 692d1e84-c543-42af-935e-8c1af99f8cea
+
+	measure 'Registros evaluados' = SUM(pbi_calidad[registros_evaluados])
+		formatString: #,0
+		lineageTag: 9a38f7c7-f881-4ba5-8b12-db7c27858ab0
+
+	column dataset
+		dataType: string
+		lineageTag: 341b37aa-7a52-48c6-99d3-cdef90a3bd6d
+		summarizeBy: none
+		sourceColumn: dataset
+
+		annotation SummarizationSetBy = User
+
+	column registros_evaluados
+		dataType: int64
+		formatString: 0
+		lineageTag: 27eeb2c6-976f-43b8-82e0-0cdc060d3fc1
+		summarizeBy: none
+		sourceColumn: registros_evaluados
+
+		annotation SummarizationSetBy = User
+
+	column registros_validos
+		dataType: int64
+		formatString: 0
+		lineageTag: 630c1097-8409-4183-8619-d3e660323ab8
+		summarizeBy: none
+		sourceColumn: registros_validos
+
+		annotation SummarizationSetBy = User
+
+	column registros_rechazados
+		dataType: int64
+		formatString: 0
+		lineageTag: ed6b0db3-7b5a-4fa0-8fc7-945af215f4ae
+		summarizeBy: none
+		sourceColumn: registros_rechazados
+
+		annotation SummarizationSetBy = User
+
+	column rechazos_trazados
+		dataType: double
+		formatString: 0.00
+		lineageTag: 6aa7c13b-1966-424d-9182-14e3a06eb815
+		summarizeBy: none
+		sourceColumn: rechazos_trazados
+
+		annotation SummarizationSetBy = User
+
+	column tasa_validos_pct
+		dataType: double
+		formatString: 0.00
+		lineageTag: 1ae17339-0834-4b32-8d71-64bf88c1affc
+		summarizeBy: none
+		sourceColumn: tasa_validos_pct
+
+		annotation SummarizationSetBy = User
+
+	column tasa_rechazo_pct
+		dataType: double
+		formatString: 0.00
+		lineageTag: 2a920bfe-96e3-468c-9225-77c9438d9ce8
+		summarizeBy: none
+		sourceColumn: tasa_rechazo_pct
+
+		annotation SummarizationSetBy = User
+
+	column rechazos_trazados_pct
+		dataType: double
+		formatString: 0.00
+		lineageTag: 3f5f8732-256f-44b9-81cc-9bb8f185f52c
+		summarizeBy: none
+		sourceColumn: rechazos_trazados_pct
+
+		annotation SummarizationSetBy = User
+
+	column cumple_validos
+		dataType: boolean
+		lineageTag: 10c1cdc5-e21e-42d1-a33d-08f239d813ed
+		summarizeBy: none
+		sourceColumn: cumple_validos
+
+		annotation SummarizationSetBy = User
+
+	column cumple_rechazo
+		dataType: boolean
+		lineageTag: 69622c2a-ca6d-48a7-86a7-272fb76c4fed
+		summarizeBy: none
+		sourceColumn: cumple_rechazo
+
+		annotation SummarizationSetBy = User
+
+	partition pbi_calidad = m
+		mode: import
+		source =
+				let
+					Fuente = Parquet.Document(File.Contents(RutaGold & "powerbi\pbi_calidad.parquet"))
+				in
+					Fuente
+
+	annotation PBI_ResultType = Table
