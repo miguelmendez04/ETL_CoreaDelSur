@@ -30,6 +30,16 @@ table Panel
 		formatString: #,0
 		lineageTag: 2b3e242b-2b23-5a43-9e91-52c046f0692e
 
+	measure 'Observada (EAPS)' = CALCULATE(SUM(Panel[pob_activa]), Panel[cod_territorio] = "00", Panel[nivel] = "historico") / 1000000
+		formatString: 0.0
+		displayFolder: Presentación
+		lineageTag: 4956f663-2b79-5497-a908-25887ff00475
+
+	measure 'Estimada (KOSIS)' = CALCULATE(SUM(Panel[pob_15_64]), Panel[cod_territorio] = "00", Panel[nivel] = "historico") / 1000000
+		formatString: 0.0
+		displayFolder: Presentación
+		lineageTag: 7a4965b7-0f12-5c3c-93a7-96a9f51c6beb
+
 	column nivel
 		dataType: string
 		lineageTag: cb89f16c-b57a-5122-824c-79a2743e92e8

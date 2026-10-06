@@ -1,0 +1,189 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "v0056etlcorea",
+  "position": {
+    "x": 10,
+    "y": 500,
+    "z": 4000,
+    "height": 210,
+    "width": 1260,
+    "tabOrder": 4000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Conciliacion"
+                    }
+                  },
+                  "Property": "indicador"
+                }
+              },
+              "queryRef": "Conciliacion.indicador",
+              "nativeQueryRef": "indicador"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Conciliacion"
+                    }
+                  },
+                  "Property": "fuente_contraste"
+                }
+              },
+              "queryRef": "Conciliacion.fuente_contraste",
+              "nativeQueryRef": "fuente_contraste"
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Conciliacion"
+                        }
+                      },
+                      "Property": "anio"
+                    }
+                  },
+                  "Function": 2
+                }
+              },
+              "queryRef": "Count(Conciliacion.anio)",
+              "nativeQueryRef": "Recuento de anio"
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Conciliacion"
+                        }
+                      },
+                      "Property": "dif_pct"
+                    }
+                  },
+                  "Function": 3
+                }
+              },
+              "queryRef": "Min(Conciliacion.dif_pct)",
+              "nativeQueryRef": "Mínimo de dif_pct"
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Conciliacion"
+                        }
+                      },
+                      "Property": "dif_pct"
+                    }
+                  },
+                  "Function": 4
+                }
+              },
+              "queryRef": "Max(Conciliacion.dif_pct)",
+              "nativeQueryRef": "Máximo de dif_pct"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Conciliación por indicador y fuente de contraste (diferencia %, histórico)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "v0055etlcorea",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Conciliacion"
+              }
+            },
+            "Property": "nivel"
+          }
+        },
+        "type": "Categorical",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "f",
+              "Entity": "Conciliacion",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "In": {
+                  "Expressions": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "f"
+                          }
+                        },
+                        "Property": "nivel"
+                      }
+                    }
+                  ],
+                  "Values": [
+                    [
+                      {
+                        "Literal": {
+                          "Value": "'historico'"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "howCreated": "User"
+      }
+    ]
+  }
+}

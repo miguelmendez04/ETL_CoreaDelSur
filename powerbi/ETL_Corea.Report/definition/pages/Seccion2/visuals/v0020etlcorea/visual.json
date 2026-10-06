@@ -1,0 +1,125 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "v0020etlcorea",
+  "position": {
+    "x": 645,
+    "y": 260,
+    "z": 4000,
+    "height": 455,
+    "width": 625,
+    "tabOrder": 4000
+  },
+  "visual": {
+    "visualType": "pivotTable",
+    "query": {
+      "queryState": {
+        "Columns": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "RiesgoSensibilidad"
+                    }
+                  },
+                  "Property": "esquema"
+                }
+              },
+              "queryRef": "RiesgoSensibilidad.esquema",
+              "nativeQueryRef": "esquema",
+              "active": true
+            }
+          ]
+        },
+        "Rows": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Territorio"
+                    }
+                  },
+                  "Property": "territorio"
+                }
+              },
+              "queryRef": "Territorio.territorio",
+              "nativeQueryRef": "territorio",
+              "active": true
+            }
+          ]
+        },
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "RiesgoSensibilidad"
+                        }
+                      },
+                      "Property": "ranking"
+                    }
+                  },
+                  "Function": 3
+                }
+              },
+              "queryRef": "Min(RiesgoSensibilidad.ranking)",
+              "nativeQueryRef": "Mínimo de ranking"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "subTotals": [
+        {
+          "properties": {
+            "rowSubtotals": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "columnSubtotals": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Ranking de riesgo según el esquema de pesos (1 = mayor riesgo)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

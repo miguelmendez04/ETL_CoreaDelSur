@@ -14,6 +14,36 @@ table Escenarios
 		formatString: 0.0%;-0.0%;0.0%
 		lineageTag: 4e218de6-2eab-545f-96dd-8cd43e66a4f7
 
+	measure 'A · constante' = IF(MAX(Anio[anio]) = 2025, [Observada (EAPS)], CALCULATE(SUM(Escenarios[fuerza_laboral]), Escenarios[escenario_kostat] = "medio", Escenarios[id_supuesto] = "A") / 1000000)
+		formatString: 0.0
+		displayFolder: Presentación
+		lineageTag: 5f3d8edf-6677-5640-8de6-a78b039ca08d
+
+	measure 'B · tendencia con tope' = IF(MAX(Anio[anio]) = 2025, [Observada (EAPS)], CALCULATE(SUM(Escenarios[fuerza_laboral]), Escenarios[escenario_kostat] = "medio", Escenarios[id_supuesto] = "B") / 1000000)
+		formatString: 0.0
+		displayFolder: Presentación
+		lineageTag: 12dd847c-e1de-52fe-8a20-65de4fc6b044
+
+	measure 'C · convergencia OCDE' = IF(MAX(Anio[anio]) = 2025, [Observada (EAPS)], CALCULATE(SUM(Escenarios[fuerza_laboral]), Escenarios[escenario_kostat] = "medio", Escenarios[id_supuesto] = "C") / 1000000)
+		formatString: 0.0
+		displayFolder: Presentación
+		lineageTag: 726c0a3b-152b-57c7-afcd-81c97dba2ebe
+
+	measure 'Proyección media' = IF(MAX(Anio[anio]) = 2025, [Estimada (KOSIS)], CALCULATE(MAX(Escenarios[pob_15_64]), Escenarios[escenario_kostat] = "medio") / 1000000)
+		formatString: 0.0
+		displayFolder: Presentación
+		lineageTag: 33be9a2d-e1a6-5e86-acad-ba9f588d713a
+
+	measure 'Fecundidad alta' = IF(MAX(Anio[anio]) = 2025, [Estimada (KOSIS)], CALCULATE(MAX(Escenarios[pob_15_64]), Escenarios[escenario_kostat] = "alto") / 1000000)
+		formatString: 0.0
+		displayFolder: Presentación
+		lineageTag: e50b13c2-23bd-5282-bc46-f93c6b0d1693
+
+	measure 'Fecundidad baja' = IF(MAX(Anio[anio]) = 2025, [Estimada (KOSIS)], CALCULATE(MAX(Escenarios[pob_15_64]), Escenarios[escenario_kostat] = "bajo") / 1000000)
+		formatString: 0.0
+		displayFolder: Presentación
+		lineageTag: 8c11481f-c524-5afe-9927-d88739eb254d
+
 	column anio
 		dataType: int64
 		formatString: 0

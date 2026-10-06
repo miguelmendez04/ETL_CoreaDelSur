@@ -1,0 +1,102 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "v0031etlcorea",
+  "position": {
+    "x": 10,
+    "y": 470,
+    "z": 6000,
+    "height": 240,
+    "width": 1260,
+    "tabOrder": 6000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Asociaciones"
+                    }
+                  },
+                  "Property": "variable_x"
+                }
+              },
+              "queryRef": "Asociaciones.variable_x",
+              "nativeQueryRef": "variable_x"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Asociaciones"
+                    }
+                  },
+                  "Property": "variable_y"
+                }
+              },
+              "queryRef": "Asociaciones.variable_y",
+              "nativeQueryRef": "variable_y"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Asociaciones"
+                    }
+                  },
+                  "Property": "corr_niveles"
+                }
+              },
+              "queryRef": "Asociaciones.corr_niveles",
+              "nativeQueryRef": "corr_niveles"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Asociaciones"
+                    }
+                  },
+                  "Property": "corr_variaciones"
+                }
+              },
+              "queryRef": "Asociaciones.corr_variaciones",
+              "nativeQueryRef": "corr_variaciones"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Asociación 2000-2025: en niveles correlacionan fuerte, en variaciones anuales casi nada'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

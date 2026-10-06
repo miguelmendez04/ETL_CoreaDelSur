@@ -4,7 +4,10 @@
 
 - `ETL_Corea.SemanticModel/`: el modelo. Contiene la conexión a PostgreSQL, 14 tablas leídas de las vistas y tablas
   `gold`, las relaciones con `Territorio` y las medidas DAX.
-- `ETL_Corea.Report/`: el reporte, con 6 páginas, una por bloque de preguntas de negocio.
+- `ETL_Corea.Report/`: el reporte en formato PBIR (una carpeta por página y un `visual.json` por visual), con
+  6 páginas (una por bloque de preguntas de negocio) y una página "Presentación" con los gráficos de las
+  diapositivas. El tema UAO ya viene aplicado (`StaticResources/`).
+- `tema_uao.json`: el mismo tema por separado (rojo UAO, Segoe UI), para reutilizarlo en otro reporte.
 
 Los datos importados se guardan en `.pbi/cache.abf`, que no se versiona. Para entregar el dashboard a alguien que no
 tiene la base, se usa **Archivo > Exportar > Power BI (.pbix)**: el `.pbix` lleva los datos dentro.
@@ -22,6 +25,8 @@ tiene la base, se usa **Archivo > Exportar > Power BI (.pbix)**: el `.pbix` llev
 
 Cada vez que se vuelva a correr el pipeline basta con **Actualizar**.
 
+El tema UAO viene aplicado. Para usarlo en otro reporte: **Ver > Temas > Buscar temas** y elegir `powerbi/tema_uao.json`.
+
 ## Modelo
 
 | Tabla | Origen | Uso |
@@ -34,8 +39,11 @@ Cada vez que se vuelva a correr el pipeline basta con **Actualizar**.
 | Hitos, Senales | `gold.hitos_escasez`, `gold.v_senales_escasez` | Señales tempranas de escasez |
 | Asociaciones | `gold.asociaciones` | Correlaciones (asociación, no causalidad) |
 | KPIs, Conciliacion | `gold.v_kpis_calidad`, `gold.v_conciliacion` | Calidad del dato |
+| Embudo | `gold.v_embudo_silver` | Filas después de cada paso de bronze -> silver (`ctl.pasos_silver`) |
+| Anio | `gold.v_anios` | Eje común de años: une en un mismo gráfico el histórico (Panel) y el futuro (Escenarios) |
 
-Relaciones: `Territorio[cod_territorio]` filtra `Panel`, `Riesgo`, `RiesgoSensibilidad` y `Senales`.
+Relaciones: `Territorio[cod_territorio]` filtra `Panel`, `Riesgo`, `RiesgoSensibilidad` y `Senales`;
+`Anio[anio]` filtra `Panel` y `Escenarios`.
 
 Medidas: las de las tarjetas son siempre de Corea (nacional) y no cambian con el filtro de territorio.
 - **Natalidad y población:** `TFR 2025`, `Nacimientos 2000`, `Nacimientos 2025`, `Variación nacimientos 2000-2025`,
@@ -113,3 +121,11 @@ Resaltar a Corea con un color distinto: Formato > Barras > Colores > por element
 | Tarjetas | `KPIs cumplidos (texto)`, `Pares dentro de ±3 %` |
 | Tabla: KPIs | `KPIs[kpi]`, `[valor]`, `[meta]`, `[cumple]`, `[detalle]`. Formato condicional en `cumple` (icono) |
 | Tabla: conciliación | `Conciliacion[indicador]`, `[fuente_contraste]`, `[anio]`, `[dif_pct]`; filtro `nivel` = historico |
+
+### 7. Presentación
+Los gráficos de las diapositivas, en millones de personas, para exportar (**Archivo > Exportar > Exportar a PDF**):
+- **Embudo de silver** (diapositiva 11);
+- **Fuerza laboral observada + A/B/C** (13): las medidas de la carpeta "Presentación" arrancan los escenarios en el
+  último año observado (2025) para que la línea sea continua;
+- **Población de 15-64 estimada + KOSTAT medio/alto/bajo** (14);
+- **Índice de riesgo por si-do** (15).
