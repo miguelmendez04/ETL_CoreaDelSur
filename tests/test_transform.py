@@ -78,12 +78,33 @@ def _silver(filas):
     return df
 
 
+EAPS = ["15-19", "20-29", "30-39", "40-49", "50-59", "60+"]
+REGLAS_COHERENCIA = {"POBLACION": {"total": "TOTAL", "redondeo": 1, "grupos": ["0-4", "5-9", "10-14"]},
+                     "POB_ACTIVA": {"total": "15+", "redondeo": 1000, "grupos": EAPS}}
+
+
 def test_coherencia_rechaza_total_que_no_cuadra():
-    q = validate.QUINQUENALES
-    filas = [{"anio": 2020, "cod_territorio": "11", "cod_indicador": "POBLACION", "grupo_edad": g, "valor": 10.0} for g in q]
+    filas = [{"anio": 2020, "cod_territorio": "11", "cod_indicador": "POBLACION", "grupo_edad": g, "valor": 10.0}
+             for g in ["0-4", "5-9", "10-14"]]
     filas.append({"anio": 2020, "cod_territorio": "11", "cod_indicador": "POBLACION", "grupo_edad": "TOTAL", "valor": 999.0})
-    ok, rech = validate.coherencia_totales(_silver(filas), 0.5)
+    ok, rech = validate.coherencia_totales(_silver(filas), 0.5, REGLAS_COHERENCIA)
     assert rech["regla"].tolist() == ["coherencia_totales"] and "TOTAL" not in ok["grupo_edad"].values
+
+
+def test_coherencia_eaps_tolera_redondeo_a_miles_pero_no_descuadres():
+    def eaps(anio, h_1519, total_1519, total_15mas):
+        f = [{"anio": anio, "sexo": "T", "grupo_edad": g, "valor": 1_000_000.0} for g in EAPS[1:]]
+        f += [{"anio": anio, "sexo": "T", "grupo_edad": "15-19", "valor": total_1519},
+              {"anio": anio, "sexo": "H", "grupo_edad": "15-19", "valor": h_1519},
+              {"anio": anio, "sexo": "M", "grupo_edad": "15-19", "valor": 84_000.0},
+              {"anio": anio, "sexo": "T", "grupo_edad": "15+", "valor": total_15mas}]
+        return [{**x, "cod_territorio": "00", "cod_indicador": "POB_ACTIVA"} for x in f]
+    # 2025: H + M = 144 mil vs T = 143 mil (0,7 %, pero es redondeo a miles) -> se acepta
+    # 2024: H + M = 184 mil vs T = 143 mil y grupos 5,143 M vs 15+ 5,5 M -> se rechazan ambos totales
+    df = _silver(eaps(2025, 60_000.0, 143_000.0, 5_143_000.0) + eaps(2024, 100_000.0, 143_000.0, 5_500_000.0))
+    ok, rech = validate.coherencia_totales(df, 0.5, REGLAS_COHERENCIA)
+    assert len(rech) == 2 and all(r["anio"] == 2024 for r in rech["registro"])
+    assert len(ok) == len(df) - 2
 
 
 def test_derivados_y_agregados_de_edad():
@@ -191,3 +212,12 @@ def test_sensibilidad_riesgo_conserva_direccion_y_ordena():
                                     "esquemas_sensibilidad": {"solo_tfr": {"tfr": 1}}}}}
     s = riesgo.sensibilidad(t, cfg).set_index(["esquema", "cod_territorio"])["ranking"]
     assert s[("base", "B")] == 1 and s[("solo_tfr", "B")] == 1 and s[("solo_tfr", "A")] == 2
+
+
+def test_normalizacion_percentil_no_depende_del_valor_extremo():
+    # D es extremo en prop_65mas: con min-max comprime a A, B y C; con percentil solo cuenta el orden.
+    t = pd.DataFrame({"prop_65mas": [10.0, 11.0, 12.0, 100.0], "tfr": [0.8, 1.0, 0.9, 1.2]}, index=list("ABCD"))
+    comps = {"prop_65mas": {"peso": 1, "mas_es_peor": True}, "tfr": {"peso": 1, "mas_es_peor": False}}
+    p = riesgo.indice(t, comps, "percentil")
+    assert p.tolist() == pytest.approx([50, 33.333, 66.667, 50], abs=1e-3)   # C pasa a ser el de mayor riesgo
+    assert riesgo.indice(t, comps)["C"] < riesgo.indice(t, comps)["A"]   # en min-max el extremo cambia el orden de C

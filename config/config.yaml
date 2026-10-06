@@ -19,8 +19,19 @@ base_datos:
   esquemas: [bronze, silver, gold, ctl]
 
 calidad:
-  tolerancia_suma_edades_pct: 0.5   # suma de grupos de edad vs total
+  tolerancia_suma_edades_pct: 0.5   # suma de partes (grupos de edad, H + M, si-do) vs total
   tolerancia_conciliacion_pct: 3.0  # maestra vs contraste
+  # Coherencia de totales en silver (si no cuadra, la fila del total va a ctl.rechazos): por indicador de nivel,
+  # los grupos de edad que deben sumar el total, y H + M ≈ T. redondeo = unidad en que publica la fuente: la EAPS
+  # publica en miles, así que una diferencia de hasta medio redondeo por componente sumado no es incoherencia.
+  coherencia_totales:
+    POBLACION: {total: TOTAL, redondeo: 1, grupos: ["0-4", "5-9", "10-14", "15-19", "20-24", "25-29", "30-34",
+                "35-39", "40-44", "45-49", "50-54", "55-59", "60-64", "65-69", "70-74", "75-79", "80-84", "85+"]}
+    POB_15MAS: &eaps {total: "15+", redondeo: 1000, grupos: ["15-19", "20-29", "30-39", "40-49", "50-59", "60+"]}
+    POB_ACTIVA: *eaps
+    OCUPADOS: *eaps
+  # Coherencia territorial (KPI): suma de los 17 si-do ≈ total nacional, por año (KOSIS, sexo y edad total).
+  coherencia_territorial: [POBLACION, NACIMIENTOS, POB_15MAS, POB_ACTIVA, OCUPADOS]
 
 periodo_historico:
   inicio: 2000
@@ -415,6 +426,9 @@ gold:
       solo_proyeccion: {var_pob_15_64_proy_pct: 0.5, dependencia_vejez_proy: 0.5}
       envejecimiento_doble: {prop_65mas: 0.4, tfr: 0.2, var_pob_15_64_proy_pct: 0.2, dependencia_vejez_proy: 0.2}
       natalidad_doble: {prop_65mas: 0.2, tfr: 0.4, var_pob_15_64_proy_pct: 0.2, dependencia_vejez_proy: 0.2}
+    # Y con pesos base pero otra normalización: percentil no depende de valores extremos (Sejong crece +11 % en 15-64
+    # mientras el resto cae; en min-max eso comprime la escala de los otros 16 si-do).
+    normalizaciones_sensibilidad: [percentil]
 
   # Pregunta 8: señales tempranas de escasez laboral.
   senales_escasez:

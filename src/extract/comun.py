@@ -89,16 +89,15 @@ def relativa(path: Path) -> str:
     return path.relative_to(RAIZ).as_posix()
 
 
-def escribir_metadata(ext: Extraccion, id_carga: int | None, estado: str) -> Path:
-    """<archivo>_metadata.json junto al crudo: de dónde salió, cuándo, con qué parámetros y en qué carga quedó.
+def escribir_metadata(ext: Extraccion) -> Path:
+    """<archivo>_metadata.json junto al crudo: de dónde salió, cuándo, con qué parámetros, su sha256 y qué contiene.
 
-    Si el crudo ya tenía metadata y esta carga no lo insertó de nuevo ('omitido'), se conserva la original,
-    que es la que apunta al id_carga donde están sus registros.
+    Describe solo el archivo, no la carga: el mismo crudo produce siempre el mismo metadata, así que las descargas
+    manuales de KOSIS (versionadas en git) no cambian al correr el pipeline en otra base. La carga en que quedó
+    cada archivo se busca en ctl.log_cargas por archivo o hash_archivo. Solo se escribe si el contenido cambia.
     """
     destino = ext.archivo.with_name(f"{ext.archivo.stem}_metadata.json")
-    if destino.exists() and estado != "exito":
-        return destino
-    destino.write_text(json.dumps({
+    texto = json.dumps({
         "fuente": ext.fuente,
         "dataset": ext.dataset,
         "metodo": ext.metodo,
@@ -112,9 +111,9 @@ def escribir_metadata(ext: Extraccion, id_carga: int | None, estado: str) -> Pat
         "registros": len(ext.registros),
         "resumen": ext.resumen,
         "avisos": ext.avisos,
-        "id_carga": id_carga,
-        "estado_carga": estado,
-    }, ensure_ascii=False, indent=2, default=str), encoding="utf-8", newline="\n")  # LF en cualquier SO
+    }, ensure_ascii=False, indent=2, default=str)
+    if not destino.exists() or destino.read_text(encoding="utf-8") != texto:
+        destino.write_text(texto, encoding="utf-8", newline="\n")  # LF en cualquier SO
     return destino
 
 

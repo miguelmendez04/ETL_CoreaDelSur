@@ -2,6 +2,9 @@
 
 Cada componente se normaliza 0-100 entre los 17 si-do (100 = más riesgo según su dirección en config.yaml) y el
 índice es el promedio ponderado. Así el ranking es transparente: se puede ver qué componente lo explica.
+
+La normalización base es min-max. Como un valor extremo (Sejong, el único si-do que crece) estira la escala y
+comprime al resto, la sensibilidad también recalcula el ranking con percentiles (solo importa el orden).
 """
 import pandas as pd
 
@@ -34,11 +37,14 @@ def calcular(hist: pd.DataFrame, proy: pd.DataFrame, dims: pd.DataFrame, cfg: di
     return t.reset_index(names="cod_territorio").sort_values("ranking")
 
 
-def indice(t: pd.DataFrame, componentes: dict) -> pd.Series:
+def indice(t: pd.DataFrame, componentes: dict, normalizacion: str = "minmax") -> pd.Series:
     puntajes, pesos = [], 0
     for comp, regla in componentes.items():
         x = t[comp]
-        norm = (x - x.min()) / (x.max() - x.min()) * 100
+        if normalizacion == "percentil":
+            norm = (x.rank() - 1) / (x.count() - 1) * 100
+        else:
+            norm = (x - x.min()) / (x.max() - x.min()) * 100
         puntajes.append((norm if regla["mas_es_peor"] else 100 - norm) * regla["peso"])
         pesos += regla["peso"]
     return sum(puntajes) / pesos
@@ -46,13 +52,18 @@ def indice(t: pd.DataFrame, componentes: dict) -> pd.Series:
 
 def sensibilidad(t: pd.DataFrame, cfg: dict) -> pd.DataFrame:
     """Ranking con esquemas de pesos alternativos (config.yaml). Si los primeros puestos se mantienen, el
-    resultado no depende de la elección de pesos."""
-    base = cfg["gold"]["riesgo_sido"]["componentes"]
+    resultado no depende de la elección de pesos ni del método de normalización."""
+    r = cfg["gold"]["riesgo_sido"]
+    base = r["componentes"]
     t = t.set_index("cod_territorio")
+    pesos_base = {c: v["peso"] for c, v in base.items()}
+    esquemas = {"base": (pesos_base, "minmax"),
+                **{e: (p, "minmax") for e, p in r["esquemas_sensibilidad"].items()},
+                **{f"base_normalizacion_{n}": (pesos_base, n) for n in r.get("normalizaciones_sensibilidad", [])}}
     filas = []
-    for esquema, pesos in {"base": {c: r["peso"] for c, r in base.items()}, **cfg["gold"]["riesgo_sido"]["esquemas_sensibilidad"]}.items():
+    for esquema, (pesos, normalizacion) in esquemas.items():
         comps = {c: {"peso": w, "mas_es_peor": base[c]["mas_es_peor"]} for c, w in pesos.items() if w}
-        idx = indice(t, comps)
+        idx = indice(t, comps, normalizacion)
         filas.append(pd.DataFrame({"cod_territorio": idx.index, "esquema": esquema, "indice_riesgo": idx.values,
                                    "ranking": idx.rank(ascending=False, method="min").astype(int).values}))
     return pd.concat(filas, ignore_index=True)

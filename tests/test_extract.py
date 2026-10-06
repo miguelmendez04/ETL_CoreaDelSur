@@ -74,3 +74,13 @@ def test_kosis_rechaza_tabla_equivocada(bronze):
 def test_kosis_sin_archivo_indica_que_descargar(bronze):
     with pytest.raises(FileNotFoundError, match="Tabla ancha"):
         kosis.extraer("ancho", CFG)
+
+
+def test_metadata_describe_el_archivo_y_no_cambia_entre_corridas(bronze, monkeypatch):
+    # Las descargas de KOSIS se versionan: correr el pipeline en otra base no debe modificar su metadata.
+    monkeypatch.setattr(comun, "relativa", lambda p: p.relative_to(bronze).as_posix())
+    _escribir(bronze, "2026-10-01", "doble_2000_2025.csv", DOBLE)
+    destino = comun.escribir_metadata(kosis.extraer("doble", CFG))
+    antes = destino.read_bytes()
+    assert comun.escribir_metadata(kosis.extraer("doble", CFG)) == destino and destino.read_bytes() == antes
+    assert b"id_carga" not in antes and b'"tbl_id": "DT_X"' in antes

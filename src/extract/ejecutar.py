@@ -5,7 +5,8 @@ Por dataset:
   2. extractor       -> API o descarga manual; el crudo queda en data/bronze/<fuente>/<fecha>/.
   3. bronze.<tabla>  -> un registro por fila, sin modificar. Si el crudo es idéntico al de la última carga
                         exitosa (mismo sha256) no se duplica: la carga queda 'omitido' (salvo --forzar).
-  4. metadata        -> <archivo>_metadata.json junto al crudo, con url, parámetros, hash, resumen e id_carga.
+  4. metadata        -> <archivo>_metadata.json junto al crudo, con url, parámetros, hash y resumen
+                        (describe el archivo; la carga se busca en ctl.log_cargas por archivo o hash).
 """
 import logging
 import time
@@ -93,7 +94,7 @@ def _procesar(t, cfg: dict, conn, forzar: bool) -> dict:
                 n = carga.insertar_registros(conn, cfg[t.fuente]["tabla_bronze"], id_carga, ext)
                 estado = "exito"
                 carga.cerrar_carga(conn, id_carga, estado, ext, filas=n)
-        escribir_metadata(ext, id_carga, estado)
+        escribir_metadata(ext)
         fila["estado"] = estado
         log.info("  %s: %d registros, %s -> %s", estado, len(ext.registros), ext.resumen, relativa(ext.archivo))
     except Exception as e:  # cualquier fallo queda en ctl.log_cargas y no detiene los demás datasets

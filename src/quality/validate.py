@@ -1,7 +1,8 @@
 """Reglas de validación bronze -> silver. Cada registro que falla va a ctl.rechazos con su regla y motivo.
 
 Reglas (CLAUDE.md, sección 5): tipo y nulos, rango por indicador, indicador válido, clave única y coherencia de
-totales (suma de grupos de edad ≈ total y hombres + mujeres ≈ total, con tolerancia de config.yaml).
+totales (suma de grupos de edad ≈ total y hombres + mujeres ≈ total en población y EAPS, con la tolerancia y el
+redondeo de cada fuente definidos en config.yaml).
 """
 import pandas as pd
 
@@ -9,8 +10,6 @@ from src.transform.silver.homologacion import rechazos
 
 CLAVE_HIST = ["anio", "cod_territorio", "sexo", "grupo_edad", "cod_indicador"]
 CLAVE_PROY = CLAVE_HIST + ["edicion_proyeccion", "escenario"]
-QUINQUENALES = ["0-4", "5-9", "10-14", "15-19", "20-24", "25-29", "30-34", "35-39", "40-44", "45-49",
-                "50-54", "55-59", "60-64", "65-69", "70-74", "75-79", "80-84", "85+"]
 
 
 def clave(df: pd.DataFrame) -> list[str]:
@@ -69,33 +68,41 @@ def validar(df: pd.DataFrame, dims: dict) -> tuple[pd.DataFrame, pd.DataFrame]:
     return df[~(invalido | fuera | dup)], rech
 
 
-def coherencia_totales(df: pd.DataFrame, tolerancia_pct: float) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """POBLACION: suma de quinquenales ≈ TOTAL y H + M ≈ T. Si no cuadra, se rechaza la fila del total."""
-    pob = df[df["cod_indicador"] == "POBLACION"]
-    k = ["nivel", "anio", "cod_territorio", "edicion_proyeccion", "escenario"]
+def _incoherentes(partes: pd.Series, total: pd.Series, tolerancia_pct: float, margen: float) -> pd.Series:
+    """Diferencia % de las filas que superan la tolerancia Y el margen de redondeo de la fuente."""
+    dif = (partes - total).abs()
+    pct = dif / total.abs() * 100
+    return pct[(pct > tolerancia_pct) & (dif > margen)].dropna()
+
+
+def coherencia_totales(df: pd.DataFrame, tolerancia_pct: float, reglas: dict) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Por indicador de nivel (config.yaml, calidad.coherencia_totales): suma de grupos de edad ≈ total y
+    H + M ≈ T. Margen de redondeo = medio redondeo por componente sumado. Si no cuadra, se rechaza la fila del total."""
+    k = ["nivel", "anio", "cod_territorio", "edicion_proyeccion", "escenario", "fuente"]
     malas = []
+    for ind, r in reglas.items():
+        d = df[df["cod_indicador"] == ind]
+        suma = d[d["grupo_edad"].isin(r["grupos"])].groupby(k + ["sexo"], dropna=False)["valor"].agg(["sum", "count"])
+        tot = d[d["grupo_edad"] == r["total"]].set_index(k + ["sexo"])["valor"]
+        comp = suma.join(tot.rename("total"), how="inner")
+        comp = comp[comp["count"] == len(r["grupos"])]
+        dif = _incoherentes(comp["sum"], comp["total"], tolerancia_pct, r["redondeo"] * len(r["grupos"]) / 2)
+        for idx, v in dif.items():
+            malas.append((ind, dict(zip(k + ["sexo"], idx)), r["total"], f"suma de edades difiere {v:.2f}% del total"))
 
-    suma = (pob[pob["grupo_edad"].isin(QUINQUENALES)].groupby(k + ["sexo"], dropna=False)["valor"].agg(["sum", "count"]))
-    tot = pob[pob["grupo_edad"] == "TOTAL"].set_index(k + ["sexo"])["valor"]
-    comp = suma.join(tot.rename("total"), how="inner")
-    comp = comp[comp["count"] == len(QUINQUENALES)]
-    dif = (comp["sum"] - comp["total"]).abs() / comp["total"] * 100
-    for idx in dif[dif > tolerancia_pct].index:
-        malas.append((dict(zip(k + ["sexo"], idx)), "TOTAL", f"suma de edades difiere {dif[idx]:.2f}% del total"))
-
-    porsexo = pob.pivot_table(index=k + ["grupo_edad"], columns="sexo", values="valor", aggfunc="first", dropna=False)
-    if {"T", "H", "M"} <= set(porsexo.columns):
-        d = ((porsexo["H"] + porsexo["M"] - porsexo["T"]).abs() / porsexo["T"] * 100).dropna()
-        for idx in d[d > tolerancia_pct].index:
-            claves = dict(zip(k + ["grupo_edad"], idx))
-            malas.append(({**claves, "sexo": "T"}, claves["grupo_edad"], f"H + M difiere {d[idx]:.2f}% del total"))
+        porsexo = d.pivot_table(index=k + ["grupo_edad"], columns="sexo", values="valor", aggfunc="first", dropna=False)
+        if {"T", "H", "M"} <= set(porsexo.columns):
+            dif = _incoherentes(porsexo["H"] + porsexo["M"], porsexo["T"], tolerancia_pct, r["redondeo"])
+            for idx, v in dif.items():
+                claves = dict(zip(k + ["grupo_edad"], idx))
+                malas.append((ind, {**claves, "sexo": "T"}, claves["grupo_edad"], f"H + M difiere {v:.2f}% del total"))
 
     if not malas:
         return df, rechazos(df.iloc[0:0], "", "")
     mascara = pd.Series(False, index=df.index)
     motivos = {}
-    for claves, edad, motivo in malas:
-        m = (df["cod_indicador"] == "POBLACION") & (df["grupo_edad"] == edad)
+    for ind, claves, edad, motivo in malas:
+        m = (df["cod_indicador"] == ind) & (df["grupo_edad"] == edad)
         for c, v in claves.items():
             if c != "grupo_edad":
                 m &= df[c].isna() if pd.isna(v) else df[c] == v

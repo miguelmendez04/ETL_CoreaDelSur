@@ -82,7 +82,7 @@ dataflow de OECD o una tabla de KOSIS basta con añadirlo al catálogo, sin toca
 | Fuente | Método | Datasets | Tabla bronze |
 |---|---|---|---|
 | World Bank WDI | API v2 | 10 indicadores × 9 países | `bronze.worldbank_wdi` |
-| OECD | API SDMX | productividad, fuerza laboral, fecundidad, dependencia | `bronze.oecd_sdmx` |
+| OECD | API SDMX | productividad, fuerza laboral, participación por edad y sexo, fecundidad, dependencia (esta solo queda en bronze: la OCDE la mide como 65+/20-64, no comparable) | `bronze.oecd_sdmx` |
 | UN WPP 2024 | Data Portal API (token) | población por edad y sexo | `bronze.unwpp_wpp2024` |
 | KOSIS (KOSTAT) | descarga manual | 9 tablas (vitales, TFR, población, EAPS, proyecciones) | `bronze.kosis` |
 
@@ -101,7 +101,9 @@ Por cada dataset el pipeline:
 2. extrae y guarda el crudo en `data/bronze/<fuente>/<AAAA-MM-DD>/`, sin sobrescribir nunca un archivo anterior;
 3. inserta un registro por fila en `bronze.<tabla>` con su `id_carga` y `hash_registro`. Si el crudo es idéntico
    al de la última carga exitosa, no lo duplica y la carga queda `omitido`;
-4. escribe `<archivo>_metadata.json` junto al crudo: URL, parámetros, sha256, cobertura detectada, avisos e `id_carga`.
+4. escribe `<archivo>_metadata.json` junto al crudo: URL, parámetros, sha256, cobertura detectada y avisos. Describe
+   el archivo, no la carga (el mismo crudo da siempre el mismo metadata); la carga se busca en `ctl.log_cargas`
+   por `archivo` o `hash_archivo`.
 
 **KOSIS se descarga a mano** porque su OpenAPI está restringida a residentes de Corea. Para actualizarlo:
 descargar la tabla desde [kosis.kr/eng](https://kosis.kr/eng/) en CSV, guardarla en
@@ -121,12 +123,17 @@ bronze, en una sola transacción (si algo falla, queda la versión anterior). La
 1. **Formato largo:** una fila por año × territorio × sexo × grupo de edad × indicador.
 2. **Homologación** con diccionarios explícitos (`etiquetas.csv`), incluidas las etiquetas en coreano
    (`남자` -> `H`, `0 - 4세` -> `0-4`, `중위 추계` -> `medio`). Lo que no se reconoce va a `ctl.rechazos`.
-3. **Unidades:** miles -> personas (EAPS); 85-89 … 100+ -> 85+; se descartan los agregados que se solapan.
+3. **Unidades y frecuencia:** miles -> personas (EAPS); 85-89 … 100+ -> 85+; se descartan los agregados que se
+   solapan. Las series mensuales de la EAPS entran como el promedio anual que publica KOSIS (los meses sueltos
+   recientes quedan solo en bronze); la población es la de mitad de año.
 4. **Validación:** nulos, tipo, rango por indicador, indicador válido, clave única y coherencia de totales
-   (suma de edades ≈ total, H + M ≈ T). Cada rechazo queda en `ctl.rechazos` con su regla y motivo.
+   (suma de edades ≈ total y H + M ≈ T en población y EAPS, con tolerancia de 0,5 % y el margen de redondeo de la
+   fuente: la EAPS publica en miles). Cada rechazo queda en `ctl.rechazos` con su regla y motivo.
 5. **Cálculos del pipeline:** agregados 0-14 / 15-64 / 65+, Chungnam + Sejong (tasas recalculadas desde los
    niveles), proporción de 65+, índice de envejecimiento y dependencia de vejez.
-6. **Conciliación** maestra vs contraste (OECD, World Bank, UN WPP) en `silver.conciliacion`.
+6. **Conciliación** maestra vs contraste (OECD, World Bank, UN WPP) en `silver.conciliacion`. La meta de ±3 % se
+   mide en el histórico; en proyección la diferencia con UN WPP es esperable (otros supuestos de fecundidad y
+   migración) y se guarda como contraste, no como error.
 
 | Tabla | Contenido |
 |---|---|
@@ -150,7 +157,7 @@ para analizarlos sin conectarse a la base.
 | `gold.escenario_fuerza_laboral` + `gold.supuestos` | 6b | Fuerza laboral potencial 2026–2072 por sexo y edad |
 | `gold.escenarios_sensibilidad` | 6b | Fuerza laboral total con variantes de los parámetros de B y C |
 | `gold.indicadores_riesgo` | 5 | Índice de riesgo demográfico por si-do (0–100) y ranking, con sus componentes |
-| `gold.riesgo_sensibilidad` | 5 | Ranking de riesgo con esquemas de pesos alternativos |
+| `gold.riesgo_sensibilidad` | 5 | Ranking de riesgo con esquemas de pesos alternativos y normalización por percentiles |
 | `gold.asociaciones` | 7 | Correlaciones 2000–2025 en niveles y en variaciones anuales (asociación, no causalidad) |
 | `gold.hitos_escasez` | 8 | Años en que se cruzan umbrales (pico de 15-64, relevo < 100, dependencia ≥ 50 y ≥ 75) y caída de la fuerza laboral |
 | `ctl.kpis` / `gold.v_kpis_calidad` | — | KPIs de calidad del proyecto, una foto por ejecución |
@@ -179,7 +186,26 @@ población institucional; con él, el año base reproduce la población activa o
 
 Los supuestos calculados (pendientes de la tendencia, objetivos OCDE) quedan guardados en `gold.supuestos`, y la
 sensibilidad a sus parámetros en `gold.escenarios_sensibilidad`. El índice de riesgo por si-do usa cuatro
-componentes con igual peso; `gold.riesgo_sensibilidad` muestra el ranking con otros esquemas de pesos.
+componentes con igual peso; `gold.riesgo_sensibilidad` muestra el ranking con otros esquemas de pesos y con
+normalización por percentiles (Sejong, el único si-do cuya población de 15-64 crece, estira la escala min-max).
+Las cifras regionales de la EAPS vienen de una encuesta por muestreo: se interpretan como tendencia.
+
+## KPIs de calidad
+
+Se calculan en cada ejecución desde `ctl` y silver (`ctl.kpis`, vista `gold.v_kpis_calidad`):
+
+| KPI | Meta |
+|---|---|
+| Fuentes institucionales integradas | ≥ 3 |
+| Indicadores con definición en el diccionario | 100 % |
+| Contrastes del diccionario que coinciden con la conciliación | 100 % |
+| Ejecuciones sin fallo técnico | ≥ 95 % |
+| Registros válidos / rechazo, en cada carga silver | ≥ 98 % / ≤ 2 %, con el 100 % de rechazos con motivo |
+| Completitud año × indicador | ≥ 95 % nacional, ≥ 90 % regional |
+| Suma de los 17 si-do vs total nacional (±0,5 %) | 100 % de los años |
+| Duplicados en bronze | se monitorean |
+| Proyecciones con edición y escenario | 100 % |
+| Pares maestra-contraste dentro de ±3 % (histórico) | ≥ 90 % |
 
 ## Pruebas
 

@@ -61,7 +61,8 @@ def construir(conn, cfg: dict) -> dict:
 
     # 4-5. Agregados, coherencia y derivados
     df = derive.agregados_edad(df, s["agregados_edad"])
-    df, r_coher = validate.coherencia_totales(df, cfg["calidad"]["tolerancia_suma_edades_pct"])
+    df, r_coher = validate.coherencia_totales(df, cfg["calidad"]["tolerancia_suma_edades_pct"],
+                                                 cfg["calidad"]["coherencia_totales"])
     df = derive.chungnam_sejong(df, s["agregado_cnsj"])
     df = derive.derivados(df)
     df["estado"] = derive.estado(df, s["preliminar"])
