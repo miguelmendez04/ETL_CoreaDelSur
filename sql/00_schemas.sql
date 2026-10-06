@@ -46,6 +46,20 @@ CREATE TABLE IF NOT EXISTS ctl.rechazos (
     fecha_rechazo     TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS ix_rechazos_carga ON ctl.rechazos (id_carga);
+
+-- Filas después de cada paso de bronze -> silver (embudo): 'filtro' deja pasar o descarta, 'calculo' agrega filas
+-- calculadas en el pipeline. id_carga = la carga de silver.fact_historico de esa ejecución.
+CREATE TABLE IF NOT EXISTS ctl.pasos_silver (
+    id_carga     BIGINT   NOT NULL REFERENCES ctl.log_cargas (id_carga),
+    orden        SMALLINT NOT NULL,
+    paso         TEXT     NOT NULL,
+    tipo         TEXT     NOT NULL CHECK (tipo IN ('filtro', 'calculo')),
+    filas        INTEGER  NOT NULL,
+    variacion    INTEGER  NOT NULL,  -- filas - filas del paso anterior (negativo = descartadas)
+    en_embudo    BOOLEAN  NOT NULL,  -- filtros antes del primer cálculo: forman el embudo decreciente
+    descripcion  TEXT     NOT NULL,
+    PRIMARY KEY (id_carga, orden)
+);
 CREATE INDEX IF NOT EXISTS ix_log_dataset ON ctl.log_cargas (capa, fuente, dataset, estado);
 
 -- ---------------------------------------------------------------------
@@ -337,6 +351,14 @@ FROM silver.conciliacion c JOIN silver.dim_indicador i USING (cod_indicador);
 -- Última foto de los KPIs de calidad.
 CREATE OR REPLACE VIEW gold.v_kpis_calidad AS
 SELECT k.* FROM ctl.kpis k WHERE k.id_carga = (SELECT max(id_carga) FROM ctl.kpis);
+
+-- Embudo de la última ejecución de silver (pasos y filas), para Power BI.
+CREATE OR REPLACE VIEW gold.v_embudo_silver AS
+SELECT p.* FROM ctl.pasos_silver p WHERE p.id_carga = (SELECT max(id_carga) FROM ctl.pasos_silver);
+
+-- Dimensión de años para Power BI: une en un mismo eje el histórico (panel) y el futuro (escenarios).
+CREATE OR REPLACE VIEW gold.v_anios AS
+SELECT DISTINCT anio FROM silver.fact_historico UNION SELECT DISTINCT anio FROM silver.fact_proyeccion;
 
 -- Dimensión de territorio para Power BI: filtra a la vez el panel, el riesgo y las señales por si-do.
 CREATE OR REPLACE VIEW gold.v_territorios AS

@@ -167,6 +167,9 @@ bronze, en una sola transacción (si algo falla, queda la versión anterior). La
 Cada fila guarda `fuente`, `fecha_extraccion`, `version_publicacion`, `estado` (`preliminar`/`definitivo`),
 `id_carga` (la carga silver) e `id_carga_origen` (la carga bronze de donde viene).
 
+Las filas que quedan después de cada paso (embudo bronze -> silver) se registran en `ctl.pasos_silver` y se ven en
+`gold.v_embudo_silver`.
+
 Al terminar, cada tabla silver y los rechazos de esa ejecución quedan también en `data/silver/<fecha>/` (Parquet),
 para analizarlos sin conectarse a la base.
 

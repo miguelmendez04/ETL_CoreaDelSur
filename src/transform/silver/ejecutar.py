@@ -8,6 +8,8 @@ Pasos:
   5. indicadores derivados y estado preliminar/definitivo (derive.py)
   6. conciliación maestra vs contraste (reconcile.py)
   7. escribir silver en una transacción, registrar cada tabla en ctl.log_cargas y respaldar en data/silver/
+
+Las filas que quedan después de cada paso se guardan en ctl.pasos_silver (embudo de la transformación).
 """
 import logging
 import time
@@ -30,6 +32,18 @@ KOSIS = {"vitales_sido": normalize.kosis_vitales_sido, "tfr_sido": normalize.kos
          "proyeccion_escenarios": normalize.kosis_proyeccion_escenarios}
 
 
+def pasos_embudo(pasos: list[tuple[str, str, int, str]]) -> pd.DataFrame:
+    """(paso, tipo, filas, descripción) en orden -> tabla de ctl.pasos_silver. Los filtros anteriores al primer
+    cálculo forman el embudo (siempre decreciente); después, los cálculos agregan filas."""
+    df = pd.DataFrame(pasos, columns=["paso", "tipo", "filas", "descripcion"])
+    df.insert(0, "orden", range(1, len(df) + 1))
+    df["variacion"] = df["filas"].diff().fillna(0).astype(int)
+    df["en_embudo"] = (df["tipo"] == "filtro") & (df["tipo"] == "calculo").cumsum().eq(0)
+    if (df.loc[df["en_embudo"], "variacion"] > 0).any():
+        raise ValueError("Un filtro de silver agregó filas: revisar el orden de los pasos")
+    return df
+
+
 def construir(conn, cfg: dict) -> dict:
     """Todo el cálculo de silver, sin escribir en la base. Devuelve los DataFrames y métricas."""
     s = cfg["silver"]
@@ -50,21 +64,33 @@ def construir(conn, cfg: dict) -> dict:
     partes.append(normalize.oecd_participacion(oecd["participacion_edad_sexo"], cfg))
     cand = pd.concat(partes, ignore_index=True)
     log.info("  candidatos: %d valores desde %d datasets de bronze", len(cand), len(partes))
+    pasos = [("Formato largo", "filtro", len(cand), "Valores de bronze en formato largo: columnas anuales e ítems del estudio")]
 
     # 2-3. Homologar, convertir y validar
     df, r_homol, fuera = homologacion.homologar(cand, dims, cfg)
+    pasos += [("En alcance", "filtro", len(cand) - sum(fuera.values()),
+               "Sin escenarios KOSTAT no usados ni grupos de edad solapados (fuera de alcance, ver config.yaml)"),
+              ("Homologados", "filtro", len(df), "Territorio, sexo, edad y escenario con código; lo demás a ctl.rechazos")]
     for col in ("edicion_proyeccion", "escenario"):   # centinela para agrupar sin perder filas del histórico
         df[col] = df[col].where(df["nivel"] == "proyeccion", "-")
     df, r_valor, no_aplica = validate.convertir_valores(df, dims)
+    pasos.append(("Con dato (sin imputar)", "filtro", len(df), "Sin nulos ni años en que el territorio no existía"))
     df = validate.agrupar_edades(df)
     df, r_valid = validate.validar(df, dims)
+    pasos.append(("Válidos (85+ agrupado y reglas)", "filtro", len(df),
+                  "85-89 … 100+ sumados en 85+; indicador válido, rango y clave única"))
 
     # 4-5. Agregados, coherencia y derivados
     df = derive.agregados_edad(df, s["agregados_edad"])
+    pasos.append(("+ agregados de edad", "calculo", len(df), "0-14, 15-64 y 65+ sumados desde los quinquenales"))
     df, r_coher = validate.coherencia_totales(df, cfg["calidad"]["tolerancia_suma_edades_pct"],
                                                  cfg["calidad"]["coherencia_totales"])
+    pasos.append(("Coherencia de totales", "filtro", len(df), "Suma de edades ≈ total y H + M ≈ T (población y EAPS)"))
     df = derive.chungnam_sejong(df, s["agregado_cnsj"])
+    pasos.append(("+ Chungnam + Sejong", "calculo", len(df), "Agregado territorial; tasas recalculadas desde niveles"))
     df = derive.derivados(df)
+    pasos.append(("+ indicadores derivados", "calculo", len(df),
+                  "% 65+, índice de envejecimiento y dependencia de vejez = filas en silver"))
     df["estado"] = derive.estado(df, s["preliminar"])
 
     # 6. Conciliación
@@ -79,7 +105,8 @@ def construir(conn, cfg: dict) -> dict:
 
     rechazos = pd.concat([r_homol, r_valor, r_valid, r_coher], ignore_index=True)
     return {"dims": dims, "hist": df[df["nivel"] == "historico"], "proy": df[df["nivel"] == "proyeccion"],
-            "conc": conc, "rechazos": rechazos, "candidatos": cand, "fuera_alcance": {**fuera, "no_aplica": no_aplica}}
+            "conc": conc, "rechazos": rechazos, "candidatos": cand, "fuera_alcance": {**fuera, "no_aplica": no_aplica},
+            "pasos": pasos_embudo(pasos)}
 
 
 def ejecutar_silver() -> pd.DataFrame:
@@ -95,7 +122,7 @@ def ejecutar_silver() -> pd.DataFrame:
         hist, proy, conc, rech = r["hist"].copy(), r["proy"].copy(), r["conc"].copy(), r["rechazos"].copy()
         hist["id_carga"], proy["id_carga"], conc["id_carga"] = ids["silver.fact_historico"], ids["silver.fact_proyeccion"], ids["silver.conciliacion"]
         rech["id_carga"] = rech["destino"].map(ids)
-        carga.escribir(conn, r["dims"], hist, proy, conc, rech)
+        carga.escribir(conn, r["dims"], hist, proy, conc, rech, r["pasos"].assign(id_carga=ids["silver.fact_historico"]))
 
         resumen = []
         for tabla, datos in (("silver.fact_historico", hist), ("silver.fact_proyeccion", proy), ("silver.conciliacion", conc)):
@@ -112,7 +139,9 @@ def ejecutar_silver() -> pd.DataFrame:
         h = conc["nivel"] == "historico"
         log.info("Conciliación histórica: %d de %d pares dentro de ±%s%% (%.1f%%)", dentro[h].sum(), h.sum(),
                  cfg["calidad"]["tolerancia_conciliacion_pct"], dentro[h].mean() * 100)
-        m = archivos.exportar(conn, "silver", carga.TABLAS + ["ctl.rechazos"], ids, solo_esta_carga=("ctl.rechazos",))
+        log.info("Embudo bronze -> silver:\n%s", r["pasos"][["orden", "paso", "filas", "variacion"]].to_string(index=False))
+        m = archivos.exportar(conn, "silver", carga.TABLAS + ["ctl.rechazos", "ctl.pasos_silver"], ids,
+                              solo_esta_carga=("ctl.rechazos", "ctl.pasos_silver"))
         log.info("Respaldo silver: %s (%d archivos Parquet)", m["archivos"][0]["archivo"].rsplit("/", 1)[0], len(m["archivos"]))
         return resumen
     except Exception as e:

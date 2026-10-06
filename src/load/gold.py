@@ -10,7 +10,8 @@ from src.load.ctl import copiar
 TABLAS = ["gold.supuestos", "gold.escenario_fuerza_laboral", "gold.escenarios_sensibilidad", "gold.indicadores_riesgo",
           "gold.riesgo_sensibilidad", "gold.asociaciones", "gold.hitos_escasez"]
 VISTAS = ["gold.v_panel_indicadores", "gold.v_escenarios_resumen", "gold.v_natalidad_vs_15_64",
-          "gold.v_senales_escasez", "gold.v_conciliacion", "gold.v_kpis_calidad", "gold.v_territorios"]
+          "gold.v_senales_escasez", "gold.v_conciliacion", "gold.v_kpis_calidad", "gold.v_territorios",
+          "gold.v_anios", "gold.v_embudo_silver"]
 
 
 def escribir(conn: psycopg.Connection, datos: dict[str, pd.DataFrame], ids: dict[str, int]) -> None:

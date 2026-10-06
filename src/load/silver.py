@@ -27,8 +27,9 @@ DIMENSIONES = {
 
 
 def escribir(conn: psycopg.Connection, dims: dict, hist: pd.DataFrame, proy: pd.DataFrame, conc: pd.DataFrame,
-             rechazos: pd.DataFrame) -> None:
-    """Reemplaza el contenido de silver (dimensiones, hechos y conciliación) y agrega los rechazos a ctl."""
+             rechazos: pd.DataFrame, pasos: pd.DataFrame) -> None:
+    """Reemplaza el contenido de silver (dimensiones, hechos y conciliación) y agrega a ctl los rechazos y el
+    embudo de pasos de esta ejecución."""
     with conn.transaction(), conn.cursor() as cur:
         # Gold depende de silver (llaves foráneas a las dimensiones): queda vacío hasta correr la capa gold.
         cur.execute("TRUNCATE gold.escenario_fuerza_laboral, gold.supuestos, gold.indicadores_riesgo, "
@@ -44,6 +45,8 @@ def escribir(conn: psycopg.Connection, dims: dict, hist: pd.DataFrame, proy: pd.
         if not rechazos.empty:
             r = rechazos.assign(registro=rechazos["registro"].map(lambda x: json.dumps(x, ensure_ascii=False, default=str)))
             copiar(cur, "ctl.rechazos", r, ["id_carga", "tabla_origen", "id_registro_origen", "regla", "motivo", "registro"])
+        copiar(cur, "ctl.pasos_silver", pasos, ["id_carga", "orden", "paso", "tipo", "filas", "variacion", "en_embudo",
+                                                "descripcion"])
 
 
 TABLAS = ["silver.fact_historico", "silver.fact_proyeccion", "silver.conciliacion",

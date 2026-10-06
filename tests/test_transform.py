@@ -221,3 +221,13 @@ def test_normalizacion_percentil_no_depende_del_valor_extremo():
     p = riesgo.indice(t, comps, "percentil")
     assert p.tolist() == pytest.approx([50, 33.333, 66.667, 50], abs=1e-3)   # C pasa a ser el de mayor riesgo
     assert riesgo.indice(t, comps)["C"] < riesgo.indice(t, comps)["A"]   # en min-max el extremo cambia el orden de C
+
+
+def test_pasos_embudo_marca_filtros_y_calculos():
+    from src.transform.silver.ejecutar import pasos_embudo
+    p = pasos_embudo([("Formato largo", "filtro", 100, ""), ("Homologados", "filtro", 90, ""),
+                      ("+ derivados", "calculo", 120, ""), ("Coherencia", "filtro", 118, "")])
+    assert p["orden"].tolist() == [1, 2, 3, 4] and p["variacion"].tolist() == [0, -10, 30, -2]
+    assert p["en_embudo"].tolist() == [True, True, False, False]   # después de un cálculo ya no es embudo
+    with pytest.raises(ValueError, match="agregó filas"):
+        pasos_embudo([("A", "filtro", 10, ""), ("B", "filtro", 12, "")])
