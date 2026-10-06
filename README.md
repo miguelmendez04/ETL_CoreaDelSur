@@ -45,6 +45,7 @@ en `data/`.
 │   └── mappings/    dimensiones y diccionario de etiquetas (inglés y coreano)
 ├── sql/             DDL de los esquemas y vistas (Docker lo ejecuta al crear la base)
 ├── notebooks/       01-05 perfilamiento de calidad por fuente; 06 resultados de gold por pregunta de negocio
+├── powerbi/         proyecto de Power BI (.pbip) conectado a las vistas gold; guía en powerbi/README.md
 ├── tests/           pruebas de las tres capas
 ├── logs/            registro de ejecuciones
 ├── docker-compose.yml
@@ -68,7 +69,7 @@ en `data/`.
    ```bash
    python main.py
    ```
-5. Revisar los resultados en la base (o conectar Power BI a las vistas `gold.v_*`):
+5. Revisar los resultados en la base, o abrir `powerbi/ETL_Corea.pbip` (ver [powerbi/README.md](powerbi/README.md)):
    ```sql
    SELECT * FROM gold.v_kpis_calidad;
    SELECT * FROM gold.v_escenarios_resumen WHERE escenario_kostat = 'medio' AND anio IN (2030, 2050, 2072);

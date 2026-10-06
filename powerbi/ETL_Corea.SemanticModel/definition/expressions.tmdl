@@ -1,0 +1,12 @@
+/// Servidor PostgreSQL (host:puerto) de docker-compose
+expression Servidor = "localhost:5432" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 644c4c46-5fea-538a-a35c-1d942fa171fb
+
+	annotation PBI_ResultType = Text
+
+/// Base de datos (PG_DB en .env)
+expression BaseDatos = "etl_corea" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 1599c88a-37a6-5900-8a26-f8b3b8573c26
+
+	annotation PBI_ResultType = Text
+

@@ -1,0 +1,392 @@
+{
+  "config": "{\"version\":\"5.37\",\"themeCollection\":{},\"activeSectionIndex\":0,\"defaultDrillFilterOtherVisuals\":true,\"linguisticSchemaSyncVersion\":2,\"objects\":{}}",
+  "layoutOptimization": 0,
+  "sections": [
+    {
+      "config": "{}",
+      "displayName": "Natalidad",
+      "displayOption": 1,
+      "filters": "[]",
+      "height": 720.0,
+      "name": "Seccion1",
+      "visualContainers": [
+        {
+          "config": "{\"name\": \"v0003etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 10, \"y\": 5, \"z\": 0, \"width\": 1260, \"height\": 60, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"textbox\", \"drillFilterOtherVisuals\": true, \"objects\": {\"general\": [{\"properties\": {\"paragraphs\": [{\"textRuns\": [{\"value\": \"Natalidad (preguntas 1 y 2)\", \"textStyle\": {\"fontWeight\": \"bold\", \"fontSize\": \"18pt\"}}]}, {\"textRuns\": [{\"value\": \"Corea del Sur, 2000-2025. Fuente maestra: KOSIS (estadísticas vitales y población).\", \"textStyle\": {\"fontSize\": \"10pt\", \"color\": \"#605E5C\"}}]}]}}]}}}",
+          "filters": "[]",
+          "x": 10,
+          "y": 5,
+          "z": 0,
+          "width": 1260,
+          "height": 60
+        },
+        {
+          "config": "{\"name\": \"v0004etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 10, \"y\": 70, \"z\": 0, \"width\": 410, \"height\": 110, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"card\", \"drillFilterOtherVisuals\": true, \"projections\": {\"Values\": [{\"queryRef\": \"Panel.TFR 2025\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"t0\", \"Entity\": \"Panel\", \"Type\": 0}], \"Select\": [{\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"TFR 2025\"}, \"Name\": \"Panel.TFR 2025\", \"NativeReferenceName\": \"TFR 2025\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'TFR 2025 (hijos por mujer)'\"}}}}}]}}}",
+          "filters": "[]",
+          "x": 10,
+          "y": 70,
+          "z": 0,
+          "width": 410,
+          "height": 110
+        },
+        {
+          "config": "{\"name\": \"v0005etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 435, \"y\": 70, \"z\": 0, \"width\": 410, \"height\": 110, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"card\", \"drillFilterOtherVisuals\": true, \"projections\": {\"Values\": [{\"queryRef\": \"Panel.Nacimientos 2025\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"t0\", \"Entity\": \"Panel\", \"Type\": 0}], \"Select\": [{\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"Nacimientos 2025\"}, \"Name\": \"Panel.Nacimientos 2025\", \"NativeReferenceName\": \"Nacimientos 2025\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Nacimientos 2025'\"}}}}}]}}}",
+          "filters": "[]",
+          "x": 435,
+          "y": 70,
+          "z": 0,
+          "width": 410,
+          "height": 110
+        },
+        {
+          "config": "{\"name\": \"v0006etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 860, \"y\": 70, \"z\": 0, \"width\": 410, \"height\": 110, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"card\", \"drillFilterOtherVisuals\": true, \"projections\": {\"Values\": [{\"queryRef\": \"Panel.Variación nacimientos 2000-2025\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"t0\", \"Entity\": \"Panel\", \"Type\": 0}], \"Select\": [{\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"Variación nacimientos 2000-2025\"}, \"Name\": \"Panel.Variación nacimientos 2000-2025\", \"NativeReferenceName\": \"Variación nacimientos 2000-2025\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Variación de nacimientos 2000-2025'\"}}}}}]}}}",
+          "filters": "[]",
+          "x": 860,
+          "y": 70,
+          "z": 0,
+          "width": 410,
+          "height": 110
+        },
+        {
+          "config": "{\"name\": \"v0009etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 10, \"y\": 190, \"z\": 0, \"width\": 625, \"height\": 260, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"lineChart\", \"drillFilterOtherVisuals\": true, \"projections\": {\"Category\": [{\"queryRef\": \"Panel.anio\", \"active\": true}], \"Y\": [{\"queryRef\": \"Avg(Panel.tfr)\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"t0\", \"Entity\": \"Panel\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"anio\"}, \"Name\": \"Panel.anio\", \"NativeReferenceName\": \"anio\"}, {\"Aggregation\": {\"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"tfr\"}}, \"Function\": 1}, \"Name\": \"Avg(Panel.tfr)\", \"NativeReferenceName\": \"Promedio de tfr\"}], \"OrderBy\": [{\"Direction\": 1, \"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"anio\"}}}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Tasa global de fecundidad 2000-2025'\"}}}}}]}}}",
+          "filters": "[{\"name\": \"v0007etlcorea\", \"type\": \"Categorical\", \"howCreated\": 1, \"expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Entity\": \"Panel\"}}, \"Property\": \"cod_territorio\"}}, \"filter\": {\"Version\": 2, \"From\": [{\"Name\": \"f\", \"Entity\": \"Panel\", \"Type\": 0}], \"Where\": [{\"Condition\": {\"In\": {\"Expressions\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"f\"}}, \"Property\": \"cod_territorio\"}}], \"Values\": [[{\"Literal\": {\"Value\": \"'00'\"}}]]}}}]}}, {\"name\": \"v0008etlcorea\", \"type\": \"Categorical\", \"howCreated\": 1, \"expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Entity\": \"Panel\"}}, \"Property\": \"nivel\"}}, \"filter\": {\"Version\": 2, \"From\": [{\"Name\": \"f\", \"Entity\": \"Panel\", \"Type\": 0}], \"Where\": [{\"Condition\": {\"In\": {\"Expressions\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"f\"}}, \"Property\": \"nivel\"}}], \"Values\": [[{\"Literal\": {\"Value\": \"'historico'\"}}]]}}}]}}]",
+          "x": 10,
+          "y": 190,
+          "z": 0,
+          "width": 625,
+          "height": 260
+        },
+        {
+          "config": "{\"name\": \"v0012etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 645, \"y\": 190, \"z\": 0, \"width\": 625, \"height\": 260, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"clusteredColumnChart\", \"drillFilterOtherVisuals\": true, \"projections\": {\"Category\": [{\"queryRef\": \"Panel.anio\", \"active\": true}], \"Y\": [{\"queryRef\": \"Sum(Panel.nacimientos)\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"t0\", \"Entity\": \"Panel\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"anio\"}, \"Name\": \"Panel.anio\", \"NativeReferenceName\": \"anio\"}, {\"Aggregation\": {\"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"nacimientos\"}}, \"Function\": 0}, \"Name\": \"Sum(Panel.nacimientos)\", \"NativeReferenceName\": \"Suma de nacimientos\"}], \"OrderBy\": [{\"Direction\": 1, \"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"anio\"}}}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Nacimientos por año'\"}}}}}]}}}",
+          "filters": "[{\"name\": \"v0010etlcorea\", \"type\": \"Categorical\", \"howCreated\": 1, \"expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Entity\": \"Panel\"}}, \"Property\": \"cod_territorio\"}}, \"filter\": {\"Version\": 2, \"From\": [{\"Name\": \"f\", \"Entity\": \"Panel\", \"Type\": 0}], \"Where\": [{\"Condition\": {\"In\": {\"Expressions\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"f\"}}, \"Property\": \"cod_territorio\"}}], \"Values\": [[{\"Literal\": {\"Value\": \"'00'\"}}]]}}}]}}, {\"name\": \"v0011etlcorea\", \"type\": \"Categorical\", \"howCreated\": 1, \"expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Entity\": \"Panel\"}}, \"Property\": \"nivel\"}}, \"filter\": {\"Version\": 2, \"From\": [{\"Name\": \"f\", \"Entity\": \"Panel\", \"Type\": 0}], \"Where\": [{\"Condition\": {\"In\": {\"Expressions\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"f\"}}, \"Property\": \"nivel\"}}], \"Values\": [[{\"Literal\": {\"Value\": \"'historico'\"}}]]}}}]}}]",
+          "x": 645,
+          "y": 190,
+          "z": 0,
+          "width": 625,
+          "height": 260
+        },
+        {
+          "config": "{\"name\": \"v0013etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 10, \"y\": 460, \"z\": 0, \"width\": 1260, \"height\": 250, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"lineChart\", \"drillFilterOtherVisuals\": true, \"projections\": {\"Category\": [{\"queryRef\": \"Natalidad.anio\", \"active\": true}], \"Y\": [{\"queryRef\": \"Sum(Natalidad.nacidos_hace_15)\"}, {\"queryRef\": \"Sum(Natalidad.pob_15_19)\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"t0\", \"Entity\": \"Natalidad\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"anio\"}, \"Name\": \"Natalidad.anio\", \"NativeReferenceName\": \"anio\"}, {\"Aggregation\": {\"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"nacidos_hace_15\"}}, \"Function\": 0}, \"Name\": \"Sum(Natalidad.nacidos_hace_15)\", \"NativeReferenceName\": \"Suma de nacidos_hace_15\"}, {\"Aggregation\": {\"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"pob_15_19\"}}, \"Function\": 0}, \"Name\": \"Sum(Natalidad.pob_15_19)\", \"NativeReferenceName\": \"Suma de pob_15_19\"}], \"OrderBy\": [{\"Direction\": 1, \"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"anio\"}}}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Nacidos hace 15 años vs población de 15-19: la caída de nacimientos llega a la edad de trabajar'\"}}}}}]}}}",
+          "filters": "[]",
+          "x": 10,
+          "y": 460,
+          "z": 0,
+          "width": 1260,
+          "height": 250
+        }
+      ],
+      "width": 1280.0
+    },
+    {
+      "config": "{}",
+      "displayName": "Envejecimiento y regiones",
+      "displayOption": 1,
+      "filters": "[]",
+      "height": 720.0,
+      "name": "Seccion2",
+      "ordinal": 1,
+      "visualContainers": [
+        {
+          "config": "{\"name\": \"v0014etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 10, \"y\": 5, \"z\": 0, \"width\": 1260, \"height\": 60, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"textbox\", \"drillFilterOtherVisuals\": true, \"objects\": {\"general\": [{\"properties\": {\"paragraphs\": [{\"textRuns\": [{\"value\": \"Envejecimiento y riesgo por si-do (preguntas 3 y 5)\", \"textStyle\": {\"fontWeight\": \"bold\", \"fontSize\": \"18pt\"}}]}, {\"textRuns\": [{\"value\": \"Histórico 2000-2025 y proyección oficial KOSTAT (escenario medio). Índice de riesgo descriptivo, no causal.\", \"textStyle\": {\"fontSize\": \"10pt\", \"color\": \"#605E5C\"}}]}]}}]}}}",
+          "filters": "[]",
+          "x": 10,
+          "y": 5,
+          "z": 0,
+          "width": 1260,
+          "height": 60
+        },
+        {
+          "config": "{\"name\": \"v0016etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 10, \"y\": 70, \"z\": 0, \"width\": 625, \"height\": 300, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"lineChart\", \"drillFilterOtherVisuals\": true, \"projections\": {\"Category\": [{\"queryRef\": \"Panel.anio\", \"active\": true}], \"Y\": [{\"queryRef\": \"Avg(Panel.prop_65mas)\"}], \"Series\": [{\"queryRef\": \"Panel.nivel\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"t0\", \"Entity\": \"Panel\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"anio\"}, \"Name\": \"Panel.anio\", \"NativeReferenceName\": \"anio\"}, {\"Aggregation\": {\"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"prop_65mas\"}}, \"Function\": 1}, \"Name\": \"Avg(Panel.prop_65mas)\", \"NativeReferenceName\": \"Promedio de prop_65mas\"}, {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"nivel\"}, \"Name\": \"Panel.nivel\", \"NativeReferenceName\": \"nivel\"}], \"OrderBy\": [{\"Direction\": 1, \"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"anio\"}}}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Proporción de 65+ (%), Corea'\"}}}}}]}}}",
+          "filters": "[{\"name\": \"v0015etlcorea\", \"type\": \"Categorical\", \"howCreated\": 1, \"expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Entity\": \"Panel\"}}, \"Property\": \"cod_territorio\"}}, \"filter\": {\"Version\": 2, \"From\": [{\"Name\": \"f\", \"Entity\": \"Panel\", \"Type\": 0}], \"Where\": [{\"Condition\": {\"In\": {\"Expressions\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"f\"}}, \"Property\": \"cod_territorio\"}}], \"Values\": [[{\"Literal\": {\"Value\": \"'00'\"}}]]}}}]}}]",
+          "x": 10,
+          "y": 70,
+          "z": 0,
+          "width": 625,
+          "height": 300
+        },
+        {
+          "config": "{\"name\": \"v0018etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 645, \"y\": 70, \"z\": 0, \"width\": 625, \"height\": 300, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"lineChart\", \"drillFilterOtherVisuals\": true, \"projections\": {\"Category\": [{\"queryRef\": \"Panel.anio\", \"active\": true}], \"Y\": [{\"queryRef\": \"Avg(Panel.dependencia_vejez)\"}], \"Series\": [{\"queryRef\": \"Panel.nivel\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"t0\", \"Entity\": \"Panel\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"anio\"}, \"Name\": \"Panel.anio\", \"NativeReferenceName\": \"anio\"}, {\"Aggregation\": {\"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"dependencia_vejez\"}}, \"Function\": 1}, \"Name\": \"Avg(Panel.dependencia_vejez)\", \"NativeReferenceName\": \"Promedio de dependencia_vejez\"}, {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"nivel\"}, \"Name\": \"Panel.nivel\", \"NativeReferenceName\": \"nivel\"}], \"OrderBy\": [{\"Direction\": 1, \"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"anio\"}}}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Dependencia de vejez (65+ por cada 100 de 15-64), Corea'\"}}}}}]}}}",
+          "filters": "[{\"name\": \"v0017etlcorea\", \"type\": \"Categorical\", \"howCreated\": 1, \"expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Entity\": \"Panel\"}}, \"Property\": \"cod_territorio\"}}, \"filter\": {\"Version\": 2, \"From\": [{\"Name\": \"f\", \"Entity\": \"Panel\", \"Type\": 0}], \"Where\": [{\"Condition\": {\"In\": {\"Expressions\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"f\"}}, \"Property\": \"cod_territorio\"}}], \"Values\": [[{\"Literal\": {\"Value\": \"'00'\"}}]]}}}]}}]",
+          "x": 645,
+          "y": 70,
+          "z": 0,
+          "width": 625,
+          "height": 300
+        },
+        {
+          "config": "{\"name\": \"v0019etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 10, \"y\": 380, \"z\": 0, \"width\": 625, \"height\": 330, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"clusteredBarChart\", \"drillFilterOtherVisuals\": true, \"projections\": {\"Category\": [{\"queryRef\": \"Territorio.territorio\", \"active\": true}], \"Y\": [{\"queryRef\": \"Riesgo.Índice de riesgo\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"t0\", \"Entity\": \"Territorio\", \"Type\": 0}, {\"Name\": \"t1\", \"Entity\": \"Riesgo\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"territorio\"}, \"Name\": \"Territorio.territorio\", \"NativeReferenceName\": \"territorio\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t1\"}}, \"Property\": \"Índice de riesgo\"}, \"Name\": \"Riesgo.Índice de riesgo\", \"NativeReferenceName\": \"Índice de riesgo\"}], \"OrderBy\": [{\"Direction\": 2, \"Expression\": {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t1\"}}, \"Property\": \"Índice de riesgo\"}}}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Índice de riesgo demográfico por si-do (0-100)'\"}}}}}]}}}",
+          "filters": "[]",
+          "x": 10,
+          "y": 380,
+          "z": 0,
+          "width": 625,
+          "height": 330
+        },
+        {
+          "config": "{\"name\": \"v0020etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 645, \"y\": 380, \"z\": 0, \"width\": 625, \"height\": 330, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"pivotTable\", \"drillFilterOtherVisuals\": true, \"projections\": {\"Rows\": [{\"queryRef\": \"Territorio.territorio\", \"active\": true}], \"Columns\": [{\"queryRef\": \"RiesgoSensibilidad.esquema\"}], \"Values\": [{\"queryRef\": \"Min(RiesgoSensibilidad.ranking)\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"t0\", \"Entity\": \"Territorio\", \"Type\": 0}, {\"Name\": \"t1\", \"Entity\": \"RiesgoSensibilidad\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"territorio\"}, \"Name\": \"Territorio.territorio\", \"NativeReferenceName\": \"territorio\"}, {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t1\"}}, \"Property\": \"esquema\"}, \"Name\": \"RiesgoSensibilidad.esquema\", \"NativeReferenceName\": \"esquema\"}, {\"Aggregation\": {\"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t1\"}}, \"Property\": \"ranking\"}}, \"Function\": 3}, \"Name\": \"Min(RiesgoSensibilidad.ranking)\", \"NativeReferenceName\": \"Mínimo de ranking\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Ranking de riesgo según el esquema de pesos (1 = mayor riesgo)'\"}}}}}]}}}",
+          "filters": "[]",
+          "x": 645,
+          "y": 380,
+          "z": 0,
+          "width": 625,
+          "height": 330
+        }
+      ],
+      "width": 1280.0
+    },
+    {
+      "config": "{}",
+      "displayName": "Mercado laboral",
+      "displayOption": 1,
+      "filters": "[]",
+      "height": 720.0,
+      "name": "Seccion3",
+      "ordinal": 2,
+      "visualContainers": [
+        {
+          "config": "{\"name\": \"v0021etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 10, \"y\": 5, \"z\": 0, \"width\": 1260, \"height\": 60, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"textbox\", \"drillFilterOtherVisuals\": true, \"objects\": {\"general\": [{\"properties\": {\"paragraphs\": [{\"textRuns\": [{\"value\": \"Mercado laboral (preguntas 4 y 7)\", \"textStyle\": {\"fontWeight\": \"bold\", \"fontSize\": \"18pt\"}}]}, {\"textRuns\": [{\"value\": \"EAPS (KOSIS), población de 15 años y más, 2000-2025. Las correlaciones son asociación, no causalidad.\", \"textStyle\": {\"fontSize\": \"10pt\", \"color\": \"#605E5C\"}}]}]}}]}}}",
+          "filters": "[]",
+          "x": 10,
+          "y": 5,
+          "z": 0,
+          "width": 1260,
+          "height": 60
+        },
+        {
+          "config": "{\"name\": \"v0022etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 10, \"y\": 70, \"z\": 0, \"width\": 410, \"height\": 110, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"card\", \"drillFilterOtherVisuals\": true, \"projections\": {\"Values\": [{\"queryRef\": \"Panel.Población activa 2025\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"t0\", \"Entity\": \"Panel\", \"Type\": 0}], \"Select\": [{\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"Población activa 2025\"}, \"Name\": \"Panel.Población activa 2025\", \"NativeReferenceName\": \"Población activa 2025\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Población activa 2025'\"}}}}}]}}}",
+          "filters": "[]",
+          "x": 10,
+          "y": 70,
+          "z": 0,
+          "width": 410,
+          "height": 110
+        },
+        {
+          "config": "{\"name\": \"v0023etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 435, \"y\": 70, \"z\": 0, \"width\": 410, \"height\": 110, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"card\", \"drillFilterOtherVisuals\": true, \"projections\": {\"Values\": [{\"queryRef\": \"Panel.Proporción 65+ 2025\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"t0\", \"Entity\": \"Panel\", \"Type\": 0}], \"Select\": [{\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"Proporción 65+ 2025\"}, \"Name\": \"Panel.Proporción 65+ 2025\", \"NativeReferenceName\": \"Proporción 65+ 2025\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Proporción de 65+ 2025'\"}}}}}]}}}",
+          "filters": "[]",
+          "x": 435,
+          "y": 70,
+          "z": 0,
+          "width": 410,
+          "height": 110
+        },
+        {
+          "config": "{\"name\": \"v0024etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 860, \"y\": 70, \"z\": 0, \"width\": 410, \"height\": 110, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"card\", \"drillFilterOtherVisuals\": true, \"projections\": {\"Values\": [{\"queryRef\": \"Panel.Dependencia de vejez 2025\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"t0\", \"Entity\": \"Panel\", \"Type\": 0}], \"Select\": [{\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"Dependencia de vejez 2025\"}, \"Name\": \"Panel.Dependencia de vejez 2025\", \"NativeReferenceName\": \"Dependencia de vejez 2025\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Dependencia de vejez 2025'\"}}}}}]}}}",
+          "filters": "[]",
+          "x": 860,
+          "y": 70,
+          "z": 0,
+          "width": 410,
+          "height": 110
+        },
+        {
+          "config": "{\"name\": \"v0027etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 10, \"y\": 190, \"z\": 0, \"width\": 625, \"height\": 270, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"lineChart\", \"drillFilterOtherVisuals\": true, \"projections\": {\"Category\": [{\"queryRef\": \"Panel.anio\", \"active\": true}], \"Y\": [{\"queryRef\": \"Sum(Panel.pob_activa)\"}, {\"queryRef\": \"Sum(Panel.ocupados)\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"t0\", \"Entity\": \"Panel\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"anio\"}, \"Name\": \"Panel.anio\", \"NativeReferenceName\": \"anio\"}, {\"Aggregation\": {\"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"pob_activa\"}}, \"Function\": 0}, \"Name\": \"Sum(Panel.pob_activa)\", \"NativeReferenceName\": \"Suma de pob_activa\"}, {\"Aggregation\": {\"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"ocupados\"}}, \"Function\": 0}, \"Name\": \"Sum(Panel.ocupados)\", \"NativeReferenceName\": \"Suma de ocupados\"}], \"OrderBy\": [{\"Direction\": 1, \"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"anio\"}}}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Población activa y ocupados (personas)'\"}}}}}]}}}",
+          "filters": "[{\"name\": \"v0025etlcorea\", \"type\": \"Categorical\", \"howCreated\": 1, \"expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Entity\": \"Panel\"}}, \"Property\": \"cod_territorio\"}}, \"filter\": {\"Version\": 2, \"From\": [{\"Name\": \"f\", \"Entity\": \"Panel\", \"Type\": 0}], \"Where\": [{\"Condition\": {\"In\": {\"Expressions\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"f\"}}, \"Property\": \"cod_territorio\"}}], \"Values\": [[{\"Literal\": {\"Value\": \"'00'\"}}]]}}}]}}, {\"name\": \"v0026etlcorea\", \"type\": \"Categorical\", \"howCreated\": 1, \"expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Entity\": \"Panel\"}}, \"Property\": \"nivel\"}}, \"filter\": {\"Version\": 2, \"From\": [{\"Name\": \"f\", \"Entity\": \"Panel\", \"Type\": 0}], \"Where\": [{\"Condition\": {\"In\": {\"Expressions\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"f\"}}, \"Property\": \"nivel\"}}], \"Values\": [[{\"Literal\": {\"Value\": \"'historico'\"}}]]}}}]}}]",
+          "x": 10,
+          "y": 190,
+          "z": 0,
+          "width": 625,
+          "height": 270
+        },
+        {
+          "config": "{\"name\": \"v0030etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 645, \"y\": 190, \"z\": 0, \"width\": 625, \"height\": 270, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"lineChart\", \"drillFilterOtherVisuals\": true, \"projections\": {\"Category\": [{\"queryRef\": \"Panel.anio\", \"active\": true}], \"Y\": [{\"queryRef\": \"Avg(Panel.tasa_participacion)\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"t0\", \"Entity\": \"Panel\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"anio\"}, \"Name\": \"Panel.anio\", \"NativeReferenceName\": \"anio\"}, {\"Aggregation\": {\"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"tasa_participacion\"}}, \"Function\": 1}, \"Name\": \"Avg(Panel.tasa_participacion)\", \"NativeReferenceName\": \"Promedio de tasa_participacion\"}], \"OrderBy\": [{\"Direction\": 1, \"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"anio\"}}}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Tasa de participación (%)'\"}}}}}]}}}",
+          "filters": "[{\"name\": \"v0028etlcorea\", \"type\": \"Categorical\", \"howCreated\": 1, \"expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Entity\": \"Panel\"}}, \"Property\": \"cod_territorio\"}}, \"filter\": {\"Version\": 2, \"From\": [{\"Name\": \"f\", \"Entity\": \"Panel\", \"Type\": 0}], \"Where\": [{\"Condition\": {\"In\": {\"Expressions\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"f\"}}, \"Property\": \"cod_territorio\"}}], \"Values\": [[{\"Literal\": {\"Value\": \"'00'\"}}]]}}}]}}, {\"name\": \"v0029etlcorea\", \"type\": \"Categorical\", \"howCreated\": 1, \"expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Entity\": \"Panel\"}}, \"Property\": \"nivel\"}}, \"filter\": {\"Version\": 2, \"From\": [{\"Name\": \"f\", \"Entity\": \"Panel\", \"Type\": 0}], \"Where\": [{\"Condition\": {\"In\": {\"Expressions\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"f\"}}, \"Property\": \"nivel\"}}], \"Values\": [[{\"Literal\": {\"Value\": \"'historico'\"}}]]}}}]}}]",
+          "x": 645,
+          "y": 190,
+          "z": 0,
+          "width": 625,
+          "height": 270
+        },
+        {
+          "config": "{\"name\": \"v0031etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 10, \"y\": 470, \"z\": 0, \"width\": 1260, \"height\": 240, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"tableEx\", \"drillFilterOtherVisuals\": true, \"projections\": {\"Values\": [{\"queryRef\": \"Asociaciones.variable_x\"}, {\"queryRef\": \"Asociaciones.variable_y\"}, {\"queryRef\": \"Asociaciones.corr_niveles\"}, {\"queryRef\": \"Asociaciones.corr_variaciones\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"t0\", \"Entity\": \"Asociaciones\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"variable_x\"}, \"Name\": \"Asociaciones.variable_x\", \"NativeReferenceName\": \"variable_x\"}, {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"variable_y\"}, \"Name\": \"Asociaciones.variable_y\", \"NativeReferenceName\": \"variable_y\"}, {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"corr_niveles\"}, \"Name\": \"Asociaciones.corr_niveles\", \"NativeReferenceName\": \"corr_niveles\"}, {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"corr_variaciones\"}, \"Name\": \"Asociaciones.corr_variaciones\", \"NativeReferenceName\": \"corr_variaciones\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Asociación 2000-2025: en niveles correlacionan fuerte, en variaciones anuales casi nada'\"}}}}}]}}}",
+          "filters": "[]",
+          "x": 10,
+          "y": 470,
+          "z": 0,
+          "width": 1260,
+          "height": 240
+        }
+      ],
+      "width": 1280.0
+    },
+    {
+      "config": "{}",
+      "displayName": "Futuro de la fuerza laboral",
+      "displayOption": 1,
+      "filters": "[]",
+      "height": 720.0,
+      "name": "Seccion4",
+      "ordinal": 3,
+      "visualContainers": [
+        {
+          "config": "{\"name\": \"v0032etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 10, \"y\": 5, \"z\": 0, \"width\": 1260, \"height\": 60, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"textbox\", \"drillFilterOtherVisuals\": true, \"objects\": {\"general\": [{\"properties\": {\"paragraphs\": [{\"textRuns\": [{\"value\": \"Futuro de la fuerza laboral (preguntas 6a, 6b y 8)\", \"textStyle\": {\"fontWeight\": \"bold\", \"fontSize\": \"18pt\"}}]}, {\"textRuns\": [{\"value\": \"Población KOSTAT 2026-2072. A, B y C son escenarios del equipo, no pronósticos (supuestos en el README).\", \"textStyle\": {\"fontSize\": \"10pt\", \"color\": \"#605E5C\"}}]}]}}]}}}",
+          "filters": "[]",
+          "x": 10,
+          "y": 5,
+          "z": 0,
+          "width": 1260,
+          "height": 60
+        },
+        {
+          "config": "{\"name\": \"v0034etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 10, \"y\": 70, \"z\": 0, \"width\": 800, \"height\": 320, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"lineChart\", \"drillFilterOtherVisuals\": true, \"projections\": {\"Category\": [{\"queryRef\": \"Escenarios.anio\", \"active\": true}], \"Y\": [{\"queryRef\": \"Escenarios.Fuerza laboral potencial\"}], \"Series\": [{\"queryRef\": \"Escenarios.supuesto\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"t0\", \"Entity\": \"Escenarios\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"anio\"}, \"Name\": \"Escenarios.anio\", \"NativeReferenceName\": \"anio\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"Fuerza laboral potencial\"}, \"Name\": \"Escenarios.Fuerza laboral potencial\", \"NativeReferenceName\": \"Fuerza laboral potencial\"}, {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"supuesto\"}, \"Name\": \"Escenarios.supuesto\", \"NativeReferenceName\": \"supuesto\"}], \"OrderBy\": [{\"Direction\": 1, \"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"anio\"}}}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Fuerza laboral potencial por supuesto (escenario KOSTAT medio)'\"}}}}}]}}}",
+          "filters": "[{\"name\": \"v0033etlcorea\", \"type\": \"Categorical\", \"howCreated\": 1, \"expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Entity\": \"Escenarios\"}}, \"Property\": \"escenario_kostat\"}}, \"filter\": {\"Version\": 2, \"From\": [{\"Name\": \"f\", \"Entity\": \"Escenarios\", \"Type\": 0}], \"Where\": [{\"Condition\": {\"In\": {\"Expressions\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"f\"}}, \"Property\": \"escenario_kostat\"}}], \"Values\": [[{\"Literal\": {\"Value\": \"'medio'\"}}]]}}}]}}]",
+          "x": 10,
+          "y": 70,
+          "z": 0,
+          "width": 800,
+          "height": 320
+        },
+        {
+          "config": "{\"name\": \"v0038etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 820, \"y\": 70, \"z\": 0, \"width\": 450, \"height\": 155, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"card\", \"drillFilterOtherVisuals\": true, \"projections\": {\"Values\": [{\"queryRef\": \"Escenarios.Cambio vs población activa 2025\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"t0\", \"Entity\": \"Escenarios\", \"Type\": 0}], \"Select\": [{\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"Cambio vs población activa 2025\"}, \"Name\": \"Escenarios.Cambio vs población activa 2025\", \"NativeReferenceName\": \"Cambio vs población activa 2025\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Cambio 2025 → 2072, supuesto A (participación constante)'\"}}}}}]}}}",
+          "filters": "[{\"name\": \"v0035etlcorea\", \"type\": \"Categorical\", \"howCreated\": 1, \"expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Entity\": \"Escenarios\"}}, \"Property\": \"escenario_kostat\"}}, \"filter\": {\"Version\": 2, \"From\": [{\"Name\": \"f\", \"Entity\": \"Escenarios\", \"Type\": 0}], \"Where\": [{\"Condition\": {\"In\": {\"Expressions\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"f\"}}, \"Property\": \"escenario_kostat\"}}], \"Values\": [[{\"Literal\": {\"Value\": \"'medio'\"}}]]}}}]}}, {\"name\": \"v0036etlcorea\", \"type\": \"Categorical\", \"howCreated\": 1, \"expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Entity\": \"Escenarios\"}}, \"Property\": \"anio\"}}, \"filter\": {\"Version\": 2, \"From\": [{\"Name\": \"f\", \"Entity\": \"Escenarios\", \"Type\": 0}], \"Where\": [{\"Condition\": {\"In\": {\"Expressions\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"f\"}}, \"Property\": \"anio\"}}], \"Values\": [[{\"Literal\": {\"Value\": \"2072L\"}}]]}}}]}}, {\"name\": \"v0037etlcorea\", \"type\": \"Categorical\", \"howCreated\": 1, \"expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Entity\": \"Escenarios\"}}, \"Property\": \"id_supuesto\"}}, \"filter\": {\"Version\": 2, \"From\": [{\"Name\": \"f\", \"Entity\": \"Escenarios\", \"Type\": 0}], \"Where\": [{\"Condition\": {\"In\": {\"Expressions\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"f\"}}, \"Property\": \"id_supuesto\"}}], \"Values\": [[{\"Literal\": {\"Value\": \"'A'\"}}]]}}}]}}]",
+          "x": 820,
+          "y": 70,
+          "z": 0,
+          "width": 450,
+          "height": 155
+        },
+        {
+          "config": "{\"name\": \"v0042etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 820, \"y\": 235, \"z\": 0, \"width\": 450, \"height\": 155, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"card\", \"drillFilterOtherVisuals\": true, \"projections\": {\"Values\": [{\"queryRef\": \"Escenarios.Cambio vs población activa 2025\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"t0\", \"Entity\": \"Escenarios\", \"Type\": 0}], \"Select\": [{\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"Cambio vs población activa 2025\"}, \"Name\": \"Escenarios.Cambio vs población activa 2025\", \"NativeReferenceName\": \"Cambio vs población activa 2025\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Cambio 2025 → 2072, supuesto B (tendencia con tope)'\"}}}}}]}}}",
+          "filters": "[{\"name\": \"v0039etlcorea\", \"type\": \"Categorical\", \"howCreated\": 1, \"expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Entity\": \"Escenarios\"}}, \"Property\": \"escenario_kostat\"}}, \"filter\": {\"Version\": 2, \"From\": [{\"Name\": \"f\", \"Entity\": \"Escenarios\", \"Type\": 0}], \"Where\": [{\"Condition\": {\"In\": {\"Expressions\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"f\"}}, \"Property\": \"escenario_kostat\"}}], \"Values\": [[{\"Literal\": {\"Value\": \"'medio'\"}}]]}}}]}}, {\"name\": \"v0040etlcorea\", \"type\": \"Categorical\", \"howCreated\": 1, \"expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Entity\": \"Escenarios\"}}, \"Property\": \"anio\"}}, \"filter\": {\"Version\": 2, \"From\": [{\"Name\": \"f\", \"Entity\": \"Escenarios\", \"Type\": 0}], \"Where\": [{\"Condition\": {\"In\": {\"Expressions\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"f\"}}, \"Property\": \"anio\"}}], \"Values\": [[{\"Literal\": {\"Value\": \"2072L\"}}]]}}}]}}, {\"name\": \"v0041etlcorea\", \"type\": \"Categorical\", \"howCreated\": 1, \"expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Entity\": \"Escenarios\"}}, \"Property\": \"id_supuesto\"}}, \"filter\": {\"Version\": 2, \"From\": [{\"Name\": \"f\", \"Entity\": \"Escenarios\", \"Type\": 0}], \"Where\": [{\"Condition\": {\"In\": {\"Expressions\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"f\"}}, \"Property\": \"id_supuesto\"}}], \"Values\": [[{\"Literal\": {\"Value\": \"'B'\"}}]]}}}]}}]",
+          "x": 820,
+          "y": 235,
+          "z": 0,
+          "width": 450,
+          "height": 155
+        },
+        {
+          "config": "{\"name\": \"v0043etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 10, \"y\": 400, \"z\": 0, \"width\": 625, \"height\": 310, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"lineChart\", \"drillFilterOtherVisuals\": true, \"projections\": {\"Category\": [{\"queryRef\": \"Escenarios.anio\", \"active\": true}], \"Y\": [{\"queryRef\": \"Escenarios.Población 15-64 KOSTAT\"}], \"Series\": [{\"queryRef\": \"Escenarios.escenario_kostat\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"t0\", \"Entity\": \"Escenarios\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"anio\"}, \"Name\": \"Escenarios.anio\", \"NativeReferenceName\": \"anio\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"Población 15-64 KOSTAT\"}, \"Name\": \"Escenarios.Población 15-64 KOSTAT\", \"NativeReferenceName\": \"Población 15-64 KOSTAT\"}, {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"escenario_kostat\"}, \"Name\": \"Escenarios.escenario_kostat\", \"NativeReferenceName\": \"escenario_kostat\"}], \"OrderBy\": [{\"Direction\": 1, \"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"anio\"}}}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Población de 15-64 según escenario de KOSTAT (pregunta 6a)'\"}}}}}]}}}",
+          "filters": "[]",
+          "x": 10,
+          "y": 400,
+          "z": 0,
+          "width": 625,
+          "height": 310
+        },
+        {
+          "config": "{\"name\": \"v0045etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 645, \"y\": 400, \"z\": 0, \"width\": 625, \"height\": 310, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"tableEx\", \"drillFilterOtherVisuals\": true, \"projections\": {\"Values\": [{\"queryRef\": \"Hitos.descripcion\"}, {\"queryRef\": \"Hitos.id_supuesto\"}, {\"queryRef\": \"Hitos.anio\"}, {\"queryRef\": \"Hitos.valor\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"t0\", \"Entity\": \"Hitos\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"descripcion\"}, \"Name\": \"Hitos.descripcion\", \"NativeReferenceName\": \"descripcion\"}, {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"id_supuesto\"}, \"Name\": \"Hitos.id_supuesto\", \"NativeReferenceName\": \"id_supuesto\"}, {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"anio\"}, \"Name\": \"Hitos.anio\", \"NativeReferenceName\": \"anio\"}, {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"valor\"}, \"Name\": \"Hitos.valor\", \"NativeReferenceName\": \"valor\"}], \"OrderBy\": [{\"Direction\": 1, \"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"anio\"}}}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Señales tempranas de escasez (escenario KOSTAT medio)'\"}}}}}]}}}",
+          "filters": "[{\"name\": \"v0044etlcorea\", \"type\": \"Categorical\", \"howCreated\": 1, \"expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Entity\": \"Hitos\"}}, \"Property\": \"escenario_kostat\"}}, \"filter\": {\"Version\": 2, \"From\": [{\"Name\": \"f\", \"Entity\": \"Hitos\", \"Type\": 0}], \"Where\": [{\"Condition\": {\"In\": {\"Expressions\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"f\"}}, \"Property\": \"escenario_kostat\"}}], \"Values\": [[{\"Literal\": {\"Value\": \"'medio'\"}}]]}}}]}}]",
+          "x": 645,
+          "y": 400,
+          "z": 0,
+          "width": 625,
+          "height": 310
+        }
+      ],
+      "width": 1280.0
+    },
+    {
+      "config": "{}",
+      "displayName": "Comparación OCDE",
+      "displayOption": 1,
+      "filters": "[{\"name\": \"v0001etlcorea\", \"type\": \"Categorical\", \"howCreated\": 1, \"expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Entity\": \"Territorio\"}}, \"Property\": \"tipo\"}}, \"filter\": {\"Version\": 2, \"From\": [{\"Name\": \"f\", \"Entity\": \"Territorio\", \"Type\": 0}], \"Where\": [{\"Condition\": {\"In\": {\"Expressions\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"f\"}}, \"Property\": \"tipo\"}}], \"Values\": [[{\"Literal\": {\"Value\": \"'nacional'\"}}], [{\"Literal\": {\"Value\": \"'pais'\"}}], [{\"Literal\": {\"Value\": \"'agregado_int'\"}}]]}}}]}}, {\"name\": \"v0002etlcorea\", \"type\": \"Categorical\", \"howCreated\": 1, \"expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Entity\": \"Panel\"}}, \"Property\": \"anio\"}}, \"filter\": {\"Version\": 2, \"From\": [{\"Name\": \"f\", \"Entity\": \"Panel\", \"Type\": 0}], \"Where\": [{\"Condition\": {\"In\": {\"Expressions\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"f\"}}, \"Property\": \"anio\"}}], \"Values\": [[{\"Literal\": {\"Value\": \"2024L\"}}]]}}}]}}]",
+      "height": 720.0,
+      "name": "Seccion5",
+      "ordinal": 4,
+      "visualContainers": [
+        {
+          "config": "{\"name\": \"v0046etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 10, \"y\": 5, \"z\": 0, \"width\": 1260, \"height\": 60, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"textbox\", \"drillFilterOtherVisuals\": true, \"objects\": {\"general\": [{\"properties\": {\"paragraphs\": [{\"textRuns\": [{\"value\": \"Comparación internacional (pregunta 9)\", \"textStyle\": {\"fontWeight\": \"bold\", \"fontSize\": \"18pt\"}}]}, {\"textRuns\": [{\"value\": \"Año 2024 (último con TFR de todos los países). Corea: KOSIS/OECD; demás países: World Bank y OECD.\", \"textStyle\": {\"fontSize\": \"10pt\", \"color\": \"#605E5C\"}}]}]}}]}}}",
+          "filters": "[]",
+          "x": 10,
+          "y": 5,
+          "z": 0,
+          "width": 1260,
+          "height": 60
+        },
+        {
+          "config": "{\"name\": \"v0047etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 10, \"y\": 70, \"z\": 0, \"width\": 625, \"height\": 315, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"clusteredBarChart\", \"drillFilterOtherVisuals\": true, \"projections\": {\"Category\": [{\"queryRef\": \"Territorio.territorio\", \"active\": true}], \"Y\": [{\"queryRef\": \"Avg(Panel.tfr)\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"t0\", \"Entity\": \"Territorio\", \"Type\": 0}, {\"Name\": \"t1\", \"Entity\": \"Panel\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"territorio\"}, \"Name\": \"Territorio.territorio\", \"NativeReferenceName\": \"territorio\"}, {\"Aggregation\": {\"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t1\"}}, \"Property\": \"tfr\"}}, \"Function\": 1}, \"Name\": \"Avg(Panel.tfr)\", \"NativeReferenceName\": \"Promedio de tfr\"}], \"OrderBy\": [{\"Direction\": 2, \"Expression\": {\"Aggregation\": {\"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t1\"}}, \"Property\": \"tfr\"}}, \"Function\": 1}}}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Tasa global de fecundidad'\"}}}}}]}}}",
+          "filters": "[]",
+          "x": 10,
+          "y": 70,
+          "z": 0,
+          "width": 625,
+          "height": 315
+        },
+        {
+          "config": "{\"name\": \"v0048etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 645, \"y\": 70, \"z\": 0, \"width\": 625, \"height\": 315, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"clusteredBarChart\", \"drillFilterOtherVisuals\": true, \"projections\": {\"Category\": [{\"queryRef\": \"Territorio.territorio\", \"active\": true}], \"Y\": [{\"queryRef\": \"Avg(Panel.prop_65mas)\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"t0\", \"Entity\": \"Territorio\", \"Type\": 0}, {\"Name\": \"t1\", \"Entity\": \"Panel\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"territorio\"}, \"Name\": \"Territorio.territorio\", \"NativeReferenceName\": \"territorio\"}, {\"Aggregation\": {\"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t1\"}}, \"Property\": \"prop_65mas\"}}, \"Function\": 1}, \"Name\": \"Avg(Panel.prop_65mas)\", \"NativeReferenceName\": \"Promedio de prop_65mas\"}], \"OrderBy\": [{\"Direction\": 2, \"Expression\": {\"Aggregation\": {\"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t1\"}}, \"Property\": \"prop_65mas\"}}, \"Function\": 1}}}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Proporción de 65+ (%)'\"}}}}}]}}}",
+          "filters": "[]",
+          "x": 645,
+          "y": 70,
+          "z": 0,
+          "width": 625,
+          "height": 315
+        },
+        {
+          "config": "{\"name\": \"v0049etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 10, \"y\": 395, \"z\": 0, \"width\": 625, \"height\": 315, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"clusteredBarChart\", \"drillFilterOtherVisuals\": true, \"projections\": {\"Category\": [{\"queryRef\": \"Territorio.territorio\", \"active\": true}], \"Y\": [{\"queryRef\": \"Avg(Panel.tasa_participacion)\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"t0\", \"Entity\": \"Territorio\", \"Type\": 0}, {\"Name\": \"t1\", \"Entity\": \"Panel\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"territorio\"}, \"Name\": \"Territorio.territorio\", \"NativeReferenceName\": \"territorio\"}, {\"Aggregation\": {\"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t1\"}}, \"Property\": \"tasa_participacion\"}}, \"Function\": 1}, \"Name\": \"Avg(Panel.tasa_participacion)\", \"NativeReferenceName\": \"Promedio de tasa_participacion\"}], \"OrderBy\": [{\"Direction\": 2, \"Expression\": {\"Aggregation\": {\"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t1\"}}, \"Property\": \"tasa_participacion\"}}, \"Function\": 1}}}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Tasa de participación (%)'\"}}}}}]}}}",
+          "filters": "[]",
+          "x": 10,
+          "y": 395,
+          "z": 0,
+          "width": 625,
+          "height": 315
+        },
+        {
+          "config": "{\"name\": \"v0050etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 645, \"y\": 395, \"z\": 0, \"width\": 625, \"height\": 315, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"clusteredBarChart\", \"drillFilterOtherVisuals\": true, \"projections\": {\"Category\": [{\"queryRef\": \"Territorio.territorio\", \"active\": true}], \"Y\": [{\"queryRef\": \"Avg(Panel.pib_hora)\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"t0\", \"Entity\": \"Territorio\", \"Type\": 0}, {\"Name\": \"t1\", \"Entity\": \"Panel\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"territorio\"}, \"Name\": \"Territorio.territorio\", \"NativeReferenceName\": \"territorio\"}, {\"Aggregation\": {\"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t1\"}}, \"Property\": \"pib_hora\"}}, \"Function\": 1}, \"Name\": \"Avg(Panel.pib_hora)\", \"NativeReferenceName\": \"Promedio de pib_hora\"}], \"OrderBy\": [{\"Direction\": 2, \"Expression\": {\"Aggregation\": {\"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t1\"}}, \"Property\": \"pib_hora\"}}, \"Function\": 1}}}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'PIB por hora trabajada (USD PPA)'\"}}}}}]}}}",
+          "filters": "[]",
+          "x": 645,
+          "y": 395,
+          "z": 0,
+          "width": 625,
+          "height": 315
+        }
+      ],
+      "width": 1280.0
+    },
+    {
+      "config": "{}",
+      "displayName": "Calidad del dato",
+      "displayOption": 1,
+      "filters": "[]",
+      "height": 720.0,
+      "name": "Seccion6",
+      "ordinal": 5,
+      "visualContainers": [
+        {
+          "config": "{\"name\": \"v0051etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 10, \"y\": 5, \"z\": 0, \"width\": 1260, \"height\": 60, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"textbox\", \"drillFilterOtherVisuals\": true, \"objects\": {\"general\": [{\"properties\": {\"paragraphs\": [{\"textRuns\": [{\"value\": \"Calidad del dato\", \"textStyle\": {\"fontWeight\": \"bold\", \"fontSize\": \"18pt\"}}]}, {\"textRuns\": [{\"value\": \"KPIs de la última ejecución del pipeline (ctl.kpis) y conciliación maestra vs contraste.\", \"textStyle\": {\"fontSize\": \"10pt\", \"color\": \"#605E5C\"}}]}]}}]}}}",
+          "filters": "[]",
+          "x": 10,
+          "y": 5,
+          "z": 0,
+          "width": 1260,
+          "height": 60
+        },
+        {
+          "config": "{\"name\": \"v0052etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 10, \"y\": 70, \"z\": 0, \"width\": 410, \"height\": 110, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"card\", \"drillFilterOtherVisuals\": true, \"projections\": {\"Values\": [{\"queryRef\": \"KPIs.KPIs cumplidos (texto)\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"t0\", \"Entity\": \"KPIs\", \"Type\": 0}], \"Select\": [{\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"KPIs cumplidos (texto)\"}, \"Name\": \"KPIs.KPIs cumplidos (texto)\", \"NativeReferenceName\": \"KPIs cumplidos (texto)\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'KPIs cumplidos'\"}}}}}]}}}",
+          "filters": "[]",
+          "x": 10,
+          "y": 70,
+          "z": 0,
+          "width": 410,
+          "height": 110
+        },
+        {
+          "config": "{\"name\": \"v0053etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 435, \"y\": 70, \"z\": 0, \"width\": 410, \"height\": 110, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"card\", \"drillFilterOtherVisuals\": true, \"projections\": {\"Values\": [{\"queryRef\": \"Conciliacion.Pares dentro de ±3 %\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"t0\", \"Entity\": \"Conciliacion\", \"Type\": 0}], \"Select\": [{\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"Pares dentro de ±3 %\"}, \"Name\": \"Conciliacion.Pares dentro de ±3 %\", \"NativeReferenceName\": \"Pares dentro de ±3 %\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Pares maestra-contraste dentro de ±3 % (histórico)'\"}}}}}]}}}",
+          "filters": "[]",
+          "x": 435,
+          "y": 70,
+          "z": 0,
+          "width": 410,
+          "height": 110
+        },
+        {
+          "config": "{\"name\": \"v0054etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 10, \"y\": 190, \"z\": 0, \"width\": 1260, \"height\": 300, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"tableEx\", \"drillFilterOtherVisuals\": true, \"projections\": {\"Values\": [{\"queryRef\": \"KPIs.kpi\"}, {\"queryRef\": \"KPIs.valor\"}, {\"queryRef\": \"KPIs.meta\"}, {\"queryRef\": \"KPIs.cumple\"}, {\"queryRef\": \"KPIs.detalle\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"t0\", \"Entity\": \"KPIs\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"kpi\"}, \"Name\": \"KPIs.kpi\", \"NativeReferenceName\": \"kpi\"}, {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"valor\"}, \"Name\": \"KPIs.valor\", \"NativeReferenceName\": \"valor\"}, {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"meta\"}, \"Name\": \"KPIs.meta\", \"NativeReferenceName\": \"meta\"}, {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"cumple\"}, \"Name\": \"KPIs.cumple\", \"NativeReferenceName\": \"cumple\"}, {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"detalle\"}, \"Name\": \"KPIs.detalle\", \"NativeReferenceName\": \"detalle\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'KPIs de calidad'\"}}}}}]}}}",
+          "filters": "[]",
+          "x": 10,
+          "y": 190,
+          "z": 0,
+          "width": 1260,
+          "height": 300
+        },
+        {
+          "config": "{\"name\": \"v0056etlcorea\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 10, \"y\": 500, \"z\": 0, \"width\": 1260, \"height\": 210, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"tableEx\", \"drillFilterOtherVisuals\": true, \"projections\": {\"Values\": [{\"queryRef\": \"Conciliacion.indicador\"}, {\"queryRef\": \"Conciliacion.fuente_contraste\"}, {\"queryRef\": \"Count(Conciliacion.anio)\"}, {\"queryRef\": \"Min(Conciliacion.dif_pct)\"}, {\"queryRef\": \"Max(Conciliacion.dif_pct)\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"t0\", \"Entity\": \"Conciliacion\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"indicador\"}, \"Name\": \"Conciliacion.indicador\", \"NativeReferenceName\": \"indicador\"}, {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"fuente_contraste\"}, \"Name\": \"Conciliacion.fuente_contraste\", \"NativeReferenceName\": \"fuente_contraste\"}, {\"Aggregation\": {\"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"anio\"}}, \"Function\": 2}, \"Name\": \"Count(Conciliacion.anio)\", \"NativeReferenceName\": \"Recuento de anio\"}, {\"Aggregation\": {\"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"dif_pct\"}}, \"Function\": 3}, \"Name\": \"Min(Conciliacion.dif_pct)\", \"NativeReferenceName\": \"Mínimo de dif_pct\"}, {\"Aggregation\": {\"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"t0\"}}, \"Property\": \"dif_pct\"}}, \"Function\": 4}, \"Name\": \"Max(Conciliacion.dif_pct)\", \"NativeReferenceName\": \"Máximo de dif_pct\"}]}, \"vcObjects\": {\"title\": [{\"properties\": {\"show\": {\"expr\": {\"Literal\": {\"Value\": \"true\"}}}, \"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Conciliación por indicador y fuente de contraste (diferencia %, histórico)'\"}}}}}]}}}",
+          "filters": "[{\"name\": \"v0055etlcorea\", \"type\": \"Categorical\", \"howCreated\": 1, \"expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Entity\": \"Conciliacion\"}}, \"Property\": \"nivel\"}}, \"filter\": {\"Version\": 2, \"From\": [{\"Name\": \"f\", \"Entity\": \"Conciliacion\", \"Type\": 0}], \"Where\": [{\"Condition\": {\"In\": {\"Expressions\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"f\"}}, \"Property\": \"nivel\"}}], \"Values\": [[{\"Literal\": {\"Value\": \"'historico'\"}}]]}}}]}}]",
+          "x": 10,
+          "y": 500,
+          "z": 0,
+          "width": 1260,
+          "height": 210
+        }
+      ],
+      "width": 1280.0
+    }
+  ]
+}

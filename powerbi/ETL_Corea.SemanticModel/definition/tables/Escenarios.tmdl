@@ -1,0 +1,104 @@
+/// Preguntas 6a y 6b: fuerza laboral potencial por escenario y supuesto
+table Escenarios
+	lineageTag: 032ef9b8-ae9f-5552-9e55-93fcb8d25b5f
+
+	measure 'Fuerza laboral potencial' = SUM(Escenarios[fuerza_laboral])
+		formatString: #,0
+		lineageTag: 3e5831e6-c289-50b8-ac2b-45d6c6701c24
+
+	measure 'Población 15-64 KOSTAT' = MAX(Escenarios[pob_15_64])
+		formatString: #,0
+		lineageTag: e6470cfa-9f35-59fa-abf1-3ada2889f39a
+
+	measure 'Cambio vs población activa 2025' = DIVIDE([Fuerza laboral potencial], [Población activa 2025]) - 1
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 4e218de6-2eab-545f-96dd-8cd43e66a4f7
+
+	column anio
+		dataType: int64
+		formatString: 0
+		lineageTag: cac5da21-76e5-559f-aed4-08a8b3c0b87d
+		summarizeBy: none
+		sourceColumn: anio
+
+		annotation SummarizationSetBy = Automatic
+
+	column escenario_kostat
+		dataType: string
+		lineageTag: 62f18d86-1875-5582-a374-d694321056fe
+		summarizeBy: none
+		sourceColumn: escenario_kostat
+
+		annotation SummarizationSetBy = Automatic
+
+	column id_supuesto
+		dataType: string
+		lineageTag: 6face64c-83fc-5b63-910b-a5ffb2520589
+		summarizeBy: none
+		sourceColumn: id_supuesto
+
+		annotation SummarizationSetBy = Automatic
+
+	column supuesto
+		dataType: string
+		lineageTag: 9e73b957-a3a8-552d-9050-61fcf6192c19
+		summarizeBy: none
+		sourceColumn: supuesto
+
+		annotation SummarizationSetBy = Automatic
+
+	column version_modelo
+		dataType: string
+		lineageTag: 38a59096-52d4-541d-9084-60c45ae0b48f
+		summarizeBy: none
+		sourceColumn: version_modelo
+
+		annotation SummarizationSetBy = Automatic
+
+	column fuerza_laboral
+		dataType: double
+		formatString: #,0
+		lineageTag: 1c22c0e2-e870-567d-b56e-a6e5e9ec03eb
+		summarizeBy: sum
+		sourceColumn: fuerza_laboral
+
+		annotation SummarizationSetBy = Automatic
+
+	column poblacion_15mas
+		dataType: double
+		formatString: #,0
+		lineageTag: 490b1c2d-5897-5539-8982-f7b0608bac18
+		summarizeBy: sum
+		sourceColumn: poblacion_15mas
+
+		annotation SummarizationSetBy = Automatic
+
+	column tasa_participacion_agregada
+		dataType: double
+		formatString: #,0.00
+		lineageTag: cbbb4256-0040-5120-943e-6f904a1d3e66
+		summarizeBy: average
+		sourceColumn: tasa_participacion_agregada
+
+		annotation SummarizationSetBy = Automatic
+
+	column pob_15_64
+		dataType: double
+		formatString: #,0
+		lineageTag: ced55c18-e118-530e-ab98-237273291d6a
+		summarizeBy: sum
+		sourceColumn: pob_15_64
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Escenarios = m
+		mode: import
+		source =
+				let
+				    Origen = PostgreSQL.Database(Servidor, BaseDatos),
+				    Datos = Origen{[Schema = "gold", Item = "v_escenarios_resumen"]}[Data]
+				in
+				    Datos
+
+	annotation PBI_ResultType = Table
+

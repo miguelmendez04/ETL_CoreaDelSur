@@ -1,0 +1,50 @@
+/// Pregunta 5: ranking con otros pesos y normalizaciones
+table RiesgoSensibilidad
+	lineageTag: a64a401f-40b8-5df6-8842-a8f05f3626e0
+
+	column cod_territorio
+		dataType: string
+		lineageTag: 8038ca0a-2520-5cb4-99c2-ca339497c34a
+		summarizeBy: none
+		sourceColumn: cod_territorio
+
+		annotation SummarizationSetBy = Automatic
+
+	column esquema
+		dataType: string
+		lineageTag: 8623caaf-c982-5d10-b5fa-5fed64e16049
+		summarizeBy: none
+		sourceColumn: esquema
+
+		annotation SummarizationSetBy = Automatic
+
+	column indice_riesgo
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 07c9a391-e4bf-53bb-b80c-9ee130f5995d
+		summarizeBy: average
+		sourceColumn: indice_riesgo
+
+		annotation SummarizationSetBy = Automatic
+
+	column ranking
+		dataType: int64
+		formatString: 0
+		lineageTag: 368ee197-ca8a-5025-b66e-5c15698a2bfd
+		summarizeBy: none
+		sourceColumn: ranking
+
+		annotation SummarizationSetBy = Automatic
+
+	partition RiesgoSensibilidad = m
+		mode: import
+		source =
+				let
+				    Origen = PostgreSQL.Database(Servidor, BaseDatos),
+				    Datos = Origen{[Schema = "gold", Item = "riesgo_sensibilidad"]}[Data],
+				    Columnas = Table.SelectColumns(Datos, {"cod_territorio", "esquema", "indice_riesgo", "ranking"})
+				in
+				    Columnas
+
+	annotation PBI_ResultType = Table
+

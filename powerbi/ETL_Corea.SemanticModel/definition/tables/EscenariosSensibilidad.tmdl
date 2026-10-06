@@ -1,0 +1,50 @@
+/// Pregunta 6b: sensibilidad a los parámetros de B y C
+table EscenariosSensibilidad
+	lineageTag: dcf45909-2320-5c0e-a1de-5d56ef965c6f
+
+	column id_supuesto
+		dataType: string
+		lineageTag: bfee9568-568e-5b19-9c9d-55156456de1f
+		summarizeBy: none
+		sourceColumn: id_supuesto
+
+		annotation SummarizationSetBy = Automatic
+
+	column variante
+		dataType: string
+		lineageTag: 07ada0e3-52fb-5232-a87a-081fbe13f492
+		summarizeBy: none
+		sourceColumn: variante
+
+		annotation SummarizationSetBy = Automatic
+
+	column anio
+		dataType: int64
+		formatString: 0
+		lineageTag: 7ac9e011-30ff-5404-a518-522a4c33dabc
+		summarizeBy: none
+		sourceColumn: anio
+
+		annotation SummarizationSetBy = Automatic
+
+	column fuerza_laboral
+		dataType: double
+		formatString: #,0
+		lineageTag: 547c6b41-91b4-5610-8f5d-a78fdbbe8bb7
+		summarizeBy: sum
+		sourceColumn: fuerza_laboral
+
+		annotation SummarizationSetBy = Automatic
+
+	partition EscenariosSensibilidad = m
+		mode: import
+		source =
+				let
+				    Origen = PostgreSQL.Database(Servidor, BaseDatos),
+				    Datos = Origen{[Schema = "gold", Item = "escenarios_sensibilidad"]}[Data],
+				    Columnas = Table.SelectColumns(Datos, {"id_supuesto", "variante", "anio", "fuerza_laboral"})
+				in
+				    Columnas
+
+	annotation PBI_ResultType = Table
+

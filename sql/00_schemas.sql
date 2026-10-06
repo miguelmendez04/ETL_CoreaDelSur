@@ -338,6 +338,12 @@ FROM silver.conciliacion c JOIN silver.dim_indicador i USING (cod_indicador);
 CREATE OR REPLACE VIEW gold.v_kpis_calidad AS
 SELECT k.* FROM ctl.kpis k WHERE k.id_carga = (SELECT max(id_carga) FROM ctl.kpis);
 
+-- Dimensión de territorio para Power BI: filtra a la vez el panel, el riesgo y las señales por si-do.
+CREATE OR REPLACE VIEW gold.v_territorios AS
+SELECT cod_territorio, nombre_es AS territorio, nombre_en, tipo, iso3,
+       CASE tipo WHEN 'nacional' THEN 1 WHEN 'sido' THEN 2 WHEN 'agregado' THEN 3 WHEN 'agregado_int' THEN 4 ELSE 5 END AS orden_tipo
+FROM silver.dim_territorio;
+
 -- Pregunta 7: asociación (no causalidad) entre envejecimiento, empleo y productividad, Corea 2000-2025.
 CREATE TABLE IF NOT EXISTS gold.asociaciones (
     variable_x        TEXT     NOT NULL,

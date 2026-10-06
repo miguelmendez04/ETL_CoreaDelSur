@@ -27,3 +27,7 @@ venv/
 
 # Notas locales de Claude (no se versionan)
 CLAUDE.md
+
+# Power BI: caché de datos importados y configuración local del proyecto .pbip
+powerbi/**/.pbi/cache.abf
+powerbi/**/.pbi/localSettings.json

@@ -1,0 +1,66 @@
+/// Pregunta 8: años en que se cruzan umbrales
+table Hitos
+	lineageTag: 59eddfde-ef62-5142-8ae9-53e645717217
+
+	column hito
+		dataType: string
+		lineageTag: 434dff60-33f3-5b98-8634-2f920232a55e
+		summarizeBy: none
+		sourceColumn: hito
+
+		annotation SummarizationSetBy = Automatic
+
+	column escenario_kostat
+		dataType: string
+		lineageTag: 51c29f47-aba0-50b0-8728-6647a03f2aa9
+		summarizeBy: none
+		sourceColumn: escenario_kostat
+
+		annotation SummarizationSetBy = Automatic
+
+	column id_supuesto
+		dataType: string
+		lineageTag: c218e16a-9d67-5b4a-8de4-c7c3d733555d
+		summarizeBy: none
+		sourceColumn: id_supuesto
+
+		annotation SummarizationSetBy = Automatic
+
+	column anio
+		dataType: int64
+		formatString: 0
+		lineageTag: 277cf934-be26-50c0-beff-f5bc472986cd
+		summarizeBy: none
+		sourceColumn: anio
+
+		annotation SummarizationSetBy = Automatic
+
+	column valor
+		dataType: double
+		formatString: #,0.00
+		lineageTag: cbcc94e4-938c-5f7a-9dbf-3913846ef5de
+		summarizeBy: none
+		sourceColumn: valor
+
+		annotation SummarizationSetBy = Automatic
+
+	column descripcion
+		dataType: string
+		lineageTag: 156c3093-dd58-5b4a-81b0-9c35ca8e829c
+		summarizeBy: none
+		sourceColumn: descripcion
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Hitos = m
+		mode: import
+		source =
+				let
+				    Origen = PostgreSQL.Database(Servidor, BaseDatos),
+				    Datos = Origen{[Schema = "gold", Item = "hitos_escasez"]}[Data],
+				    Columnas = Table.SelectColumns(Datos, {"hito", "escenario_kostat", "id_supuesto", "anio", "valor", "descripcion"})
+				in
+				    Columnas
+
+	annotation PBI_ResultType = Table
+

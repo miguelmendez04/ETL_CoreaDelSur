@@ -1,0 +1,16 @@
+relationship a85a093a-46d8-52fd-8a88-28e8d4e22159
+	fromColumn: Panel.cod_territorio
+	toColumn: Territorio.cod_territorio
+
+relationship 9e35ac24-4463-5c1a-a1f0-c7a28a296b75
+	fromColumn: Riesgo.cod_territorio
+	toColumn: Territorio.cod_territorio
+
+relationship 54656a38-a993-5ce2-9f95-16a8bf0ae006
+	fromColumn: RiesgoSensibilidad.cod_territorio
+	toColumn: Territorio.cod_territorio
+
+relationship 6890b8a9-d0ea-5c50-ae86-37b15d1ecfc1
+	fromColumn: Senales.cod_territorio
+	toColumn: Territorio.cod_territorio
+

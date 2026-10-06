@@ -1,0 +1,29 @@
+model Model
+	culture: es-ES
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: es-CO
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["Servidor", "BaseDatos", "Territorio", "Panel", "Natalidad", "Riesgo", "RiesgoSensibilidad", "Escenarios", "EscenariosDetalle", "EscenariosSensibilidad", "Supuestos", "Hitos", "Senales", "Asociaciones", "KPIs", "Conciliacion"]
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table Territorio
+ref table Panel
+ref table Natalidad
+ref table Riesgo
+ref table RiesgoSensibilidad
+ref table Escenarios
+ref table EscenariosDetalle
+ref table EscenariosSensibilidad
+ref table Supuestos
+ref table Hitos
+ref table Senales
+ref table Asociaciones
+ref table KPIs
+ref table Conciliacion
+

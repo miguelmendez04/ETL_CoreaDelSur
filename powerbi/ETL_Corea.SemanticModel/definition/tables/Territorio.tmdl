@@ -1,0 +1,64 @@
+/// Dimensión de territorio: nacional, 17 si-do, Chungnam+Sejong, países y promedio OCDE
+table Territorio
+	lineageTag: afc5be8c-b053-5b6f-9fd9-d20373d61e20
+
+	column cod_territorio
+		dataType: string
+		lineageTag: c1cea530-a71c-5bb7-a3bd-6defb32ef338
+		summarizeBy: none
+		sourceColumn: cod_territorio
+
+		annotation SummarizationSetBy = Automatic
+
+	column territorio
+		dataType: string
+		lineageTag: 3cf8ba8d-e6e0-5e27-b6c9-ea9dc6c4a0f1
+		summarizeBy: none
+		sourceColumn: territorio
+
+		annotation SummarizationSetBy = Automatic
+
+	column nombre_en
+		dataType: string
+		lineageTag: 8c504369-202c-58c4-96d8-884fd9c89d9d
+		summarizeBy: none
+		sourceColumn: nombre_en
+
+		annotation SummarizationSetBy = Automatic
+
+	column tipo
+		dataType: string
+		lineageTag: 9f51a327-c150-5713-a2b9-f991631d5215
+		summarizeBy: none
+		sourceColumn: tipo
+
+		annotation SummarizationSetBy = Automatic
+
+	column iso3
+		dataType: string
+		lineageTag: 747355cb-8ea1-55c8-810d-7a1928282c16
+		summarizeBy: none
+		sourceColumn: iso3
+
+		annotation SummarizationSetBy = Automatic
+
+	column orden_tipo
+		dataType: int64
+		formatString: 0
+		lineageTag: f7ba7e2d-8760-5267-86b3-d036f9fdc7c0
+		summarizeBy: none
+		sourceColumn: orden_tipo
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Territorio = m
+		mode: import
+		source =
+				let
+				    Origen = PostgreSQL.Database(Servidor, BaseDatos),
+				    Datos = Origen{[Schema = "gold", Item = "v_territorios"]}[Data]
+				in
+				    Datos
+
+	annotation PBI_ResultType = Exception
+

@@ -1,0 +1,101 @@
+/// Pregunta 6b: fuerza laboral por sexo y grupo de edad
+table EscenariosDetalle
+	lineageTag: c3f8cb1f-aa71-54af-88df-fca6dbdc9a3a
+
+	column anio
+		dataType: int64
+		formatString: 0
+		lineageTag: 9f91b9af-ca34-57b6-a135-83fab4a362ac
+		summarizeBy: none
+		sourceColumn: anio
+
+		annotation SummarizationSetBy = Automatic
+
+	column escenario_kostat
+		dataType: string
+		lineageTag: 23be2969-c132-526e-a16b-db334b9035ae
+		summarizeBy: none
+		sourceColumn: escenario_kostat
+
+		annotation SummarizationSetBy = Automatic
+
+	column id_supuesto
+		dataType: string
+		lineageTag: 7e405434-22dd-5a5f-958f-175444223ab1
+		summarizeBy: none
+		sourceColumn: id_supuesto
+
+		annotation SummarizationSetBy = Automatic
+
+	column version_modelo
+		dataType: string
+		lineageTag: 9ca89223-e865-5246-9df8-f4b36ac2f7bb
+		summarizeBy: none
+		sourceColumn: version_modelo
+
+		annotation SummarizationSetBy = Automatic
+
+	column sexo
+		dataType: string
+		lineageTag: 48a4a34c-1d28-5003-a929-65a32a915c28
+		summarizeBy: none
+		sourceColumn: sexo
+
+		annotation SummarizationSetBy = Automatic
+
+	column grupo_edad
+		dataType: string
+		lineageTag: 06a16926-f849-5013-9377-2203cc75adf5
+		summarizeBy: none
+		sourceColumn: grupo_edad
+
+		annotation SummarizationSetBy = Automatic
+
+	column poblacion
+		dataType: double
+		formatString: #,0
+		lineageTag: 0bab0828-3ccc-509c-8abb-f77b2c1208f3
+		summarizeBy: sum
+		sourceColumn: poblacion
+
+		annotation SummarizationSetBy = Automatic
+
+	column factor_cobertura
+		dataType: double
+		formatString: #,0.00
+		lineageTag: dbd8e228-64b9-5d4f-a27f-14b2f90c2751
+		summarizeBy: average
+		sourceColumn: factor_cobertura
+
+		annotation SummarizationSetBy = Automatic
+
+	column tasa_participacion
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 030cdff4-d924-544d-bad5-33ddaf99f6d5
+		summarizeBy: average
+		sourceColumn: tasa_participacion
+
+		annotation SummarizationSetBy = Automatic
+
+	column fuerza_laboral
+		dataType: double
+		formatString: #,0
+		lineageTag: 4efed359-e9fb-5018-a8c9-ddb47ee7dbcb
+		summarizeBy: sum
+		sourceColumn: fuerza_laboral
+
+		annotation SummarizationSetBy = Automatic
+
+	partition EscenariosDetalle = m
+		mode: import
+		source =
+				let
+				    Origen = PostgreSQL.Database(Servidor, BaseDatos),
+				    Datos = Origen{[Schema = "gold", Item = "escenario_fuerza_laboral"]}[Data],
+				    Columnas = Table.SelectColumns(Datos, {"anio", "escenario_kostat", "id_supuesto", "version_modelo", "sexo", "grupo_edad", "poblacion", "factor_cobertura", "tasa_participacion", "fuerza_laboral"})
+				in
+				    Columnas
+
+	annotation PBI_ResultType = Table
+

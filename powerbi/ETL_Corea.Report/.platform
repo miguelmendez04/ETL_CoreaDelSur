@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "ETL_Corea"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "0dfd1076-5ab7-42d0-a527-54967f466d45"
+  }
+}

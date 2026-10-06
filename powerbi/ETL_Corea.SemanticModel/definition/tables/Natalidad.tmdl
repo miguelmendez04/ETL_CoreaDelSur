@@ -1,0 +1,95 @@
+/// Pregunta 2: nacimientos vs población que entra a 15-19
+table Natalidad
+	lineageTag: acc72d21-7477-5555-bce3-198fd0876c97
+
+	column anio
+		dataType: int64
+		formatString: 0
+		lineageTag: 3d7cc25a-51a2-56f3-95f5-a3c762bd9f69
+		summarizeBy: none
+		sourceColumn: anio
+
+		annotation SummarizationSetBy = Automatic
+
+	column nivel
+		dataType: string
+		lineageTag: 41bb9312-61d5-5f31-8385-e5072a4ce548
+		summarizeBy: none
+		sourceColumn: nivel
+
+		annotation SummarizationSetBy = Automatic
+
+	column nacimientos
+		dataType: double
+		formatString: #,0
+		lineageTag: 3f2a1ecc-cda5-57fa-b355-6948b15ae11e
+		summarizeBy: sum
+		sourceColumn: nacimientos
+
+		annotation SummarizationSetBy = Automatic
+
+	column pob_15_19
+		dataType: double
+		formatString: #,0
+		lineageTag: 8db6bf0b-122e-5ac6-a69f-e8079d9e8a9d
+		summarizeBy: sum
+		sourceColumn: pob_15_19
+
+		annotation SummarizationSetBy = Automatic
+
+	column pob_15_64
+		dataType: double
+		formatString: #,0
+		lineageTag: 3f79d02f-6202-58a6-8509-9e162d2ba668
+		summarizeBy: sum
+		sourceColumn: pob_15_64
+
+		annotation SummarizationSetBy = Automatic
+
+	column var_pob_15_64_pct
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 49036278-46e0-5e32-9539-a08831645928
+		summarizeBy: average
+		sourceColumn: var_pob_15_64_pct
+
+		annotation SummarizationSetBy = Automatic
+
+	column nacidos_hace_15
+		dataType: double
+		formatString: #,0
+		lineageTag: 0a98bef4-879c-5a0a-ab0e-204b83222e30
+		summarizeBy: sum
+		sourceColumn: nacidos_hace_15
+
+		annotation SummarizationSetBy = Automatic
+
+	column nacidos_cohorte_15_19
+		dataType: double
+		formatString: #,0
+		lineageTag: 513a68a2-cc70-511b-9851-ee2f3105dcf7
+		summarizeBy: sum
+		sourceColumn: nacidos_cohorte_15_19
+
+		annotation SummarizationSetBy = Automatic
+
+	column pct_cohorte_presente
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 0112ac09-40cc-5907-9a4c-78d4eb575f30
+		summarizeBy: average
+		sourceColumn: pct_cohorte_presente
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Natalidad = m
+		mode: import
+		source =
+				let
+				    Origen = PostgreSQL.Database(Servidor, BaseDatos),
+				    Datos = Origen{[Schema = "gold", Item = "v_natalidad_vs_15_64"]}[Data]
+				in
+				    Datos
+
+	annotation PBI_ResultType = Table
+

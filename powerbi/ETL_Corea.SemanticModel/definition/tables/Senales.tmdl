@@ -1,0 +1,86 @@
+/// Pregunta 8: relevo generacional y dependencia por año y si-do
+table Senales
+	lineageTag: 140fa97d-13ff-5f64-ae91-bce1f101b960
+
+	column nivel
+		dataType: string
+		lineageTag: fd2e430b-f9a3-5fba-a914-3cf6563641bb
+		summarizeBy: none
+		sourceColumn: nivel
+
+		annotation SummarizationSetBy = Automatic
+
+	column anio
+		dataType: int64
+		formatString: 0
+		lineageTag: 4df18dc3-3005-5d75-89bf-2c9ae2b8d89a
+		summarizeBy: none
+		sourceColumn: anio
+
+		annotation SummarizationSetBy = Automatic
+
+	column cod_territorio
+		dataType: string
+		lineageTag: b13da618-b674-5651-a39e-8feb3e6c1e88
+		summarizeBy: none
+		sourceColumn: cod_territorio
+
+		annotation SummarizationSetBy = Automatic
+
+	column relevo_generacional
+		dataType: double
+		formatString: #,0.00
+		lineageTag: ce89b97a-384d-5b0e-a2bd-0b74d13b7728
+		summarizeBy: average
+		sourceColumn: relevo_generacional
+
+		annotation SummarizationSetBy = Automatic
+
+	column pob_15_64
+		dataType: double
+		formatString: #,0
+		lineageTag: d317672f-2cf2-5b97-b62b-d1cb3a456758
+		summarizeBy: sum
+		sourceColumn: pob_15_64
+
+		annotation SummarizationSetBy = Automatic
+
+	column var_pob_15_64_pct
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 9958fafc-53f6-56f9-9b6e-5f13e1256776
+		summarizeBy: average
+		sourceColumn: var_pob_15_64_pct
+
+		annotation SummarizationSetBy = Automatic
+
+	column dependencia_vejez
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 0820f2e2-a33a-51e4-bc7d-4bd77ee69501
+		summarizeBy: average
+		sourceColumn: dependencia_vejez
+
+		annotation SummarizationSetBy = Automatic
+
+	column tasa_desempleo
+		dataType: double
+		formatString: #,0.00
+		lineageTag: b6330160-9998-5086-a8a5-f78ebee9bdd4
+		summarizeBy: average
+		sourceColumn: tasa_desempleo
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Senales = m
+		mode: import
+		source =
+				let
+				    Origen = PostgreSQL.Database(Servidor, BaseDatos),
+				    Datos = Origen{[Schema = "gold", Item = "v_senales_escasez"]}[Data],
+				    Columnas = Table.SelectColumns(Datos, {"nivel", "anio", "cod_territorio", "relevo_generacional", "pob_15_64", "var_pob_15_64_pct", "dependencia_vejez", "tasa_desempleo"})
+				in
+				    Columnas
+
+	annotation PBI_ResultType = Table
+
