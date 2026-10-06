@@ -10,3 +10,5 @@ PROP_65MAS,Proporción de 65+,Pob 65+ / pob total × 100,%,anual,PIPELINE,WB,tru
 INDICE_ENVEJECIMIENTO,Índice de envejecimiento,Pob 65+ / pob 0-14 × 100,ratio × 100,anual,PIPELINE,OECD,true,0,
 DEPENDENCIA_VEJEZ,Tasa de dependencia de vejez,Pob 65+ / pob 15-64 × 100,ratio × 100,anual,PIPELINE,OECD;WB,true,0,
 PIB_HORA,PIB por hora trabajada,PIB por hora trabajada en USD PPA constantes,USD PPA const.,anual,OECD,WB,false,0,
+POB_15MAS,Población de 15 años y más,Población civil de 15 años y más cubierta por la EAPS (promedio anual),personas,mensual,KOSIS,,false,0,
+PIB_OCUPADO,PIB por ocupado,PIB por persona ocupada en USD PPA constantes de 2021 (comparación internacional),USD PPA const.,anual,WB,,false,0,

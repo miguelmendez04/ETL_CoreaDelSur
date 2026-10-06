@@ -1,6 +1,7 @@
 # Configuración del pipeline ETL y catálogo de fuentes.
 # rol: maestra | contraste. Una sola fuente maestra por indicador.
 # Los valores marcados "PENDIENTE" o "verificar" aún no se han confirmado contra la fuente.
+# Las credenciales (API keys, contraseña de PostgreSQL) van en .env, nunca aquí.
 
 rutas:
   bronze: data/bronze        # crudo por fuente y fecha: data/bronze/<fuente>/<fecha>/
@@ -33,14 +34,15 @@ extraccion:
 
 kosis:
   # KOSIS OpenAPI está restringido a residentes de Corea (confirmado oficialmente), así que la extracción es
-  # MANUAL: se descarga cada tabla desde kosis.kr y guarda el CSV en data/bronze/kosis/<AAAA-MM-DD>/.
+  # MANUAL: el equipo descarga cada tabla desde kosis.kr y guarda el CSV en data/bronze/kosis/<AAAA-MM-DD>/.
   # El extractor (src/extract/kosis.py) toma la versión más reciente de cada archivo del catálogo, valida su
   # estructura, escribe <dataset>_metadata.json y lo carga en bronze.kosis.
   metodo_extraccion: descarga_manual
   tabla_bronze: bronze.kosis
   url_tabla: https://kosis.kr/statHtml/statHtml.do?orgId={org_id}&tblId={tbl_id}
   url_portal: https://kosis.kr/eng/
-  # Catálogo de extracción: un archivo = un dataset de bronze.
+  # Catálogo de extracción: un archivo = un dataset de bronze. tbl_id verificado contra el nombre oficial de cada tabla
+  # en kosis.kr (statHtml.do?orgId=101&tblId=...).
   #   patron: nombre del archivo (admite *); se busca en todas las carpetas de fecha y se usa la más reciente.
   #   formato: ancho = 1 fila de encabezado con años como columnas;
   #            encabezado_doble = fila 1 periodo, fila 2 ítem (las columnas mensuales se conservan en bronze).
@@ -49,25 +51,25 @@ kosis:
       patron: estadisticas_vitales_nacional_*.csv
       tabla_kosis: Vital Statistics of Korea
       org_id: "101"
-      tbl_id: null
+      tbl_id: DT_1B8000F
       encoding: utf-8-sig
       formato: ancho
       columnas_dimension: ["By items"]
       periodo_esperado: {inicio: 2000, fin: 2025}
     vitales_sido:
       patron: estadisticas_vitales_sido_*.csv
-      tabla_kosis: Vital statistics number by Month for Provinces
+      tabla_kosis: Vital statistics(number) by Month for Provinces
       org_id: "101"
-      tbl_id: null
+      tbl_id: DT_1B8000G
       encoding: utf-8-sig
       formato: encabezado_doble
       columnas_dimension: ["By administrative divisions"]
       periodo_esperado: {inicio: 2000, fin: 2025}
     tfr_sido:
       patron: tfr_sido_*.csv
-      tabla_kosis: Total Fertility Rates and Age-Specific Fertility Rates
+      tabla_kosis: Total Fertility Rates and Age-Specific Fertility Rates for city, county, and district
       org_id: "101"
-      tbl_id: null
+      tbl_id: DT_1B81A17
       encoding: utf-8-sig
       formato: encabezado_doble
       columnas_dimension: ["By si(city), gun(county) and gu(borough)"]
@@ -83,27 +85,27 @@ kosis:
       periodo_esperado: {inicio: 2000, fin: 2025}
     eaps_sexo_edad:
       patron: eaps_nacional_sexo_edad_*.csv
-      tabla_kosis: Summary of economically active pop. by gender & age group
+      tabla_kosis: Summary of economically active pop. by gender/ age group
       org_id: "101"
-      tbl_id: null
+      tbl_id: DT_1DA7012S
       encoding: utf-8-sig
       formato: encabezado_doble
       columnas_dimension: ["By gender", "By age group"]
       periodo_esperado: {inicio: 2000, fin: 2025}
     poblacion_nacional:
       patron: poblacion_nacional_edad_sexo_*_medio.csv
-      tabla_kosis: Estimated population by sex and age / National (1960-2072)
+      tabla_kosis: Projected Population by Age(Korea)
       org_id: "101"
-      tbl_id: null
+      tbl_id: DT_1BPA001
       encoding: utf-8-sig
       formato: ancho
       columnas_dimension: ["가정별", "성별", "연령별"]
       periodo_esperado: {inicio: 2000, fin: 2072}
     poblacion_sido:
       patron: poblacion_sido_edad_sexo_*_medio.csv
-      tabla_kosis: Projected population by age (Province)
+      tabla_kosis: Projected Population by Age(Province)
       org_id: "101"
-      tbl_id: null
+      tbl_id: DT_1BPB001
       encoding: utf-8-sig
       formato: ancho
       columnas_dimension: ["By scenarios", "By province", "By gender", "By age"]
@@ -112,7 +114,7 @@ kosis:
       patron: proyeccion_nacional_edad_sexo_por_escenario_*.csv
       tabla_kosis: Projected population by scenario, sex and age (Korea)
       org_id: "101"
-      tbl_id: null
+      tbl_id: null             # PENDIENTE: no es DT_1BPA401 (esa no trae sexo ni edad); copiar el tblId de la URL al abrir la tabla
       encoding: cp949            # única descarga que KOSIS entrega en CP949
       formato: ancho
       columnas_dimension: ["시나리오별", "성별", "연령별"]
@@ -229,7 +231,10 @@ oecd:
       rol: maestra
       dataflow: OECD.SDD.TPS,DSD_PDB@DF_PDB,2.0        # "Productivity database" (versión vigente)
       # dims: REF_AREA.FREQ.MEASURE.ACTIVITY.UNIT_MEASURE.PRICE_BASE.TRANSFORMATION.ASSET_CODE.CONVERSION_TYPE
-      clave: KOR.A.GDPHRS._T.USD_PPP_H.LR...           # PIB por hora, total economía, USD PPA, volumen encadenado (precios constantes, base 2020)
+      # PIB por hora, total economía, USD PPA, volumen encadenado (precios constantes, base 2020), sin transformar
+      # (TRANSFORMATION=N; sin ese filtro para USA llega también la tasa de crecimiento anual). Corea es la maestra;
+      # los demás países y el promedio OCDE son comparación internacional (pregunta 9).
+      clave: "{paises}+OECD.A.GDPHRS._T.USD_PPP_H.LR.N.."
       periodo: {inicio: 2000, fin: 2025}               # confirmado: 26/26 años
       nota: >
         Reemplaza a DSD_PDB@DF_PDB_LV,1.0 (archivado), que para Corea solo tenía 2011-2023.
@@ -270,6 +275,16 @@ oecd:
       clave: "{paises}.DEPEND_RATIO_OLD...."
       periodo: {inicio: 2000, fin: 2025}
       nota: OJO, OECD define 65+ / 20-64 (no 15-64). No es comparable 1 a 1 con nuestro cálculo; documentar en la conciliación.
+    participacion_edad_sexo:
+      indicadores: [TASA_PARTICIPACION]
+      rol: contraste             # insumo del escenario C (convergencia al promedio OCDE), no reemplaza a la EAPS
+      dataflow: OECD.SDD.TPS,DSD_LFS@DF_IALFS_LF_WAP_Q,1.0   # "Labour force participation rate" por sexo y edad
+      # dims: REF_AREA.MEASURE.UNIT_MEASURE.TRANSFORMATION.ADJUSTMENT.SEX.AGE.ACTIVITY.FREQ
+      clave: "KOR+OECD.LF_WAP...N....A"                      # Corea y promedio OCDE, anual, sin desestacionalizar
+      medidas: {LF_WAP: TASA_PARTICIPACION}
+      periodo: {inicio: 2015, fin: 2025}
+      nota: >
+        Edades publicadas: 15-24, 25-54, 55-64, 15-64 y 15+. El promedio OCDE llega a 2024 (Corea a 2025).
 
 unwpp:
   # API REST oficial (no descarga CSV manual). Requiere token gratuito.
@@ -293,3 +308,124 @@ unwpp:
       unidad_valor: personas (NO miles) -- verificado en EDA sumando poblacion total 2020 (~51.86M, coincide con Corea real)
       variantes_a_usar: {Median: 4, High-fertility: 9, Low-fertility: 10}   # el bronze trae 17 variantes en total, filtrar a estas 3
       cobertura: Median 2000-2072 sin huecos; High/Low-fertility solo 2024-2072 (antes no hay divergencia de escenario)
+
+silver:
+  # Reglas de transformación bronze -> silver. Salen del perfilamiento (notebooks 01-05).
+  # Silver se reconstruye completo en cada ejecución desde la última carga exitosa de cada dataset de bronze.
+  periodo_historico_hasta: 2025       # años <= van a fact_historico; > van a fact_proyeccion
+  proyeccion_desde: 2026
+  # Ítems de KOSIS que pasan a silver -> indicador y factor de unidad (miles -> personas = 1000).
+  # Los demás ítems quedan solo en bronze (fuera del alcance del proyecto).
+  items_kosis:
+    vitales_sido:
+      "Live births(persons)": {indicador: NACIMIENTOS}
+    tfr_sido:
+      "Total Fertility Rate": {indicador: TFR}
+    eaps:   # eaps_sido y eaps_sexo_edad
+      "Population 15 years old and over (Thousand Person)": {indicador: POB_15MAS, factor: 1000}
+      "Economically active population (Thousand Person)": {indicador: POB_ACTIVA, factor: 1000}
+      "Employed persons (Thousand Person)": {indicador: OCUPADOS, factor: 1000}
+      "Labor Force Participation rate (%)": {indicador: TASA_PARTICIPACION}
+      "Unemployment rate (%)": {indicador: TASA_DESEMPLEO}
+  # Grupos de edad de las tablas KOSIS que NO pasan a silver porque se solapan con otros (se recalculan o no se usan).
+  edades_excluidas: ["80+", "15-24", "15-29"]
+  # Grupos finos que se suman en uno de dim_edad.
+  edades_agrupadas: {"85-89": "85+", "90-94": "85+", "95-99": "85+", "100+": "85+"}
+  # Agregados de edad que se calculan sumando grupos quinquenales (para fuentes que no los traen).
+  agregados_edad: {"0-14": ["0-4", "5-9", "10-14"],
+                   "15-64": ["15-19", "20-24", "25-29", "30-34", "35-39", "40-44", "45-49", "50-54", "55-59", "60-64"],
+                   "65+": ["65-69", "70-74", "75-79", "80-84", "85+"]}
+  # Agregado territorial Chungnam + Sejong (antes de que Sejong exista, Chungnam ya lo incluye).
+  agregado_cnsj: {codigo: CNSJ, componentes: ["34", "29"],
+                  indicadores_suma: [POBLACION, NACIMIENTOS, POB_15MAS, POB_ACTIVA, OCUPADOS]}
+  ediciones:
+    kosis_nacional: KOSTAT_2022_2072
+    kosis_sido: KOSTAT_2022_2052
+  # Estado 'preliminar': último año publicado y población 2022-2025 de KOSIS (viene de la proyección, no es estimación).
+  preliminar:
+    ultimo_anio: 2025
+    poblacion_proyectada_kosis: {desde: 2022, hasta: 2025}
+  # World Bank: indicadores que pasan a fact_historico para los países de comparación (KOR solo va a conciliación,
+  # porque para Corea la maestra es KOSIS).
+  worldbank_historico:
+    SP.DYN.TFRT.IN: {indicador: TFR}
+    SP.POP.TOTL: {indicador: POBLACION, grupo_edad: TOTAL}
+    SP.POP.0014.TO: {indicador: POBLACION, grupo_edad: "0-14"}
+    SP.POP.1564.TO: {indicador: POBLACION, grupo_edad: "15-64"}
+    SP.POP.65UP.TO: {indicador: POBLACION, grupo_edad: "65+"}
+    SL.TLF.CACT.ZS: {indicador: TASA_PARTICIPACION, grupo_edad: "15+"}
+    SL.GDP.PCAP.EM.KD: {indicador: PIB_OCUPADO}
+
+gold:
+  version_modelo: v1
+  # Pregunta 6b: fuerza laboral potencial = población proyectada KOSTAT (edición nacional, 3 escenarios)
+  #              × tasa de participación por sexo y grupo de edad de la EAPS. Son ESCENARIOS, no pronósticos.
+  escenarios_fuerza_laboral:
+    anio_base: 2025
+    # La EAPS cubre la población civil no institucional (sin militares ni personas en instituciones), menor que la
+    # población total de KOSTAT. Factor por sexo y grupo = pob 15+ EAPS / pob KOSTAT en el año base; sin él la
+    # fuerza laboral del año base queda ~1.5 % sobre la observada.
+    calibrar_cobertura_eaps: true
+    # Grupos de la EAPS (decenales, 60+ abierto) armados con los quinquenales de la proyección.
+    grupos: {"15-19": ["15-19"], "20-29": ["20-24", "25-29"], "30-39": ["30-34", "35-39"],
+             "40-49": ["40-44", "45-49"], "50-59": ["50-54", "55-59"],
+             "60+": ["60-64", "65-69", "70-74", "75-79", "80-84", "85+"]}
+    supuestos:
+      A:
+        nombre: Participación constante
+        descripcion: Cada tasa por sexo y grupo de edad se mantiene en su valor del año base.
+      B:
+        nombre: Tendencia 2015-2025 con tope
+        descripcion: >
+          Se extrapola la tendencia lineal 2015-2025 de cada tasa por sexo y grupo de edad, con un cambio máximo
+          respecto al año base, acotada entre un piso y un tope, y congelada desde el año límite (las tendencias
+          no siguen indefinidamente).
+        anios_tendencia: [2015, 2025]
+        cambio_maximo_pp: 15   # puntos porcentuales, hacia arriba o hacia abajo
+        piso: 0
+        tope: 90
+        congelar_desde: 2050
+      C:
+        nombre: Convergencia al promedio OCDE
+        descripcion: >
+          Cada tasa converge linealmente a la del promedio OCDE para su sexo y edad, que alcanza en el año de
+          convergencia y mantiene después. Los grupos 15-19 y 60+ se mantienen constantes: la OCDE solo publica
+          15-24 (mezcla estudiantes con jóvenes que ya trabajan) y no publica 65+ por sexo.
+        anio_convergencia: 2050
+        # Grupo EAPS -> pesos sobre las edades que publica la OCDE (DSD_LFS@DF_IALFS_LF_WAP_Q).
+        equivalencias_oecd: {"20-29": {Y15T24: 0.5, Y25T54: 0.5}, "30-39": {Y25T54: 1},
+                             "40-49": {Y25T54: 1}, "50-59": {Y25T54: 0.5, Y55T64: 0.5}}
+    # Sensibilidad: cada variante reemplaza parámetros de un supuesto (resultado en gold.escenarios_sensibilidad).
+    sensibilidad:
+      B: [{cambio_maximo_pp: 10}, {cambio_maximo_pp: 20}, {congelar_desde: 2040}, {congelar_desde: 2060}]
+      C: [{anio_convergencia: 2040}, {anio_convergencia: 2060}]
+  # Pregunta 5: índice de riesgo demográfico por si-do (descriptivo, no causal). Cada componente se normaliza
+  # 0-100 entre los 17 si-do (100 = más riesgo) y se promedia con su peso.
+  riesgo_sido:
+    anio_base: 2025
+    anio_proyeccion: 2052
+    componentes:
+      prop_65mas: {peso: 0.25, mas_es_peor: true}
+      tfr: {peso: 0.25, mas_es_peor: false}
+      var_pob_15_64_proy_pct: {peso: 0.25, mas_es_peor: false}
+      dependencia_vejez_proy: {peso: 0.25, mas_es_peor: true}
+    # Sensibilidad: el ranking se recalcula con otros pesos (la dirección de cada componente no cambia).
+    esquemas_sensibilidad:
+      solo_situacion_actual: {prop_65mas: 0.5, tfr: 0.5}
+      solo_proyeccion: {var_pob_15_64_proy_pct: 0.5, dependencia_vejez_proy: 0.5}
+      envejecimiento_doble: {prop_65mas: 0.4, tfr: 0.2, var_pob_15_64_proy_pct: 0.2, dependencia_vejez_proy: 0.2}
+      natalidad_doble: {prop_65mas: 0.2, tfr: 0.4, var_pob_15_64_proy_pct: 0.2, dependencia_vejez_proy: 0.2}
+
+  # Pregunta 8: señales tempranas de escasez laboral.
+  senales_escasez:
+    umbrales_dependencia: [50, 75]          # personas de 65+ por cada 100 de 15-64
+    anios_comparacion: [2030, 2040, 2050, 2072]
+
+  # Pregunta 7: pares de indicadores (Corea, 2000-2025) cuya asociación se mide. Asociación, no causalidad.
+  asociaciones:
+    - [PROP_65MAS, TASA_PARTICIPACION]
+    - [PROP_65MAS, OCUPADOS]
+    - [PROP_65MAS, TASA_DESEMPLEO]
+    - [PROP_65MAS, PIB_HORA]
+    - [DEPENDENCIA_VEJEZ, PIB_HORA]
+    - [TFR, TASA_PARTICIPACION]

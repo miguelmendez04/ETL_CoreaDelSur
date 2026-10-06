@@ -17,23 +17,38 @@ Pipeline con arquitectura medallón sobre PostgreSQL:
 
 ## Estructura
 
+Cada capa del medallón existe en tres lugares: el código que la construye, sus tablas en PostgreSQL y sus archivos
+en `data/`.
+
+| Capa | Código | PostgreSQL | Archivos |
+|---|---|---|---|
+| Bronze | `src/extract/` + `src/load/bronze.py` | `bronze.*` | `data/bronze/<fuente>/<fecha>/`: crudo + `_metadata.json` |
+| Silver | `src/transform/silver/` + `src/quality/validate.py` + `src/load/silver.py` | `silver.*`, `ctl.rechazos` | `data/silver/<fecha>/`: Parquet de cada tabla + rechazos + `manifest.json` |
+| Gold | `src/transform/gold/` + `src/quality/kpis.py` + `src/load/gold.py` | `gold.*`, `gold.v_*`, `ctl.kpis` | `data/gold/<fecha>/`: tablas y vistas en Parquet y CSV + `manifest.json` |
+| Control | `src/load/ctl.py` | `ctl.log_cargas` | `logs/pipeline.log` |
+
 ```
-├── data/            bronze/ silver/ gold/ (archivos locales, no se versionan)
+├── data/
+│   ├── bronze/      crudo por fuente y fecha (solo KOSIS se versiona: es descarga manual)
+│   ├── silver/      respaldo limpio en Parquet por fecha (no se versiona)
+│   └── gold/        datos de negocio en Parquet y CSV por fecha (no se versiona)
 ├── src/
-│   ├── extract/     un extractor por fuente + ejecutar.py (capa bronze)
-│   ├── transform/   lectura de bronze, normalización, indicadores derivados, conciliación
-│   ├── load/        escritura a PostgreSQL
-│   ├── quality/     validaciones y KPIs de calidad
+│   ├── extract/     bronze: un extractor por fuente + ejecutar.py
+│   ├── transform/
+│   │   ├── silver/  desde_bronze, normalize, homologacion, derive, reconcile, ejecutar
+│   │   └── gold/    escenarios, riesgo, analisis, ejecutar
+│   ├── load/        ctl (bitácora y COPY), bronze, silver, gold, archivos (respaldos en data/)
+│   ├── quality/     validate (-> ctl.rechazos), kpis, perfilamiento y lectura_bronze (notebooks)
 │   └── utils/       configuración, logging y conexión
 ├── config/
-│   ├── config.yaml  parámetros y catálogo de fuentes (qué se extrae y cómo)
-│   └── mappings/    dimensiones: territorios, edades, sexo, indicadores
-├── sql/             DDL de los esquemas (Docker lo ejecuta al crear la base)
+│   ├── config.yaml  catálogo de fuentes y reglas de cada capa (bronze, silver, gold)
+│   └── mappings/    dimensiones y diccionario de etiquetas (inglés y coreano)
+├── sql/             DDL de los esquemas y vistas (Docker lo ejecuta al crear la base)
+├── notebooks/       01-05 perfilamiento de calidad por fuente; 06 resultados de gold por pregunta de negocio
+├── tests/           pruebas de las tres capas
 ├── logs/            registro de ejecuciones
-├── tests/           pruebas
-├── notebooks/       perfilamiento de calidad por fuente y conciliación
 ├── docker-compose.yml
-└── main.py          orquestación del pipeline
+└── main.py          orquestación: bronze -> silver -> gold
 ```
 
 ## Puesta en marcha
@@ -49,9 +64,14 @@ Pipeline con arquitectura medallón sobre PostgreSQL:
    ```bash
    docker compose up -d
    ```
-4. Ejecutar la extracción (capa bronze):
+4. Ejecutar el pipeline completo (bronze -> silver -> gold, unos 3 minutos):
    ```bash
    python main.py
+   ```
+5. Revisar los resultados en la base (o conectar Power BI a las vistas `gold.v_*`):
+   ```sql
+   SELECT * FROM gold.v_kpis_calidad;
+   SELECT * FROM gold.v_escenarios_resumen WHERE escenario_kostat = 'medio' AND anio IN (2030, 2050, 2072);
    ```
 
 ## Extracción (capa bronze)
@@ -68,7 +88,7 @@ dataflow de OECD o una tabla de KOSIS basta con añadirlo al catálogo, sin toca
 
 ```bash
 python main.py --listar                          # catálogo de datasets
-python main.py                                   # todas las fuentes
+python main.py --capa bronze                     # solo extracción, todas las fuentes
 python main.py --fuente oecd worldbank           # algunas fuentes
 python main.py --dataset SP.POP.TOTL tfr_sido    # datasets puntuales
 python main.py --sin-db                          # solo archivos crudos, sin PostgreSQL
@@ -91,6 +111,85 @@ las columnas de dimensión y los años cubiertos, y avisa si falta algo.
 
 **Dónde revisar una ejecución:** el resumen en consola y `logs/pipeline.log`; en la base,
 `SELECT * FROM ctl.log_cargas ORDER BY id_carga DESC;`; y el `_metadata.json` de cada archivo crudo.
+
+## Transformación (capa silver)
+
+`python main.py --capa silver` reconstruye silver completo desde la última carga exitosa de cada dataset de
+bronze, en una sola transacción (si algo falla, queda la versión anterior). Las reglas están en `config.yaml`
+(sección `silver`) y en `config/mappings/`:
+
+1. **Formato largo:** una fila por año × territorio × sexo × grupo de edad × indicador.
+2. **Homologación** con diccionarios explícitos (`etiquetas.csv`), incluidas las etiquetas en coreano
+   (`남자` -> `H`, `0 - 4세` -> `0-4`, `중위 추계` -> `medio`). Lo que no se reconoce va a `ctl.rechazos`.
+3. **Unidades:** miles -> personas (EAPS); 85-89 … 100+ -> 85+; se descartan los agregados que se solapan.
+4. **Validación:** nulos, tipo, rango por indicador, indicador válido, clave única y coherencia de totales
+   (suma de edades ≈ total, H + M ≈ T). Cada rechazo queda en `ctl.rechazos` con su regla y motivo.
+5. **Cálculos del pipeline:** agregados 0-14 / 15-64 / 65+, Chungnam + Sejong (tasas recalculadas desde los
+   niveles), proporción de 65+, índice de envejecimiento y dependencia de vejez.
+6. **Conciliación** maestra vs contraste (OECD, World Bank, UN WPP) en `silver.conciliacion`.
+
+| Tabla | Contenido |
+|---|---|
+| `silver.fact_historico` | Observado 2000–2025: Corea (KOSIS/OECD, nacional + 17 si-do + Chungnam+Sejong) y países de comparación (World Bank) |
+| `silver.fact_proyeccion` | KOSTAT sin modificar: nacional 2026–2072 (medio/alto/bajo) y si-do 2026–2052 (medio) |
+| `silver.conciliacion` | Diferencia % entre la fuente maestra y cada contraste |
+| `silver.dim_*` | Territorio, edad, sexo e indicador (desde `config/mappings/`) |
+
+Cada fila guarda `fuente`, `fecha_extraccion`, `version_publicacion`, `estado` (`preliminar`/`definitivo`),
+`id_carga` (la carga silver) e `id_carga_origen` (la carga bronze de donde viene).
+
+Al terminar, cada tabla silver y los rechazos de esa ejecución quedan también en `data/silver/<fecha>/` (Parquet),
+para analizarlos sin conectarse a la base.
+
+## Capa gold
+
+`python main.py --capa gold` calcula, desde silver:
+
+| Tabla / vista | Pregunta | Contenido |
+|---|---|---|
+| `gold.escenario_fuerza_laboral` + `gold.supuestos` | 6b | Fuerza laboral potencial 2026–2072 por sexo y edad |
+| `gold.escenarios_sensibilidad` | 6b | Fuerza laboral total con variantes de los parámetros de B y C |
+| `gold.indicadores_riesgo` | 5 | Índice de riesgo demográfico por si-do (0–100) y ranking, con sus componentes |
+| `gold.riesgo_sensibilidad` | 5 | Ranking de riesgo con esquemas de pesos alternativos |
+| `gold.asociaciones` | 7 | Correlaciones 2000–2025 en niveles y en variaciones anuales (asociación, no causalidad) |
+| `gold.hitos_escasez` | 8 | Años en que se cruzan umbrales (pico de 15-64, relevo < 100, dependencia ≥ 50 y ≥ 75) y caída de la fuerza laboral |
+| `ctl.kpis` / `gold.v_kpis_calidad` | — | KPIs de calidad del proyecto, una foto por ejecución |
+| `gold.v_panel_indicadores` | 1, 3, 4, 9 | Un registro por año × territorio con todos los indicadores (histórico + proyección media) |
+| `gold.v_natalidad_vs_15_64` | 2 | Nacimientos de cada año frente a quienes entran a 15-19 quince años después, y variación de 15-64 |
+| `gold.v_senales_escasez` | 8 | Relevo generacional (15-19 por cada 100 de 60-64), variación de 15-64 y dependencia, por año y si-do |
+| `gold.v_escenarios_resumen` | 6a, 6b | Fuerza laboral total por año, escenario KOSTAT y supuesto, junto a la población 15-64 |
+| `gold.v_conciliacion` | — | Conciliación con nombres legibles y marca de tolerancia |
+
+La pregunta 10 (información para política pública) se responde en el informe con las tres capas.
+
+Todas las tablas y vistas gold se exportan además a `data/gold/<fecha>/` en Parquet y CSV, con un `manifest.json`
+(filas, columnas, sha256 e `id_carga`): sirven para Power BI o Excel sin la base, y el notebook
+`06_resultados_gold.ipynb` responde las preguntas de negocio directamente desde esos archivos.
+
+**Escenarios propios** (parámetros en `config.yaml`, sección `gold`; son escenarios, no pronósticos).
+Fuerza laboral = población proyectada KOSTAT × factor de cobertura × tasa de participación. El factor de cobertura
+(población 15+ de la EAPS / población KOSTAT, por sexo y edad, en 2025) corrige que la EAPS no cubra militares ni
+población institucional; con él, el año base reproduce la población activa observada.
+
+- **A, participación constante:** cada tasa por sexo y grupo de edad queda en su valor de 2025.
+- **B, tendencia 2015–2025:** se extrapola la tendencia lineal, con un cambio máximo de ±15 puntos, entre 0 y
+  90 %, y congelada desde 2050.
+- **C, convergencia OCDE:** cada tasa converge al promedio OCDE de su sexo y edad hasta 2050. Los grupos 15-19 y
+  60+ quedan constantes porque la OCDE no publica edades equivalentes.
+
+Los supuestos calculados (pendientes de la tendencia, objetivos OCDE) quedan guardados en `gold.supuestos`, y la
+sensibilidad a sus parámetros en `gold.escenarios_sensibilidad`. El índice de riesgo por si-do usa cuatro
+componentes con igual peso; `gold.riesgo_sensibilidad` muestra el ranking con otros esquemas de pesos.
+
+## Pruebas
+
+```bash
+python -m pytest tests
+```
+
+Cubren la extracción (archivos, deduplicación, estructura de KOSIS), la homologación (incluidas las etiquetas
+en coreano), las reglas de validación, los cálculos derivados, Chungnam + Sejong, los escenarios A/B/C, el factor
+de cobertura, las asociaciones y el índice de riesgo con su sensibilidad.
 
 ## Equipo
 

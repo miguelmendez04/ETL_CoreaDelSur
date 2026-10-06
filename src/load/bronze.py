@@ -5,6 +5,7 @@ import psycopg
 from psycopg import sql
 
 from src.extract.comun import Extraccion, hash_registro, relativa
+from src.load import ctl
 
 # Columnas propias de cada tabla bronze, además de las comunes.
 COLUMNAS_EXTRA = {"bronze.kosis": ["org_id", "tbl_id"]}
@@ -17,12 +18,7 @@ def _tabla(nombre: str) -> sql.Composed:
 
 
 def abrir_carga(conn: psycopg.Connection, fuente: str, dataset: str, metodo: str) -> int:
-    with conn.cursor() as cur:
-        cur.execute("""INSERT INTO ctl.log_cargas (capa, fuente, dataset, metodo)
-                       VALUES ('bronze', %s, %s, %s) RETURNING id_carga""", (fuente, dataset, metodo))
-        id_carga = cur.fetchone()[0]
-    conn.commit()
-    return id_carga
+    return ctl.abrir_carga(conn, "bronze", dataset, fuente=fuente, metodo=metodo)
 
 
 def carga_identica(conn: psycopg.Connection, ext: Extraccion) -> int | None:

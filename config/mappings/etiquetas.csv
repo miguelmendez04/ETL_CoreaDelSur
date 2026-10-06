@@ -1,0 +1,38 @@
+dimension,etiqueta,codigo,observacion
+territorio,Whole country,00,
+territorio,Total,00,EAPS
+territorio,Seoul,11,
+territorio,Busan,21,
+territorio,Daegu,22,
+territorio,Incheon,23,
+territorio,Gwangju,24,
+territorio,Daejeon,25,
+territorio,Ulsan,26,
+territorio,Sejong,29,
+territorio,sejong-si,29,Así aparece en la tabla de TFR
+territorio,Gyeonggi-do,31,
+territorio,Gangwon-do,32,Nombre anterior a 2023 (hoy Gangwon State)
+territorio,Chungcheongbuk-do,33,
+territorio,Chungcheongnam-do,34,
+territorio,Jeollabuk-do,35,Nombre anterior a 2024 (hoy Jeonbuk State)
+territorio,Jeollanam-do,36,
+territorio,Gyeongsangbuk-do,37,
+territorio,Gyeongsangnam-do,38,
+territorio,Jeju,39,
+territorio,Jeju-do,39,
+territorio,OECD,OED,Código OECD del promedio de países miembros (World Bank usa OED)
+territorio,Jeonnam-Gwangju,EXCLUIR,Región combinada que KOSIS publica solo en 2025 (= Gwangju + Jeollanam-do); duplicaría valores
+sexo,Total,T,
+sexo,Male,H,
+sexo,Female,M,
+sexo,전체,T,Coreano: total
+sexo,남자,H,Coreano: hombres
+sexo,여자,M,Coreano: mujeres
+sexo,Both sexes,T,UN WPP
+escenario,Medium,medio,KOSIS tabla provincial
+escenario,중위 추계(기본 추계: 출산율-중위 / 기대수명-중위 / 국제순이동-중위),medio,Coreano: escenario medio (base)
+escenario,높은 출산율 추계(출산율-고위 / 기대수명-중위 / 국제순이동-중위),alto,Coreano: fecundidad alta; resto medio
+escenario,낮은 출산율 추계(출산율-저위 / 기대수명-중위 / 국제순이동-중위),bajo,Coreano: fecundidad baja; resto medio
+escenario,Median,medio,UN WPP
+escenario,High-fertility,alto,UN WPP
+escenario,Low-fertility,bajo,UN WPP
